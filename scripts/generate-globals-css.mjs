@@ -246,7 +246,113 @@ function flattenTypoTokens(typo) {
       }
     }
   }
-  return { lines, v1Utilities };
+  // V2: Title, Heading, Body, Caption 등에서 root 변수 및 utility 생성
+  const v2RootVars = [];
+  const fontSizeSet = new Set();
+  const v2Utilities = [];
+  const leadingSet = new Set();
+
+  if (typo.V2) {
+    for (const groupKey of Object.keys(typo.V2)) {
+      const groupObj = typo.V2[groupKey];
+      for (const sizeKey of Object.keys(groupObj)) {
+        const sizeObj = groupObj[sizeKey];
+        // Body.read와 같이 weightKey 없이 바로 value가 있는 경우 처리
+        if (sizeObj && sizeObj.value) {
+          const val = sizeObj.value;
+          const fontSizeVar = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-font-size`;
+          const lineHeightVar = `--leading-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}`;
+          const letterSpacingVar = `--letter-spacing`;
+          const fontSize =
+            val.fontSize && val.fontSize.match(/\{(.+)\}/)
+              ? typo.fontSize[val.fontSize.replace(/\{|\}/g, '').split('.')[1]]
+                  .value
+              : val.fontSize;
+          const lineHeight =
+            val.lineHeight && val.lineHeight.match(/\{(.+)\}/)
+              ? typo.lineHeights[
+                  val.lineHeight.replace(/\{|\}/g, '').split('.')[1]
+                ].value
+              : val.lineHeight;
+          const letterSpacing =
+            val.letterSpacing && val.letterSpacing.match(/\{(.+)\}/)
+              ? typo.letterSpacing[
+                  val.letterSpacing.replace(/\{|\}/g, '').split('.')[1]
+                ].value
+              : val.letterSpacing;
+          if (fontSize && !fontSizeSet.has(fontSizeVar)) {
+            v2RootVars.push(`  ${fontSizeVar}: ${fontSize}px;`);
+            fontSizeSet.add(fontSizeVar);
+          }
+          if (lineHeight && !leadingSet.has(lineHeightVar)) {
+            v2RootVars.push(`  ${lineHeightVar}: ${lineHeight}px;`);
+            leadingSet.add(lineHeightVar);
+          }
+          if (letterSpacing)
+            v2RootVars.push(`  ${letterSpacingVar}: ${letterSpacing};`);
+          // font-weight 매핑 (Body.read는 pretendard-3)
+          let fontWeightVar = 'var(--text-font-weight-pretendard-3)';
+          let util = `@utility ${toKebabCase(groupKey)}-${toKebabCase(sizeKey)} {\n  font-size: var(${fontSizeVar});\n  line-height: var(${lineHeightVar});\n  font-weight: ${fontWeightVar};\n  letter-spacing: var(--letter-spacing);\n}`;
+          v2Utilities.push(util);
+        } else {
+          for (const weightKey of Object.keys(sizeObj)) {
+            const style = sizeObj[weightKey];
+            if (!style || !style.value) continue;
+            const val = style.value;
+            // 변수명 생성
+            const fontSizeVar = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-${toKebabCase(weightKey)}`;
+            const fontSizeVar2 = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-font-size`;
+            const lineHeightVar = `--leading-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}`;
+            const letterSpacingVar = `--letter-spacing`;
+            // 값 추출
+            const fontSize =
+              val.fontSize && val.fontSize.match(/\{(.+)\}/)
+                ? typo.fontSize[
+                    val.fontSize.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.fontSize;
+            const lineHeight =
+              val.lineHeight && val.lineHeight.match(/\{(.+)\}/)
+                ? typo.lineHeights[
+                    val.lineHeight.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.lineHeight;
+            const letterSpacing =
+              val.letterSpacing && val.letterSpacing.match(/\{(.+)\}/)
+                ? typo.letterSpacing[
+                    val.letterSpacing.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.letterSpacing;
+            // root 변수 정의
+            if (fontSize && !fontSizeSet.has(fontSizeVar2)) {
+              v2RootVars.push(`  ${fontSizeVar2}: ${fontSize}px;`);
+              fontSizeSet.add(fontSizeVar2);
+            }
+            if (lineHeight && !leadingSet.has(lineHeightVar)) {
+              v2RootVars.push(`  ${lineHeightVar}: ${lineHeight}px;`);
+              leadingSet.add(lineHeightVar);
+            }
+            if (letterSpacing)
+              v2RootVars.push(`  ${letterSpacingVar}: ${letterSpacing};`);
+            // font-weight 매핑
+            let fontWeightVar = '';
+            if (weightKey === 'bold')
+              fontWeightVar = 'var(--text-font-weight-pretendard-2)';
+            else if (weightKey === 'semibold')
+              fontWeightVar = 'var(--text-font-weight-pretendard-0)';
+            else if (weightKey === 'medium')
+              fontWeightVar = 'var(--text-font-weight-pretendard-1)';
+            else if (weightKey === 'regular')
+              fontWeightVar = 'var(--text-font-weight-pretendard-3)';
+            // utility 생성
+            let util = `@utility ${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-${toKebabCase(weightKey)} {\n  font-size: var(${fontSizeVar2});\n  line-height: var(${lineHeightVar});\n  font-weight: ${fontWeightVar};\n  letter-spacing: var(--letter-spacing);\n}`;
+            v2Utilities.push(util);
+          }
+        }
+      }
+    }
+  }
+  return { lines, v1Utilities, v2RootVars, v2Utilities };
 }
 
 function collectTextPrimitives(typoMode) {
@@ -327,7 +433,12 @@ async function main() {
 
   // Typo
   const typoMode = tokens['Typo/Mode 1'];
-  const { lines: typoVars, v1Utilities } = flattenTypoTokens(typoMode);
+  const {
+    lines: typoVars,
+    v1Utilities,
+    v2RootVars,
+    v2Utilities,
+  } = flattenTypoTokens(typoMode);
   const textPrimitives = collectTextPrimitives(typoMode);
 
   // letterSpacing
@@ -344,17 +455,23 @@ async function main() {
   });
   css += '  /* generated-color-tokens:end */\n\n';
 
-  // letterSpacing 변수 추가
-  Object.entries(letterSpacing).forEach(([key, obj]) => {
-    if (obj && obj.value !== undefined) {
-      css += `  --letter-spacing-${key}: ${obj.value};\n`;
+  css += '  /* generated-text-tokens:start */\n';
+  // letter-spacing은 한 번만 정의
+  css += '  --letter-spacing: -2%;\n';
+  typoVars.forEach((line) => {
+    // letter-spacing 변수는 추가하지 않음
+    if (!line.includes('--letter-spacing')) {
+      css += line + '\n';
     }
   });
-
-  css += '  /* generated-text-tokens:start */\n';
-  typoVars.forEach((line) => {
-    css += line + '\n';
-  });
+  // v2 root 변수 추가 (letter-spacing 변수는 추가하지 않음)
+  if (v2RootVars.length > 0) {
+    v2RootVars.forEach((line) => {
+      if (!line.includes('--letter-spacing')) {
+        css += line + '\n';
+      }
+    });
+  }
   css += '  /* generated-text-tokens:end */\n';
   css += '}\n\n';
 
@@ -383,8 +500,15 @@ async function main() {
   css += `}\n\n`;
   // body 아래에 v1 utility 추가
   if (v1Utilities.length > 0) {
-    css += '// v1\n';
+    css += '//v1\n';
     v1Utilities.forEach((util) => {
+      css += util + '\n';
+    });
+  }
+  // v2 utility 추가
+  if (v2Utilities.length > 0) {
+    css += '//v2\n';
+    v2Utilities.forEach((util) => {
       css += util + '\n';
     });
   }
