@@ -52,15 +52,20 @@ jobs:
           echo "new_sha=$AFTER" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@v4
+        if: ${{ steps.promote.outputs.changed == 'true' }}
         with:
             node-version: 20
 
       - uses: pnpm/action-setup@v4
+        if: ${{ steps.promote.outputs.changed == 'true' }}
         with:
           version: 10
+          standalone: true
       - run: pnpm -v
+        if: ${{ steps.promote.outputs.changed == 'true' }}
 
       - uses: actions/setup-node@v4
+        if: ${{ steps.promote.outputs.changed == 'true' }}
         with:
           node-version: 20
           cache: 'pnpm'
@@ -84,7 +89,11 @@ jobs:
 
       - name: Deploy (prod)
         if: ${{ steps.promote.outputs.changed == 'true' }}
-        run: vercel deploy --prebuilt --prod --token='${{ secrets.VERCEL_TOKEN }}'
+        id: deploy
+        run: |
+          url="$(vercel deploy --prebuilt --prod --token='${{ secrets.VERCEL_TOKEN }}')"
+          echo "::notice::Deployed $url"
+
 
   deploy-on-main:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -98,6 +107,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
+          standalone: true
       - run: pnpm -v
 
       - uses: actions/setup-node@v4
