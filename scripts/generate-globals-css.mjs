@@ -500,14 +500,14 @@ async function main() {
   css += `}\n\n`;
   // body 아래에 v1 utility 추가
   if (v1Utilities.length > 0) {
-    css += '//v1\n';
+    css += '/* v1 */\n';
     v1Utilities.forEach((util) => {
       css += util + '\n';
     });
   }
   // v2 utility 추가
   if (v2Utilities.length > 0) {
-    css += '//v2\n';
+    css += '/* v2 */\n';
     v2Utilities.forEach((util) => {
       css += util + '\n';
     });

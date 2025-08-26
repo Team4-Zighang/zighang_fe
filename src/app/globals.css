@@ -155,7 +155,7 @@ body {
   font-family: Pretendard, Helvetica, sans-serif;
 }
 
-//v1
+/* v1 */
 @utility web-title1 {
   font-size: var(--text-web-title1-font-size);
   line-height: var(--text-web-title1-line-height);
@@ -266,7 +266,7 @@ body {
   line-height: var(--text-mobile-badge-sm-line-height);
   font-weight: var(--text-font-weight-pretendard-1);
 }
-//v2
+/* v2 */
 @utility title-lg-bold {
   font-size: var(--text-title-lg-font-size);
   line-height: var(--leading-title-lg);
