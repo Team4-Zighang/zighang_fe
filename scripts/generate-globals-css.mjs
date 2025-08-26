@@ -39,15 +39,27 @@ function flattenSemanticTokens(
       (value && value.type === 'color' && value.value)
     ) {
       let resolvedValue = value.value;
-      // 토큰 참조 치환
       const refMatch = resolvedValue.match(/^\{(.+)\}$/);
-      if (refMatch) {
-        const ref = refMatch[1].replace(/\./g, '-');
-        // colorPathToVarMap은 flattenColorTokens에서 생성됨
-        const varName = `--color-${ref}`;
-        // 실제 값으로 치환
-        const found = out.find((t) => t.name === varName);
-        resolvedValue = found ? found.value : resolvedValue;
+      if (
+        refMatch &&
+        colorPathToVarMap &&
+        typeof colorPathToVarMap.get === 'function'
+      ) {
+        const ref = refMatch[1].split('.');
+        let colorVarName = null;
+        if (ref.length === 2) {
+          colorVarName =
+            colorPathToVarMap.get(`color.${ref[0].toLowerCase()}.${ref[1]}`) ||
+            colorPathToVarMap.get(`${ref[0].toLowerCase()}.${ref[1]}`);
+        }
+        if (ref.length === 2 && ref[0].toLowerCase() === 'base') {
+          colorVarName =
+            colorPathToVarMap.get(`color.base.${ref[1].toLowerCase()}`) ||
+            colorPathToVarMap.get(`base.${ref[1].toLowerCase()}`);
+        }
+        if (colorVarName) {
+          resolvedValue = `var(${colorVarName})`;
+        }
       }
       out.push({ name: `--color-${nextPath.join('-')}`, value: resolvedValue });
     } else if (isPlainObject(value)) {
@@ -429,7 +441,20 @@ async function main() {
 
   // Colors
   const colorsMode = tokens['Color Palette/Mode 1'];
-  const { tokens: colorVars } = flattenColorTokens(colorsMode, ['color']);
+  const { tokens: colorVars, pathToVarMap } = flattenColorTokens(colorsMode, [
+    'color',
+  ]);
+
+  pathToVarMap.tokens = colorVars;
+
+  // Semantic Colors
+  const semanticMode = tokens['Semantic/Mode 1'];
+  const semanticVars = flattenSemanticTokens(
+    semanticMode,
+    pathToVarMap,
+    [],
+    []
+  );
 
   // Typo
   const typoMode = tokens['Typo/Mode 1'];
@@ -455,6 +480,12 @@ async function main() {
   });
   css += '  /* generated-color-tokens:end */\n\n';
 
+  css += '  /* generated-semantic-tokens:start */\n';
+  semanticVars.forEach(({ name, value }) => {
+    css += `  ${name}: ${value};\n`;
+  });
+  css += '  /* generated-semantic-tokens:end */\n\n';
+
   css += '  /* generated-text-tokens:start */\n';
   // letter-spacing은 한 번만 정의
   css += '  --letter-spacing: -2%;\n';
@@ -479,11 +510,7 @@ async function main() {
   css += `  --color-background: var(--background);\n`;
   css += `  --color-foreground: var(--foreground);\n`;
   css += `  --font-sans: var(--font-pretendard);\n`;
-  css += `  --font-mono: var(--font-geist-mono);\n\n`;
-  css += '  /* generated-semantic-tokens:start */\n';
-  css += '  --color-bg-interactive-primary: var(--color-blue-500);\n';
-  css += '  /* generated-semantic-tokens:end */\n\n';
-  // buildTextThemeCss 함수 호출 제거 (오류 방지)
+  css += `  --font-mono: var(--font-geist-mono);\n`;
   css += `}\n\n`;
 
   // 다크모드 및 body 스타일 추가
