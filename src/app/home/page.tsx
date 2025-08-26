@@ -1,7 +1,7 @@
 import React from 'react';
 import PostingLotto from './components/PostingLotto';
 import Image from 'next/image';
-import Footer from '../_components/Footer';
+import Footer from '../_components/common/Footer';
 
 const page = () => {
   return (
