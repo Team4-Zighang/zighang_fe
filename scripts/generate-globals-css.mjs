@@ -1,38 +1,75 @@
-import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 function toKebabCase(input) {
   return String(input)
-    .replaceAll(/[^a-zA-Z0-9]+/g, "-")
-    .replaceAll(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replaceAll(/[^a-zA-Z0-9]+/g, '-')
+    .replaceAll(/([a-z0-9])([A-Z])/g, '$1-$2')
     .toLowerCase()
-    .replaceAll(/-{2,}/g, "-")
-    .replaceAll(/^-|-$/g, "");
+    .replaceAll(/-{2,}/g, '-')
+    .replaceAll(/^-|-$/g, '');
 }
 
 function isColorToken(node) {
   return (
     node &&
-    typeof node === "object" &&
-    "value" in node &&
-    "type" in node &&
-    node.type === "color"
+    typeof node === 'object' &&
+    'value' in node &&
+    'type' in node &&
+    node.type === 'color'
   );
 }
 
 function isPlainObject(value) {
-  return value && typeof value === "object" && !Array.isArray(value);
+  return value && typeof value === 'object' && !Array.isArray(value);
 }
 
-// Colors/Mode 1 처리
-function flattenColorTokens(root, pathParts = [], out = [], pathToVarMap = new Map()) {
-  if (!root || typeof root !== "object") return { tokens: out, pathToVarMap };
+// Semantic/Mode 1 처리
+function flattenSemanticTokens(
+  root,
+  colorPathToVarMap,
+  out = [],
+  pathParts = []
+) {
+  if (!root || typeof root !== 'object') return out;
+  for (const [key, value] of Object.entries(root)) {
+    const nextPath = [...pathParts, toKebabCase(key)];
+    if (
+      isColorToken(value) ||
+      (value && value.type === 'color' && value.value)
+    ) {
+      let resolvedValue = value.value;
+      // 토큰 참조 치환
+      const refMatch = resolvedValue.match(/^\{(.+)\}$/);
+      if (refMatch) {
+        const ref = refMatch[1].replace(/\./g, '-');
+        // colorPathToVarMap은 flattenColorTokens에서 생성됨
+        const varName = `--color-${ref}`;
+        // 실제 값으로 치환
+        const found = out.find((t) => t.name === varName);
+        resolvedValue = found ? found.value : resolvedValue;
+      }
+      out.push({ name: `--color-${nextPath.join('-')}`, value: resolvedValue });
+    } else if (isPlainObject(value)) {
+      flattenSemanticTokens(value, colorPathToVarMap, out, nextPath);
+    }
+  }
+  return out;
+}
+
+function flattenColorTokens(
+  root,
+  pathParts = [],
+  out = [],
+  pathToVarMap = new Map()
+) {
+  if (!root || typeof root !== 'object') return { tokens: out, pathToVarMap };
   for (const [key, value] of Object.entries(root)) {
     const nextPath = [...pathParts, toKebabCase(key)];
     if (isColorToken(value)) {
-      const variableName = `--color-${nextPath.slice(1).join("-")}`;
+      const variableName = `--color-${nextPath.slice(1).join('-')}`;
       out.push({ name: variableName, value: value.value });
-      pathToVarMap.set(nextPath.join("."), variableName);
+      pathToVarMap.set(nextPath.join('.'), variableName);
     } else if (isPlainObject(value)) {
       flattenColorTokens(value, nextPath, out, pathToVarMap);
     }
@@ -43,134 +80,290 @@ function flattenColorTokens(root, pathParts = [], out = [], pathToVarMap = new M
 // Typo/Mode 1 처리 (font, size, line-height 등)
 function flattenTypoTokens(typo) {
   const lines = [];
-  // 그룹/사이즈별로 모든 weight 값이 동일하면 단일 변수만 생성
-  const groupOrder = ["heading", "body", "title", "caption"];
+  const v1Utilities = [];
+  // font-weight: pretendard-0~3 공통 매핑 (root에 한 번만)
+  if (typo.fontWeights) {
+    for (const [wKey, wVal] of Object.entries(typo.fontWeights)) {
+      let weightNum = 400;
+      if (wKey === 'pretendard-0') weightNum = 600;
+      else if (wKey === 'pretendard-1') weightNum = 500;
+      else if (wKey === 'pretendard-2') weightNum = 700;
+      else if (wKey === 'pretendard-3') weightNum = 400;
+      lines.push(`  --text-font-weight-${wKey}: ${weightNum};`);
+    }
+  }
+
+  // V2: title, heading, body, caption 그룹별 처리
+  const groupOrder = ['heading', 'body', 'title', 'caption'];
   for (const group of groupOrder) {
-    const groupObj = typo[group] || typo[toKebabCase(group)] || typo[group.charAt(0).toUpperCase() + group.slice(1)];
+    const groupObj =
+      typo[group] ||
+      typo[toKebabCase(group)] ||
+      typo[group.charAt(0).toUpperCase() + group.slice(1)];
     if (!groupObj) continue;
     // font-family
     if (typo.fontFamilies && typo.fontFamilies.pretendard) {
       lines.push(`  --text-${group}-font-family: pretendard;`);
     }
-    // font-weight
-    if (typo.fontWeights) {
-      for (const [wKey, wVal] of Object.entries(typo.fontWeights)) {
-        lines.push(`  --text-${group}-font-weight-${wVal.value.toLowerCase()}: ${wVal.value.toLowerCase() === "regular" ? 400 : FONT_WEIGHT_MAP[wVal.value.toLowerCase()] ?? wVal.value};`);
-      }
-    }
-    // 사이즈별 처리
+    // V2 구조 flatten: 사이즈별-웨이트별 변수 생성
     for (const [sizeKey, sizeObj] of Object.entries(groupObj)) {
       if (!isPlainObject(sizeObj)) continue;
-      // font-size, line-height는 그룹/사이즈 단일 변수로 한 번만 생성, font-weight만 weight별로 생성
-      const fontSizes = [];
-      const lineHeights = [];
-      const fontWeightMap = {};
       for (const [weightKey, weightObj] of Object.entries(sizeObj)) {
         if (!isPlainObject(weightObj) || !weightObj.value) continue;
         const val = weightObj.value;
         function resolveToken(token, tokens, type) {
-          if (!token) return "";
+          if (!token) return '';
           const refMatch = token.match(/^\{(.+)\}$/);
           if (refMatch) {
-            const ref = refMatch[1].split(".");
-            if (ref.length === 2 && tokens[type] && tokens[type][ref[1]] && tokens[type][ref[1]].value) {
+            const ref = refMatch[1].split('.');
+            if (
+              ref.length === 2 &&
+              tokens[type] &&
+              tokens[type][ref[1]] &&
+              tokens[type][ref[1]].value
+            ) {
               return tokens[type][ref[1]].value;
             }
           }
-          return token.replace(/[^0-9]/g, "");
+          return token.replace(/[^0-9]/g, '');
         }
-        const fontSize = resolveToken(val.fontSize, typo, "fontSize");
-        const lineHeight = resolveToken(val.lineHeight, typo, "lineHeights");
-        const fwToken = val.fontWeight;
-        let fw = "";
-        if (fwToken) {
-          const refMatch = fwToken.match(/^\{(.+)\}$/);
-          if (refMatch) {
-            const ref = refMatch[1].split(".");
-            if (ref.length === 2 && typo.fontWeights && typo.fontWeights[ref[1]] && typo.fontWeights[ref[1]].value) {
-              fw = typo.fontWeights[ref[1]].value.toLowerCase();
+        const fontSize = resolveToken(val.fontSize, typo, 'fontSize');
+        const lineHeight = resolveToken(val.lineHeight, typo, 'lineHeights');
+        const fontWeight = (() => {
+          // fontWeight 값이 토큰 참조일 경우
+          if (val.fontWeight && val.fontWeight.match(/^\{(.+)\}$/)) {
+            const ref = val.fontWeight.replace(/[{}]/g, '').split('.');
+            if (
+              ref.length === 2 &&
+              typo.fontWeights &&
+              typo.fontWeights[ref[1]]
+            ) {
+              const wKey = ref[1];
+              if (wKey === 'pretendard-0') return 600;
+              if (wKey === 'pretendard-1') return 500;
+              if (wKey === 'pretendard-2') return 700;
+              if (wKey === 'pretendard-3') return 400;
             }
-          } else {
-            fw = fwToken.replace(/\{|\}/g, "").split(".").pop().toLowerCase();
+          }
+          return undefined;
+        })();
+        const varPrefix = `--text-${group}-${toKebabCase(sizeKey)}-${toKebabCase(weightKey)}`;
+        if (fontSize) lines.push(`${varPrefix}-font-size: ${fontSize}px;`);
+        if (lineHeight)
+          lines.push(`${varPrefix}-line-height: ${lineHeight}px;`);
+        if (fontWeight) lines.push(`${varPrefix}-font-weight: ${fontWeight};`);
+      }
+    }
+  }
+
+  // V1: Web/Mobile utility 생성 (body 아래에 출력용)
+  if (typo.V1) {
+    function resolveToken(token, tokens) {
+      if (!token) return '';
+      const refMatch = token.match(/^(.+)$/);
+      if (refMatch) {
+        const ref = refMatch[1].split('.');
+        if (
+          ref.length === 2 &&
+          tokens[ref[0]] &&
+          tokens[ref[0]][ref[1]] &&
+          tokens[ref[0]][ref[1]].value
+        ) {
+          return tokens[ref[0]][ref[1]].value;
+        }
+      }
+      return token;
+    }
+    for (const device of Object.keys(typo.V1)) {
+      for (const styleName of Object.keys(typo.V1[device])) {
+        const style = typo.V1[device][styleName];
+        if (!style || !style.value) continue;
+        const val = style.value;
+        const fontSizeVar = `var(--text-${toKebabCase(device)}-${toKebabCase(styleName)}-font-size)`;
+        const lineHeightVar = `var(--text-${toKebabCase(device)}-${toKebabCase(styleName)}-line-height)`;
+        // fontWeight 토큰에서 pretendard-x 추출
+        let fontWeightKey = '';
+        if (val.fontWeight) {
+          const match = val.fontWeight.match(/pretendard-[0-3]/);
+          if (match) fontWeightKey = match[0];
+        }
+        let fontWeightVar = fontWeightKey
+          ? `var(--text-font-weight-${fontWeightKey})`
+          : '';
+        let util = `@utility ${toKebabCase(device)}-${toKebabCase(styleName)} {\n  font-size: ${fontSizeVar};\n  line-height: ${lineHeightVar};\n  font-weight: ${fontWeightVar};\n}`;
+        v1Utilities.push(util);
+      }
+    }
+  }
+
+  // V1: Web/Mobile 스타일 처리
+  if (typo.V1) {
+    function resolveToken(token, tokens) {
+      if (!token) return '';
+      const refMatch = token.match(/^\{(.+)\}$/);
+      if (refMatch) {
+        const ref = refMatch[1].split('.');
+        if (
+          ref.length === 2 &&
+          tokens[ref[0]] &&
+          tokens[ref[0]][ref[1]] &&
+          tokens[ref[0]][ref[1]].value
+        ) {
+          return tokens[ref[0]][ref[1]].value;
+        }
+      }
+      return token;
+    }
+    for (const device of Object.keys(typo.V1)) {
+      for (const styleName of Object.keys(typo.V1[device])) {
+        const style = typo.V1[device][styleName];
+        if (!style || !style.value) continue;
+        const val = style.value;
+        const fontFamily = val.fontFamily ? 'pretendard' : '';
+        const fontWeightKey = val.fontWeight
+          ? val.fontWeight.replace(/\{|\}/g, '').split('.').pop().toLowerCase()
+          : '';
+        const fontSize = resolveToken(val.fontSize, typo);
+        const lineHeight = resolveToken(val.lineHeight, typo);
+        // 공통 변수는 한 번만 생성
+        if (
+          fontFamily &&
+          !lines.includes(`  --text-font-family: ${fontFamily};`)
+        ) {
+          lines.push(`  --text-font-family: ${fontFamily};`);
+        }
+        // 스타일별 변수 생성
+        if (fontSize) {
+          lines.push(
+            `  --text-${toKebabCase(device)}-${toKebabCase(styleName)}-font-size: ${fontSize}${isNaN(Number(fontSize)) ? '' : 'px'};`
+          );
+        }
+        if (lineHeight) {
+          lines.push(
+            `  --text-${toKebabCase(device)}-${toKebabCase(styleName)}-line-height: ${lineHeight}${isNaN(Number(lineHeight)) ? '' : 'px'};`
+          );
+        }
+      }
+    }
+  }
+  // V2: Title, Heading, Body, Caption 등에서 root 변수 및 utility 생성
+  const v2RootVars = [];
+  const fontSizeSet = new Set();
+  const v2Utilities = [];
+  const leadingSet = new Set();
+
+  if (typo.V2) {
+    for (const groupKey of Object.keys(typo.V2)) {
+      const groupObj = typo.V2[groupKey];
+      for (const sizeKey of Object.keys(groupObj)) {
+        const sizeObj = groupObj[sizeKey];
+        // Body.read와 같이 weightKey 없이 바로 value가 있는 경우 처리
+        if (sizeObj && sizeObj.value) {
+          const val = sizeObj.value;
+          const fontSizeVar = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-font-size`;
+          const lineHeightVar = `--leading-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}`;
+          const letterSpacingVar = `--letter-spacing`;
+          const fontSize =
+            val.fontSize && val.fontSize.match(/\{(.+)\}/)
+              ? typo.fontSize[val.fontSize.replace(/\{|\}/g, '').split('.')[1]]
+                  .value
+              : val.fontSize;
+          const lineHeight =
+            val.lineHeight && val.lineHeight.match(/\{(.+)\}/)
+              ? typo.lineHeights[
+                  val.lineHeight.replace(/\{|\}/g, '').split('.')[1]
+                ].value
+              : val.lineHeight;
+          const letterSpacing =
+            val.letterSpacing && val.letterSpacing.match(/\{(.+)\}/)
+              ? typo.letterSpacing[
+                  val.letterSpacing.replace(/\{|\}/g, '').split('.')[1]
+                ].value
+              : val.letterSpacing;
+          if (fontSize && !fontSizeSet.has(fontSizeVar)) {
+            v2RootVars.push(`  ${fontSizeVar}: ${fontSize}px;`);
+            fontSizeSet.add(fontSizeVar);
+          }
+          if (lineHeight && !leadingSet.has(lineHeightVar)) {
+            v2RootVars.push(`  ${lineHeightVar}: ${lineHeight}px;`);
+            leadingSet.add(lineHeightVar);
+          }
+          if (letterSpacing)
+            v2RootVars.push(`  ${letterSpacingVar}: ${letterSpacing};`);
+          // font-weight 매핑 (Body.read는 pretendard-3)
+          let fontWeightVar = 'var(--text-font-weight-pretendard-3)';
+          let util = `@utility ${toKebabCase(groupKey)}-${toKebabCase(sizeKey)} {\n  font-size: var(${fontSizeVar});\n  line-height: var(${lineHeightVar});\n  font-weight: ${fontWeightVar};\n  letter-spacing: var(--letter-spacing);\n}`;
+          v2Utilities.push(util);
+        } else {
+          for (const weightKey of Object.keys(sizeObj)) {
+            const style = sizeObj[weightKey];
+            if (!style || !style.value) continue;
+            const val = style.value;
+            // 변수명 생성
+            const fontSizeVar = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-${toKebabCase(weightKey)}`;
+            const fontSizeVar2 = `--text-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-font-size`;
+            const lineHeightVar = `--leading-${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}`;
+            const letterSpacingVar = `--letter-spacing`;
+            // 값 추출
+            const fontSize =
+              val.fontSize && val.fontSize.match(/\{(.+)\}/)
+                ? typo.fontSize[
+                    val.fontSize.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.fontSize;
+            const lineHeight =
+              val.lineHeight && val.lineHeight.match(/\{(.+)\}/)
+                ? typo.lineHeights[
+                    val.lineHeight.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.lineHeight;
+            const letterSpacing =
+              val.letterSpacing && val.letterSpacing.match(/\{(.+)\}/)
+                ? typo.letterSpacing[
+                    val.letterSpacing.replace(/\{|\}/g, '').split('.')[1]
+                  ].value
+                : val.letterSpacing;
+            // root 변수 정의
+            if (fontSize && !fontSizeSet.has(fontSizeVar2)) {
+              v2RootVars.push(`  ${fontSizeVar2}: ${fontSize}px;`);
+              fontSizeSet.add(fontSizeVar2);
+            }
+            if (lineHeight && !leadingSet.has(lineHeightVar)) {
+              v2RootVars.push(`  ${lineHeightVar}: ${lineHeight}px;`);
+              leadingSet.add(lineHeightVar);
+            }
+            if (letterSpacing)
+              v2RootVars.push(`  ${letterSpacingVar}: ${letterSpacing};`);
+            // font-weight 매핑
+            let fontWeightVar = '';
+            if (weightKey === 'bold')
+              fontWeightVar = 'var(--text-font-weight-pretendard-2)';
+            else if (weightKey === 'semibold')
+              fontWeightVar = 'var(--text-font-weight-pretendard-0)';
+            else if (weightKey === 'medium')
+              fontWeightVar = 'var(--text-font-weight-pretendard-1)';
+            else if (weightKey === 'regular')
+              fontWeightVar = 'var(--text-font-weight-pretendard-3)';
+            // utility 생성
+            let util = `@utility ${toKebabCase(groupKey)}-${toKebabCase(sizeKey)}-${toKebabCase(weightKey)} {\n  font-size: var(${fontSizeVar2});\n  line-height: var(${lineHeightVar});\n  font-weight: ${fontWeightVar};\n  letter-spacing: var(--letter-spacing);\n}`;
+            v2Utilities.push(util);
           }
         }
-        fontSizes.push(fontSize);
-        lineHeights.push(lineHeight);
-        fontWeightMap[weightKey] = fw;
-      }
-      // font-size, line-height는 첫 weight 값으로 단일 변수 생성
-      if (fontSizes.length > 0) {
-        lines.push(`  --text-${group}-${toKebabCase(sizeKey)}-font-size: ${fontSizes[0]}px;`);
-      }
-      if (lineHeights.length > 0) {
-        lines.push(`  --text-${group}-${toKebabCase(sizeKey)}-line-height: ${lineHeights[0]}px;`);
-      }
-  // font-weight는 그룹 공통 변수만 생성 (사이즈별 변수 생성 제거)
-    }
-  }
-  return lines;
-}
-
-function buildTextThemeCss(textRoot) {
-  // Only text/leading variables, in requested order
-  const lines = [];
-  const groupOrder = ["heading", "body", "title", "caption"];
-  for (const group of groupOrder) {
-    // font-family
-    lines.push(`  --font-${group}: var(--text-${group}-font-family);`);
-    // sizes
-    if (!textRoot[group]) continue;
-    const sizeKeys = Object.keys(textRoot[group]).filter(k => !["fontFamily", "fontWeight"].includes(k) && !k.includes("-"));
-    for (const sizeKey of sizeKeys) {
-      lines.push(`  --text-${group}-${sizeKey}: var(--text-${group}-${sizeKey}-font-size);`);
-      lines.push(`  --leading-${group}-${sizeKey}: var(--text-${group}-${sizeKey}-line-height);`);
-    }
-  }
-  return lines;
-}
-
-function buildTypographyUtilitiesCss(textRoot) {
-  const lines = [];
-  const start = "/* generated-typography-utilities:start */";
-  const end = "/* generated-typography-utilities:end */";
-  lines.push(start);
-
-  // 그룹별 크기/웨이트 정의
-  const config = {
-    title: { sizes: ["lg", "md", "sm"], weights: ["bold", "semibold", "medium", "regular"] },
-    heading: { sizes: ["3xl", "2xl", "1xl", "lg", "md", "sm"], weights: ["bold", "semibold", "medium", "regular"] },
-    body: { sizes: ["2xl", "1xl", "lg", "md", "sm", "read"], weights: ["bold", "semibold", "medium", "regular"] },
-    caption: { sizes: ["md", "sm"], weights: { md: ["bold", "semibold", "medium", "regular"], sm: ["medium"] } }
-  };
-
-  for (const group in config) {
-    const sizes = config[group].sizes;
-    const weights = config[group].weights;
-    for (const size of sizes) {
-      let weightList = weights;
-      if (group === "caption" && typeof weights === "object") {
-        weightList = weights[size] || [];
-      }
-      for (const weight of weightList) {
-        // body-read는 weight가 항상 regular로 고정
-        if (group === "body" && size === "read" && weight !== "regular") continue;
-        const className = `${group}-${size}-${weight}`;
-        lines.push(`@utility ${className} {`);
-        lines.push(`  font-size: var(--text-${group}-${size}-font-size);`);
-        lines.push(`  line-height: var(--leading-${group}-${size});`);
-        lines.push(`  font-weight: var(--text-${group}-font-weight-${weight});`);
-        lines.push(`}`);
       }
     }
   }
-  lines.push(end);
-  return lines;
+  return { lines, v1Utilities, v2RootVars, v2Utilities };
 }
 
 function collectTextPrimitives(typoMode) {
   const textRoot = {};
   for (const [groupKey, groupVal] of Object.entries(typoMode)) {
-    if (["fontFamilies", "fontWeights", "fontSize", "lineHeights"].includes(groupKey)) continue;
+    if (
+      ['fontFamilies', 'fontWeights', 'fontSize', 'lineHeights'].includes(
+        groupKey
+      )
+    )
+      continue;
     if (!isPlainObject(groupVal)) continue;
     const groupName = toKebabCase(groupKey);
     const groupOut = (textRoot[groupName] = {});
@@ -180,7 +373,8 @@ function collectTextPrimitives(typoMode) {
     if (typoMode.fontWeights) {
       const weights = {};
       for (const [wKey, wVal] of Object.entries(typoMode.fontWeights)) {
-        weights[toKebabCase(wVal.value)] = FONT_WEIGHT_MAP[wVal.value.toLowerCase()] ?? wVal.value;
+        weights[toKebabCase(wVal.value)] =
+          FONT_WEIGHT_MAP[wVal.value.toLowerCase()] ?? wVal.value;
       }
       groupOut.fontWeight = weights;
     }
@@ -189,45 +383,23 @@ function collectTextPrimitives(typoMode) {
       for (const [weightKey, weightObj] of Object.entries(sizeObj)) {
         if (!isPlainObject(weightObj) || !weightObj.value) continue;
         const val = weightObj.value;
-        const sizeName = toKebabCase(sizeKey + "-" + weightKey);
+        const sizeName = toKebabCase(sizeKey + '-' + weightKey);
         groupOut[sizeName] = {
-          fontSize: val.fontSize ? `${val.fontSize.replace(/[^0-9]/g, "")}px` : undefined,
-          lineHeight: val.lineHeight ? `${val.lineHeight.replace(/[^0-9]/g, "")}px` : undefined,
-          letterSpacing: val.letterSpacing ? `${val.letterSpacing.replace(/[^0-9]/g, "")}px` : undefined,
+          fontSize: val.fontSize
+            ? `${val.fontSize.replace(/[^0-9]/g, '')}px`
+            : undefined,
+          lineHeight: val.lineHeight
+            ? `${val.lineHeight.replace(/[^0-9]/g, '')}px`
+            : undefined,
+          letterSpacing: val.letterSpacing
+            ? `${val.letterSpacing.replace(/[^0-9]/g, '')}px`
+            : undefined,
         };
       }
     }
   }
   return textRoot;
 }
-
-// Interactive/Mode 1 처리 (interactive color)
-function flattenInteractiveTokens(interactive, colorMap) {
-  const lines = [];
-  function resolveRef(val) {
-    if (typeof val !== "string") return val;
-    const match = val.match(/^\{(.+)\}$/);
-    if (match) {
-      // 예: {gray.500} → --color-gray-500
-      const ref = match[1].replace(/\./g, "-").replace(/Base-/g, "base-");
-      return `var(--color-${ref})`;
-    }
-    return val;
-  }
-  function walk(obj, prefix = []) {
-    for (const [key, value] of Object.entries(obj)) {
-      if (isColorToken(value)) {
-        const varName = `--color-${[...prefix, toKebabCase(key)].join("-")}`;
-        lines.push(`  ${varName}: ${resolveRef(value.value)};`);
-      } else if (isPlainObject(value)) {
-        walk(value, [...prefix, toKebabCase(key)]);
-      }
-    }
-  }
-  walk(interactive.colors || {});
-  return lines;
-}
-
 
 // Map common weight names to numeric values
 const FONT_WEIGHT_MAP = {
@@ -247,65 +419,71 @@ const FONT_WEIGHT_MAP = {
   black: 900,
 };
 
-
 async function main() {
   const projectRoot = process.cwd();
-  const inputPath = resolve(projectRoot, "src/app/tokens.json");
-  const outputPath = resolve(projectRoot, "src/app/globals.css");
+  const inputPath = resolve(projectRoot, 'src/app/tokens.json');
+  const outputPath = resolve(projectRoot, 'src/app/globals.css');
 
-  const raw = await readFile(inputPath, "utf8");
+  const raw = await readFile(inputPath, 'utf8');
   const tokens = JSON.parse(raw);
 
   // Colors
-  const colorsMode = tokens["Colors/Mode 1"];
-  const { tokens: colorVars } = flattenColorTokens(colorsMode, ["color"]);
+  const colorsMode = tokens['Color Palette/Mode 1'];
+  const { tokens: colorVars } = flattenColorTokens(colorsMode, ['color']);
 
   // Typo
-  const typoMode = tokens["Typo/Mode 1"];
-  const typoVars = flattenTypoTokens(typoMode);
+  const typoMode = tokens['Typo/Mode 1'];
+  const {
+    lines: typoVars,
+    v1Utilities,
+    v2RootVars,
+    v2Utilities,
+  } = flattenTypoTokens(typoMode);
   const textPrimitives = collectTextPrimitives(typoMode);
 
-  // Interactive
-  const interactiveMode = tokens["Interactive/Mode 1"];
-  const interactiveVars = flattenInteractiveTokens(interactiveMode, colorVars);
+  // letterSpacing
+  const letterSpacing = typoMode.letterSpacing || {};
 
   // CSS 생성
   let css = `@import "tailwindcss";\n\n`;
-  
+
   css += `:root {\n`;
 
-  css += "  /* generated-color-tokens:start */\n";
+  css += '  /* generated-color-tokens:start */\n';
   colorVars.forEach(({ name, value }) => {
     css += `  ${name}: ${value};\n`;
   });
-  css += "  /* generated-color-tokens:end */\n\n";
+  css += '  /* generated-color-tokens:end */\n\n';
 
-  css += "  /* generated-text-tokens:start */\n";
+  css += '  /* generated-text-tokens:start */\n';
+  // letter-spacing은 한 번만 정의
+  css += '  --letter-spacing: -2%;\n';
   typoVars.forEach((line) => {
-    css += line + "\n";
+    // letter-spacing 변수는 추가하지 않음
+    if (!line.includes('--letter-spacing')) {
+      css += line + '\n';
+    }
   });
-  css += "  /* generated-text-tokens:end */\n\n";
-
-  css += "  /* generated-interactive-tokens:start */\n";
-  interactiveVars.forEach((line) => {
-    css += line + "\n";
-  });
-  css += "  /* generated-interactive-tokens:end */\n";
-  css += "}\n\n";
+  // v2 root 변수 추가 (letter-spacing 변수는 추가하지 않음)
+  if (v2RootVars.length > 0) {
+    v2RootVars.forEach((line) => {
+      if (!line.includes('--letter-spacing')) {
+        css += line + '\n';
+      }
+    });
+  }
+  css += '  /* generated-text-tokens:end */\n';
+  css += '}\n\n';
 
   css += `@theme inline {\n`;
   css += `  --color-background: var(--background);\n`;
   css += `  --color-foreground: var(--foreground);\n`;
   css += `  --font-sans: var(--font-pretendard);\n`;
   css += `  --font-mono: var(--font-geist-mono);\n\n`;
-  css += "  /* generated-semantic-tokens:start */\n";
-  css += "  --color-bg-interactive-primary: var(--color-blue-500);\n";
-  css += "  /* generated-semantic-tokens:end */\n\n";
-  css += "  /* generated-typography-tokens:start */\n";
-  buildTextThemeCss(textPrimitives).forEach((line) => {
-    css += line + "\n";
-  });
-  css += "  /* generated-typography-tokens:end */\n";
+  css += '  /* generated-semantic-tokens:start */\n';
+  css += '  --color-bg-interactive-primary: var(--color-blue-500);\n';
+  css += '  /* generated-semantic-tokens:end */\n\n';
+  // buildTextThemeCss 함수 호출 제거 (오류 방지)
   css += `}\n\n`;
 
   // 다크모드 및 body 스타일 추가
@@ -320,12 +498,22 @@ async function main() {
   css += `  color: var(--foreground);\n`;
   css += `  font-family: Pretendard, Helvetica, sans-serif;\n`;
   css += `}\n\n`;
+  // body 아래에 v1 utility 추가
+  if (v1Utilities.length > 0) {
+    css += '/* v1 */\n';
+    v1Utilities.forEach((util) => {
+      css += util + '\n';
+    });
+  }
+  // v2 utility 추가
+  if (v2Utilities.length > 0) {
+    css += '/* v2 */\n';
+    v2Utilities.forEach((util) => {
+      css += util + '\n';
+    });
+  }
 
-  buildTypographyUtilitiesCss(textPrimitives).forEach((line) => {
-    css += line + "\n";
-  });
-
-  await writeFile(outputPath, css, "utf8");
+  await writeFile(outputPath, css, 'utf8');
   console.log(`globals.css generated!`);
 }
 
