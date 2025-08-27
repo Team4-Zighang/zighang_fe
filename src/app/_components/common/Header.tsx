@@ -9,7 +9,7 @@ export default function Header() {
   const pathname = usePathname();
   return (
     <header className="relative w-full">
-      <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] py-[12px] md:px-[40px]">
+      <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] px-[16px] py-[12px] md:px-[40px]">
         <div className="flex gap-[20px]">
           <Image
             src="/icons/logo_header.svg"
