@@ -6,14 +6,14 @@ import Footer from '../_components/common/Footer';
 const page = () => {
   return (
     <>
-      <div className="flex flex-col items-start px-[270px]">
+      <div className="flex flex-col items-start px-4 lg:px-[270px]">
         <PostingLotto />
         <Image
           src="/images/zighang_banner.png"
           alt="배너"
           width={900}
           height={136}
-          className="mt-12 w-full"
+          className="hidden sm:mt-12 sm:block sm:w-full"
         />
       </div>
       <Footer />
