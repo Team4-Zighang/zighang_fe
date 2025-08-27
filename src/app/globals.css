@@ -1,5 +1,15 @@
 @import 'tailwindcss';
 
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @theme {
   --color-base-black: #000000;
   --color-base-white: #ffffff;
