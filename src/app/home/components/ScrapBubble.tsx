@@ -1,3 +1,4 @@
+'use client';
 type ScrapBubbleProps = {
   onClose?: () => void;
   className?: string;
