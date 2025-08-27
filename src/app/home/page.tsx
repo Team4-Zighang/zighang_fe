@@ -7,14 +7,14 @@ const page = () => {
   return (
     <>
       <div className="flex flex-col items-start px-4 lg:px-[270px]">
-        <PostingLotto />
         <Image
           src="/images/zighang_banner.png"
           alt="배너"
           width={900}
           height={136}
-          className="hidden sm:mt-12 sm:block sm:w-full"
+          className="sm:mt-6 sm:block sm:w-full"
         />
+        <PostingLotto />
       </div>
       <Footer />
     </>
