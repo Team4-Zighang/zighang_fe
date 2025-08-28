@@ -11,7 +11,7 @@ const page = () => {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-start px-4 lg:px-[270px]">
+      <div className="flex flex-col items-center overflow-visible px-[16px]">
         <div className="flex w-full flex-col gap-[24px]">
           <div className="flex flex-col items-stretch gap-[20px] pt-[36px] md:items-center md:px-0 md:pt-[80px]">
             <div className="mobile-title1 md:heading-md-bold flex flex-col items-center md:flex-row md:text-[22px]">
@@ -27,15 +27,18 @@ const page = () => {
           </div>
           <NavigateGroup />
         </div>
-        <JobGroup />
-        <Image
-          src="/images/zighang_banner.png"
-          alt="배너"
-          width={900}
-          height={136}
-          className="sm:mt-6 sm:block sm:w-full"
-        />
-        <PostingLotto />
+        {/* 반응형 대응 */}
+        <div className="mx-auto flex w-full max-w-[900px] flex-col items-center">
+          <JobGroup />
+          <Image
+            src="/images/zighang_banner.png"
+            alt="배너"
+            width={900}
+            height={136}
+            className="w-full rounded-[8px] pt-[20px] md:pt-[24px]"
+          />
+          <PostingLotto />
+        </div>
       </div>
       <Footer />
     </>

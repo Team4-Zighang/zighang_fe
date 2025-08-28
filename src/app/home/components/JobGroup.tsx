@@ -137,7 +137,7 @@ const JOBS: Job[] = [
 function Placeholder({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`bg-base-neutral-alternative pointer-events-none h-[44px] w-full md:h-[68px] ${className}`}
+      className={`bg-base-neutral-alternative pointer-events-none h-[48px] w-full md:h-[68px] ${className}`}
       aria-hidden="true"
     ></div>
   );
@@ -145,7 +145,7 @@ function Placeholder({ className = '' }: { className?: string }) {
 
 export default function JobGroup() {
   return (
-    <div className="relative flex w-full flex-col items-center md:px-[60px]">
+    <div className="relative flex w-full flex-col items-center">
       <div className="mx-auto grid w-full max-w-[900px] grid-cols-3 gap-[2px] overflow-hidden rounded-[20px] md:grid-cols-4 lg:grid-cols-5">
         {JOBS.map((job) => (
           <JobElement
