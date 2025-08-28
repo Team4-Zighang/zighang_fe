@@ -30,7 +30,7 @@ const JOBS: Job[] = [
   {
     href: '/strategy',
     label: '기획·전략',
-    iconSrc: '/icons/jobs/assignment.svg',
+    iconSrc: '/icons/jobs/assignment_purple.svg',
   },
   {
     href: '/marketing',
