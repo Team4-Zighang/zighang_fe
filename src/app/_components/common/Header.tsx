@@ -10,6 +10,7 @@ import NavigationPanel from './NavigationPanel';
 export default function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 추후 로그인 상태 관리 로직으로 변경
 
   return (
     <>
@@ -68,13 +69,24 @@ export default function Header() {
             <span className="web-navi text-contents-neutral-primary hidden flex-shrink-0 cursor-pointer md:block">
               북마크
             </span>
-            <Image
-              src="/icons/profile.svg"
-              alt="profile"
-              width={40}
-              height={40}
-              className="h-[40px] w-[40px] cursor-pointer"
-            />
+            {isLoggedIn ? (
+              <Image
+                src="/icons/profile.svg"
+                alt="profile"
+                width={40}
+                height={40}
+                className="h-[40px] w-[40px] cursor-pointer"
+              />
+            ) : (
+              <>
+                <div className="mobile-filter text-contents-primary-default px-[8px] md:hidden">
+                  로그인
+                </div>
+                <div className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block">
+                  로그인/회원가입
+                </div>
+              </>
+            )}
             <Image
               src="/icons/menu.svg"
               alt="menu"
