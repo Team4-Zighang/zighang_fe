@@ -1,3 +1,5 @@
+'use client';
+
 import SearchBar from '@/app/home/components/SearchBar';
 import Image from 'next/image';
 import Link from 'next/link';
