@@ -2,10 +2,12 @@ import Image from 'next/image';
 
 type SearchBarProps = {
   mdWidth?: string;
+  onClick?: () => void;
 };
 
 export default function SearchBar({
   mdWidth = 'md:w-[640px]',
+  onClick,
 }: SearchBarProps) {
   return (
     <div
@@ -25,6 +27,7 @@ export default function SearchBar({
           width={24}
           height={24}
           className="h-[24px] w-[24px]"
+          onClick={onClick}
         />
       </div>
     </div>
