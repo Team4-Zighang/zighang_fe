@@ -1,8 +1,11 @@
 'use client';
+import Image from 'next/image';
 import Footer from '../_components/common/Footer';
 import Header from '../_components/common/Header';
-
+import { Toggle } from '../_components/common/Toggle';
+import SearchBar from '../home/components/SearchBar';
 import { useState } from 'react';
+import { BookMarkFilter } from './components/BookmarkFilter';
 
 const page = () => {
   const [showClosed, setShowClosed] = useState(false);
@@ -23,7 +26,42 @@ const page = () => {
           </span>
         </div>
       </div>
-
+      <div className="flex flex-col items-center">
+        <div className="flex w-[1200px] flex-col gap-[32px] py-[64px]">
+          <SearchBar
+            mdWidth="w-full"
+            placeholder="직무 혹은 기업을 검색해보세요"
+          />
+          <div className="flex flex-col gap-[16px]">
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <span className="body-2xl-semibold text-contents-neutral-primary">
+                  총 00건
+                </span>
+                <div className="bg-base-neutral-border mx-[12px] h-[16px] w-px self-center" />
+                <Toggle
+                  checked={showClosed}
+                  onChange={setShowClosed}
+                  label="마감된 공고도 보기"
+                />
+              </div>
+              <div className="flex cursor-pointer">
+                <div className="text-contents-neutral-tertiary web-summary">
+                  마감임박순
+                </div>
+                <Image
+                  src="/icons/arrow_under.svg"
+                  width={20}
+                  height={20}
+                  alt=""
+                />
+              </div>
+            </div>
+            <BookMarkFilter />
+          </div>
+        </div>
+        <div className="py-[48px]">공고분석</div>
+      </div>
       <div className="block md:hidden">mobile</div>
       <Footer />
     </>

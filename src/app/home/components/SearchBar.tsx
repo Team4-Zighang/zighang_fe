@@ -3,11 +3,13 @@ import Image from 'next/image';
 type SearchBarProps = {
   mdWidth?: string;
   onClick?: () => void;
+  placeholder?: string;
 };
 
 export default function SearchBar({
   mdWidth = 'md:w-[640px]',
   onClick,
+  placeholder = '검색어를 입력해 주세요',
 }: SearchBarProps) {
   return (
     <div
@@ -15,7 +17,7 @@ export default function SearchBar({
     >
       <input
         type="text"
-        placeholder="검색어를 입력해 주세요"
+        placeholder={placeholder}
         className="mobile-filter md:web-summary text-contents-state-unselected flex-1 bg-transparent outline-none"
       />
       <div className="flex cursor-pointer items-center">
