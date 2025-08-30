@@ -17,13 +17,15 @@ export default function Header() {
       <header className="relative w-full">
         <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] px-[16px] py-[12px] md:px-[40px]">
           <div className="flex flex-shrink-0 gap-[20px]">
-            <Image
-              src="/icons/logo.svg"
-              className="my-[8px] h-[24px] md:h-[30px]"
-              alt="Logo"
-              width={65}
-              height={24}
-            />
+            <Link className="cursor-pointer" href="/home">
+              <Image
+                src="/icons/logo.svg"
+                className="my-[8px] h-[24px] md:h-[30px]"
+                alt="Logo"
+                width={65}
+                height={24}
+              />
+            </Link>
             <div className="web-navi text-contents-neutral-primary hidden items-center gap-[32px] md:flex">
               <Link
                 href="/home"
@@ -66,9 +68,11 @@ export default function Header() {
             <div className="hidden min-w-[120px] flex-shrink px-[20px] lg:flex">
               <SearchBar mdWidth="md:w-[448px]" />
             </div>
-            <span className="web-navi text-contents-neutral-primary hidden flex-shrink-0 cursor-pointer md:block">
-              북마크
-            </span>
+            <Link href="/bookmark">
+              <span className="web-navi text-contents-neutral-primary hidden flex-shrink-0 cursor-pointer md:block">
+                북마크
+              </span>
+            </Link>
             {isLoggedIn ? (
               <Image
                 src="/icons/profile.svg"
