@@ -5,7 +5,8 @@ import Header from '../_components/common/Header';
 import { Toggle } from '../_components/common/Toggle';
 import SearchBar from '../home/components/SearchBar';
 import { useState } from 'react';
-import { BookMarkFilter } from './components/BookmarkFilter';
+import BookmarkList from './components/BookmarkList';
+import BookMarkFilter from './components/BookmarkFilter';
 
 const page = () => {
   const [showClosed, setShowClosed] = useState(false);
@@ -69,9 +70,10 @@ const page = () => {
               </div>
             </div>
             <BookMarkFilter />
+            {/* 북마크 리스트 */}
+            <BookmarkList />
           </div>
         </div>
-        {/* 북마크 리스트 */}
         <div className="py-[48px]">공고분석</div>
       </div>
       <div className="block md:hidden">mobile</div>
