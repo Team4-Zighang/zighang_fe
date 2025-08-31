@@ -6,11 +6,11 @@ type BookmarkSelectButtonProps = {
   onClick?: () => void;
 };
 
-export function BookmarkSelectButton({
+const BookmarkSelectButton = ({
   selected,
   text,
   onClick,
-}: BookmarkSelectButtonProps) {
+}: BookmarkSelectButtonProps) => {
   return (
     <button
       className={`flex h-[44px] flex-shrink-0 cursor-pointer items-center justify-center gap-[4px] rounded-[8px] px-[16px] ${
@@ -39,4 +39,6 @@ export function BookmarkSelectButton({
       />
     </button>
   );
-}
+};
+
+export default BookmarkSelectButton;
