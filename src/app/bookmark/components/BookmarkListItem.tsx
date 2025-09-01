@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export type BookmarkListItemProps = {
   id: number;
-  dday: number; // D-DAY
+  dday: number | '상시' | '마감'; // D-DAY
   title: string; // 공고명
   company: string; // 기업명
   requirement: string; // 자격요건
@@ -19,12 +19,16 @@ type Props = {
   onToggleExpand?: () => void;
 };
 
-const BookmarkListItem = ({ item, onToggleSelect, onToggleExpand }: Props) => {
-  const isUrgent = item.dday <= 5;
+function getDisabledClass(dday: BookmarkListItemProps['dday']) {
+  return dday === '마감' ? 'text-contents-state-disabled' : '';
+}
 
+const BookmarkListItem = ({ item, onToggleSelect, onToggleExpand }: Props) => {
   return (
     <>
-      <div className="hover:bg-base-primary-alternative body-md-medium text-contents-neutral-secondary flex h-[56px] cursor-pointer items-center rounded-[12px] transition-colors">
+      <div
+        className={`hover:bg-base-primary-alternative body-md-medium flex h-[56px] cursor-pointer items-center rounded-[12px] transition-colors ${getDisabledClass(item.dday)} text-contents-neutral-secondary`}
+      >
         <div className="flex w-[40px] items-center justify-center">
           <button onClick={onToggleExpand}>
             <Image
@@ -55,13 +59,21 @@ const BookmarkListItem = ({ item, onToggleSelect, onToggleExpand }: Props) => {
           />
         </div>
         <span className="flex w-[64px] justify-center">
-          {isUrgent ? (
-            <div className="text-contents-state-inverse rounded-full bg-red-500 px-[12px]">
-              D-{item.dday}
-            </div>
+          {typeof item.dday === 'number' ? (
+            item.dday <= 5 ? (
+              <div className="text-contents-state-inverse rounded-full bg-red-500 px-[12px]">
+                D-{item.dday}
+              </div>
+            ) : (
+              <div className="text-contents-neutral-secondary px-[12px]">
+                D-{item.dday}
+              </div>
+            )
           ) : (
-            <div className="text-contents-neutral-secondary px-[12px]">
-              D-{item.dday}
+            <div
+              className={`text-contents-neutral-secondary px-[12px] ${getDisabledClass(item.dday)}`}
+            >
+              {item.dday}
             </div>
           )}
         </span>
@@ -73,18 +85,36 @@ const BookmarkListItem = ({ item, onToggleSelect, onToggleExpand }: Props) => {
         <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
           {item.preference}
         </span>
-        <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
+        <span
+          className={`flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap ${getDisabledClass(item.dday)}`}
+        >
           {item.memo ? (
             item.memo
           ) : (
-            <span className="text-contents-state-unselected">메모 없음</span>
+            <span
+              className={
+                item.dday === '마감'
+                  ? 'text-contents-state-disabled'
+                  : 'text-contents-state-unselected'
+              }
+            >
+              메모 없음
+            </span>
           )}
         </span>
         <span className="w-[104px] px-[12px]">
           {item.docs ? (
-            <span className="text-contents-primary-default">업로드 완료</span>
+            <span
+              className={`text-contents-primary-default ${getDisabledClass(item.dday)} text-contents-primary-default`}
+            >
+              업로드 완료
+            </span>
           ) : (
-            <span className="text-contents-state-unselected">미업로드</span>
+            <span
+              className={`text-contents-state-unselected ${getDisabledClass(item.dday)}`}
+            >
+              미업로드
+            </span>
           )}
         </span>
       </div>
