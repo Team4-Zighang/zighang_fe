@@ -8,8 +8,11 @@ import { useState } from 'react';
 import BookmarkList from './components/BookmarkList';
 import BookMarkFilter from './components/BookmarkFilter';
 import AnalyzeCard from './components/AnalyzeCard';
+import { BookmarkListItemProps } from './components/BookmarkListItem';
 
 const page = () => {
+  // TODO: 로그인 및 데이터 관리 추후 페이지에서 적용
+
   const [showClosed, setShowClosed] = useState(false);
 
   return (

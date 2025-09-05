@@ -59,6 +59,8 @@ const data: BookmarkListItemProps[] = [
 ];
 
 const BookmarkList = () => {
+  const isLoggedIn = false; // 추후 실제 로그인 상태에 맞게 변경
+
   const [items, setItems] = useState<BookmarkListItemProps[]>(data);
   const [isPublic, setIsPublic] = useState(true);
 
@@ -88,27 +90,55 @@ const BookmarkList = () => {
     );
   };
 
-  return items.length === 0 ? (
-    <div className="flex flex-col items-center gap-[12px] py-[64px]">
-      <Image
-        src="/icons/bookmark.svg"
-        alt="empty bookmark"
-        width={40}
-        height={40}
-      />
-      <div className="flex flex-col items-center gap-[4px]">
-        <span className="body-2xl-semibold text-contents-neutral-primary">
-          담겨있는 북마크가 없어요 😢
-        </span>
-        <span className="body-md-medium text-contents-neutral-tertiary">
-          마음에 드는 공고를 보고 북마크에 담아보세요!
-        </span>
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center gap-[12px] py-[64px]">
+        <Image
+          src="/icons/bookmark.svg"
+          alt="empty bookmark"
+          width={40}
+          height={40}
+        />
+        <div className="flex flex-col items-center gap-[4px]">
+          <span className="body-2xl-semibold text-contents-neutral-primary">
+            로그인이 필요해요 😢
+          </span>
+          <span className="body-md-medium text-contents-neutral-tertiary">
+            마음에 드는 공고를 보고 북마크에 담아보세요!
+          </span>
+        </div>
+        <button className="bg-base-primary-default text-contents-state-inverse rounded-[12px] px-[24px] py-[12px]">
+          로그인하고 공고 북마크하기
+        </button>
       </div>
-      <div className="bg-base-primary-default text-contents-state-inverse rounded-[12px] px-[24px] py-[12px]">
-        공고 보러가기
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="flex flex-col items-center gap-[12px] py-[64px]">
+        <Image
+          src="/icons/bookmark.svg"
+          alt="empty bookmark"
+          width={40}
+          height={40}
+        />
+        <div className="flex flex-col items-center gap-[4px]">
+          <span className="body-2xl-semibold text-contents-neutral-primary">
+            담겨있는 북마크가 없어요 😢
+          </span>
+          <span className="body-md-medium text-contents-neutral-tertiary">
+            마음에 드는 공고를 보고 북마크에 담아보세요!
+          </span>
+        </div>
+        <button className="bg-base-primary-default text-contents-state-inverse rounded-[12px] px-[24px] py-[12px]">
+          공고 보러가기
+        </button>
       </div>
-    </div>
-  ) : (
+    );
+  }
+
+  return (
     <div className="flex flex-col gap-[16px]">
       <div className="flex justify-between">
         <div className="flex items-center gap-[8px]">
