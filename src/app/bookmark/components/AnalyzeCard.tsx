@@ -3,38 +3,38 @@ import React from 'react';
 
 const AnalyzeCard = () => {
   return (
-    <div className="flex w-[1200px] flex-col gap-[16px] py-[48px]">
+    <div className="md:px-auto flex flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
       <div className="flex items-center justify-between">
-        <span className="heading-1xl-semibold">
+        <span className="heading-sm-semibold md:heading-1xl-semibold">
           00님이 북마크한 공고들을 분석했어요!
         </span>
-        <span className="body-2xl-medium text-contents-primary-default underline decoration-solid underline-offset-4">
+        <span className="body-2xl-medium text-contents-primary-default hidden underline decoration-solid underline-offset-4 md:block">
           내 유형에 맞는 공고 탐색
         </span>
       </div>
-      <div className="flex h-[360px] w-full rounded-[16px] bg-[#F6E7FF]">
+      <div className="bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px]">
         <Image
-          className="mr-[32px] object-contain"
+          className="w-full object-contain md:mr-[32px] md:w-[360px]"
           src="/images/zighang_character_1.png"
           alt="zighang character"
           width={360}
           height={360}
         />
-        <div className="flex flex-1 flex-col gap-[80px] py-[52px]">
+        <div className="flex flex-1 flex-col gap-[8px] p-[8px] md:gap-[80px] md:p-0 md:py-[52px]">
           <div className="flex flex-col">
-            <span className="text-contents-primary-accent body-xl-semibold">
+            <span className="text-contents-primary-accent body-lg-semibold md:body-xl-semibold">
               당신의 취업 유형은 바로...
             </span>
-            <span className="text-contents-neutral-primary title-lg-semibold">
+            <span className="text-contents-neutral-primary heading-2xl-semibold md:title-lg-semibold">
               듬직행
             </span>
           </div>
-          <span className="body-xl-regular text-contents-neutral-tertiary">
+          <span className="body-md-medium md:body-xl-regular text-contents-neutral-tertiary">
             주로 대기업에서 주5일 오피스 출근을 선호하시네요. 개인 성장도
             중요하지만, 연봉과 복지를 추구하는 점이 듬직해요!
           </span>
         </div>
-        <div className="m-[32px] flex w-[400px] flex-col justify-between rounded-[12px] bg-white px-[24px] py-[20px]">
+        <div className="flex w-full flex-col justify-between gap-[12px] rounded-[12px] bg-white px-[20px] py-[20px] md:m-[32px] md:w-[400px] md:px-[24px]">
           {/* AnalyzeBar로 컴포넌트 분리 */}
           {/* 기업 규모 */}
           <div>
