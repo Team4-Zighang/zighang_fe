@@ -4,10 +4,11 @@ import Footer from '../_components/common/Footer';
 import Header from '../_components/common/Header';
 import { Toggle } from '../_components/common/Toggle';
 import SearchBar from '../home/components/SearchBar';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BookmarkList from './components/BookmarkList';
 import BookMarkFilter from './components/BookmarkFilter';
 import AnalyzeCard from './components/AnalyzeCard';
+import ArrayButton from './components/ArrayButton';
 
 const page = () => {
   // TODO: 로그인 및 데이터 관리 추후 페이지에서 적용
@@ -48,7 +49,7 @@ const page = () => {
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex w-[1200px] flex-col gap-[32px] py-[64px]">
+        <div className="flex w-full flex-col gap-[32px] px-[20px] py-[64px] md:min-w-[1200px]">
           {/* 검색창 */}
           <SearchBar
             mdWidth="w-full"
@@ -57,28 +58,20 @@ const page = () => {
           {/* 필터 */}
           <div className="flex flex-col gap-[16px]">
             <div className="flex justify-between">
-              <div className="flex items-center">
-                <span className="body-2xl-semibold text-contents-neutral-primary">
-                  총 00건
-                </span>
-                <div className="bg-base-neutral-border mx-[12px] h-[16px] w-px self-center" />
+              <div className="flex flex-col gap-[4px] md:flex-row md:items-center md:gap-0">
+                <div className="flex">
+                  <span className="body-2xl-semibold text-contents-neutral-primary">
+                    총 00건
+                  </span>
+                  <div className="bg-base-neutral-border mx-[12px] h-[16px] w-px self-center" />
+                </div>
                 <Toggle
                   checked={showClosed}
                   onChange={setShowClosed}
                   label="마감된 공고도 보기"
                 />
               </div>
-              <div className="flex cursor-pointer">
-                <div className="text-contents-neutral-tertiary web-summary">
-                  마감임박순
-                </div>
-                <Image
-                  src="/icons/arrow_under.svg"
-                  width={20}
-                  height={20}
-                  alt=""
-                />
-              </div>
+              <ArrayButton />
             </div>
             <BookMarkFilter />
             {/* 북마크 리스트 */}
