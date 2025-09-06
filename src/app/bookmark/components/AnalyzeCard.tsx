@@ -22,10 +22,12 @@ const AnalyzeCard = () => {
         />
         <div className="flex flex-1 flex-col gap-[80px] py-[52px]">
           <div className="flex flex-col">
-            <span className="text-contents-primary-accent">
+            <span className="text-contents-primary-accent body-xl-semibold">
               당신의 취업 유형은 바로...
             </span>
-            <span className="text-contents-neutral-primary">듬직행</span>
+            <span className="text-contents-neutral-primary title-lg-semibold">
+              듬직행
+            </span>
           </div>
           <span className="body-xl-regular text-contents-neutral-tertiary">
             주로 대기업에서 주5일 오피스 출근을 선호하시네요. 개인 성장도
