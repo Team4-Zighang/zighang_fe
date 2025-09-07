@@ -3,6 +3,7 @@ import AlumniBanner from './components/AlumniBanner';
 import HopeSameWork from './components/HopeSameWork';
 import ManyBookmark from './ManyBookmark';
 import Footer from '../_components/common/Footer';
+import SearchAlumni from './components/SearchAlumni';
 
 const page = () => {
   return (
@@ -10,6 +11,7 @@ const page = () => {
       <AlumniBanner />
       <HopeSameWork />
       <ManyBookmark />
+      <SearchAlumni />
       <Footer />
     </div>
   );
