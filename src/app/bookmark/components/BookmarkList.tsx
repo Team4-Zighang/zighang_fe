@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 
 // 더미데이터, 추후 API 연동 필요
 const data: BookmarkListItemProps[] = [
-  /*
+  /**/
   {
     id: 1,
     dday: '마감',
@@ -18,6 +18,7 @@ const data: BookmarkListItemProps[] = [
     docs: true,
     selected: false,
     expanded: false,
+    bookmarked: true,
   },
   {
     id: 2,
@@ -30,6 +31,7 @@ const data: BookmarkListItemProps[] = [
     docs: true,
     selected: false,
     expanded: false,
+    bookmarked: true,
   },
   {
     id: 3,
@@ -42,6 +44,7 @@ const data: BookmarkListItemProps[] = [
     docs: false,
     selected: false,
     expanded: false,
+    bookmarked: true,
   },
   {
     id: 4,
@@ -54,12 +57,12 @@ const data: BookmarkListItemProps[] = [
     docs: false,
     selected: false,
     expanded: false,
+    bookmarked: true,
   },
-   */
 ];
 
 const BookmarkList = () => {
-  const isLoggedIn = false; // 추후 실제 로그인 상태에 맞게 변경
+  const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
 
   const [items, setItems] = useState<BookmarkListItemProps[]>(data);
   const [isPublic, setIsPublic] = useState(true);
@@ -87,6 +90,14 @@ const BookmarkList = () => {
   const toggleExpand = (id: number) => {
     setItems((prev) =>
       prev.map((i) => (i.id === id ? { ...i, expanded: !i.expanded } : i))
+    );
+  };
+
+  const toggleBookmark = (id: number) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, bookmarked: !item.bookmarked } : item
+      )
     );
   };
 
@@ -141,7 +152,7 @@ const BookmarkList = () => {
   return (
     <div className="flex flex-col gap-[16px]">
       <div className="flex justify-between">
-        <div className="flex items-center gap-[8px]">
+        <div className="hidden items-center gap-[8px] md:flex">
           <div className="flex gap-[4px]">
             <span className="body-md-medium text-contents-neutral-primary">
               총
@@ -165,7 +176,7 @@ const BookmarkList = () => {
             삭제하기
           </button>
         </div>
-        <div className="flex items-center">
+        <div className="ml-auto flex items-center">
           <span className="body-lg-medium text-contents-neutral-secondary">
             북마크 공개
           </span>
@@ -173,7 +184,7 @@ const BookmarkList = () => {
         </div>
       </div>
       <div className="flex flex-col gap-[8px]">
-        <div className="body-md-medium text-contents-neutral-tertiary flex h-[32px] items-center">
+        <div className="body-md-medium text-contents-neutral-tertiary hidden h-[32px] items-center md:flex">
           <div className="w-[40px]"></div>
           {/* 전체 선택 체크박스 */}
           <div className="relative flex w-[56px] items-center justify-center">
@@ -206,6 +217,7 @@ const BookmarkList = () => {
             item={item}
             onToggleSelect={() => toggleSelectOne(item.id)}
             onToggleExpand={() => toggleExpand(item.id)}
+            onBookmarkSelect={() => toggleBookmark(item.id)}
           />
         ))}
       </div>

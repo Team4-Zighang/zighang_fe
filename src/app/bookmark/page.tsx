@@ -49,7 +49,7 @@ const page = () => {
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex w-full flex-col gap-[32px] px-[20px] py-[64px] md:min-w-[1200px]">
+        <div className="flex w-full flex-col gap-[32px] px-[20px] py-[64px] md:w-[1200px]">
           {/* 검색창 */}
           <SearchBar
             mdWidth="w-full"
@@ -57,7 +57,7 @@ const page = () => {
           />
           {/* 필터 */}
           <div className="flex flex-col gap-[16px]">
-            <div className="flex justify-between">
+            <div className="flex items-center justify-between">
               <div className="flex flex-col gap-[4px] md:flex-row md:items-center md:gap-0">
                 <div className="flex">
                   <span className="body-2xl-semibold text-contents-neutral-primary">
@@ -80,7 +80,6 @@ const page = () => {
         </div>
         <AnalyzeCard />
       </div>
-      <div className="block md:hidden">mobile</div>
       <Footer />
     </>
   );
