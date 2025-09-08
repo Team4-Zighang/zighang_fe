@@ -1,16 +1,16 @@
 import Image from 'next/image';
 
-type BookmarkSelectButtonProps = {
+type BookmarkFilterButtonProps = {
   selected: boolean;
   text: string;
   onClick?: () => void;
 };
 
-const BookmarkSelectButton = ({
+const BookmarkFilterButton = ({
   selected,
   text,
   onClick,
-}: BookmarkSelectButtonProps) => {
+}: BookmarkFilterButtonProps) => {
   return (
     <button
       className={`flex h-[44px] flex-shrink-0 cursor-pointer items-center justify-center gap-[4px] rounded-[8px] px-[16px] ${
@@ -41,4 +41,4 @@ const BookmarkSelectButton = ({
   );
 };
 
-export default BookmarkSelectButton;
+export default BookmarkFilterButton;
