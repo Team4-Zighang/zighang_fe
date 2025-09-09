@@ -144,7 +144,7 @@ export default function BookmarkFilterModal({
       onClick={onClose}
     >
       <div
-        className="relative flex h-full w-full flex-col bg-white md:h-[480px] md:w-[560px] md:rounded-[16px]"
+        className="relative grid h-full w-full grid-rows-[auto,1fr,auto] overflow-hidden bg-white md:h-[480px] md:w-[560px] md:rounded-[16px]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="border-base-neutral-border relative flex items-center justify-center border-b-[1px] py-[16px]">
