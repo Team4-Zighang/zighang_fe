@@ -1,6 +1,7 @@
 import ItemButton from '@/app/_components/common/ItemButton';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import CareerSlider from './CareerSlider';
 
 export const FILTER_OPTIONS = {
   task: ['직무1', '직무2', '직무3', '직무4'],
@@ -39,7 +40,6 @@ export const FILTER_OPTIONS = {
 } as const;
 
 export type FilterKey = keyof typeof FILTER_OPTIONS;
-// 직군(jobGroup), 경력조건(career)은 추후 별도 설계 (지금은 모달 레이아웃만)
 
 type DesktopFilterModalProps = {
   title?: string;
@@ -54,7 +54,6 @@ type DesktopFilterModalProps = {
 };
 
 export default function BookmarkFilterModal({
-  title,
   onClose,
   onApply,
   open,
@@ -289,7 +288,14 @@ export default function BookmarkFilterModal({
 
           {/* 경력조건 */}
           <Section title="경력 조건">
-            <div>경력 슬라이더 추가</div>
+            <CareerSlider
+              minValue={careerMin}
+              maxValue={careerMax}
+              onCommit={(min, max) => {
+                setCareerMin(min);
+                setCareerMax(max);
+              }}
+            />
           </Section>
         </div>
 
