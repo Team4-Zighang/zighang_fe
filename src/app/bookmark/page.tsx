@@ -1,6 +1,4 @@
 'use client';
-import Footer from '../_components/common/Footer';
-import Header from '../_components/common/Header';
 import SearchBar from '../home/components/SearchBar';
 import BookmarkList from './components/BookmarkList';
 import BookMarkFilter from './components/BookmarkFilter';
@@ -12,7 +10,6 @@ const page = () => {
   // TODO: 로그인 및 데이터 관리 추후 페이지에서 적용
   return (
     <>
-      <Header />
       {/* 상단 배너 */}
       <div className="flex-col">
         <div className="flex h-[320px] w-full bg-[url('/images/zighang_bookmark_mo.png')] bg-cover bg-center py-[32px] md:bg-[url('/images/zighang_bookmark.png')] md:pt-[80px]">
@@ -63,7 +60,6 @@ const page = () => {
         </div>
         <AnalyzeCard />
       </div>
-      <Footer />
     </>
   );
 };
