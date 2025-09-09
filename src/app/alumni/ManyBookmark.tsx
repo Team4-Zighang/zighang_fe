@@ -1,88 +1,136 @@
+'use client';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import Pagination, {
+  useResponsivePageSize,
+} from '../_components/common/Pagination';
 
 const jobs = [
   {
-    company: '쿠팡',
-    title: 'Senior Product Manager (SCM Demand Forecasting Science)',
-    certification: '5~10년차 · 정규직 · 학력 무관 · 서울',
+    company: '가우디오랩',
+    title: 'Backend Developer (Java) - 1년 이상',
+    certifications: ['신입~8년차', '정규직', '학력 무관', '서울'],
     status: '상시',
   },
   {
     company: '네이버',
-    title: 'Senior Product Manager (SCM Demand Forecasting Science)',
-    certification: '5~10년차 · 정규직 · 학력 무관 · 서울',
+    title: 'Backend Developer (Java) - 1년 이상',
+    certifications: ['신입~8년차', '정규직', '학력 무관', '서울'],
     status: '상시',
   },
   {
     company: '카카오',
     title: 'Senior Product Manager (SCM Demand Forecasting Science)',
-    certification: '5~10년차 · 정규직 · 학력 무관 · 서울',
+    certifications: ['5~10년차', '정규직', '학력 무관', '서울'],
     status: '상시',
   },
 ];
 
-const jobList = [...jobs, ...jobs].slice(0, 6);
+const jobList = Array.from({ length: 24 }, (_, i) => ({
+  ...jobs[i % jobs.length],
+}));
 
 const ManyBookmark = () => {
+  const pageSize = useResponsivePageSize(3, 6);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(jobList.length / pageSize));
+    if (page > totalPages) setPage(totalPages);
+  }, [pageSize]);
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return jobList.slice(start, start + pageSize);
+  }, [page, pageSize]);
+
   return (
-    <div className="flex flex-col items-start px-[120px] pb-8">
-      <div className="text-contents-neutral-primary heading-1xl-semibold">
-        지우님의 동문들이 가장 많이 북마크한 공고를 살펴보세요!
+    <div className="flex flex-col items-start px-5 pt-24 pb-12 md:px-[120px] md:pt-0 md:pb-8">
+      <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
+        지우님의 동문들이
+        <span className="block md:inline">
+          {' '}
+          가장 많이 북마크한 공고를 살펴보세요!
+        </span>
       </div>
 
-      <div className="mt-8 flex flex-row">
-        <div className="text-contents-neutral-primary body-2xl-semibold">
-          총 83건
+      <div className="mt-4 w-full text-sm md:mt-8 md:text-base">
+        <div className="flex items-center">
+          <div className="text-contents-neutral-primary body-xl-semibold md:body-2xl-semibold">
+            총 {jobList.length}건
+          </div>
+          <div className="text-base-neutral-border mx-2 md:mx-3">|</div>
+          <div className="text-contents-neutral-secondary body-lg-medium hidden md:block">
+            마감된 공고도 보기
+          </div>
         </div>
-        <div className="text-base-neutral-border mx-3"> | </div>
-        <div className="text-contents-neutral-secondary body-lg-medium">
+        <div className="text-contents-neutral-secondary body-md-medium mt-1 md:hidden">
           마감된 공고도 보기
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-6">
-        {jobList.map((job, idx) => (
+      <div className="mt-4 grid grid-cols-1 gap-4 md:mt-8 md:grid-cols-2 md:gap-x-4 md:gap-y-6">
+        {paged.map((job, idx) => (
           <div
-            key={idx}
+            key={`${page}-${idx}`}
             className="border-base-neutral-border flex rounded-[12px] border bg-white"
           >
-            <div className="flex w-full flex-1 items-center justify-center gap-6 pl-5">
-              <div className="border-base-neutral-border relative h-[80px] w-[80px] rounded-[12px] border bg-gray-50">
+            <div className="flex min-w-0 flex-1 items-center gap-[10px] px-2 py-4 md:gap-4 md:p-4">
+              <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
                 <Image
                   src="/images/sampleimage.png"
                   alt={`${job.company} logo`}
-                  width={80}
-                  height={80}
-                  className="object-fit"
+                  fill
+                  sizes="(min-width: 768px) 80px, 44px"
+                  className="object-contain"
                 />
               </div>
 
-              <div className="flex flex-1 flex-col pt-5 pr-5 pb-5">
-                <div className="text-contents-neutral-tertiary web-summary">
+              <div className="flex min-w-0 flex-1 flex-col">
+                <div className="text-contents-neutral-tertiary md:web-summary mobile-summary">
                   {job.company}
                 </div>
-                <div className="text-contents-neutral-primary web-title2 mt-3">
+                <div className="text-contents-neutral-primary mobile-title2 md:web-title2 mt-[6px] md:mt-3">
                   {job.title}
                 </div>
-                <div className="text-contents-neutral-secondary body-lg-medium mt-3 line-clamp-1">
-                  {job.certification}
+                <div className="mt-[6px] flex flex-row items-center md:mt-3">
+                  <div className="text-contents-neutral-tertiary mobile-badge-lg md:body-lg-medium truncate">
+                    {job.certifications.join(' · ')}
+                  </div>
+                  <div className="text-base-neutral-border mx-[6px] md:mx-3">
+                    |
+                  </div>
+                  <div className="flex flex-row items-center gap-[1px] md:gap-[2px]">
+                    <Image
+                      src="/icons/visibility.svg"
+                      alt="visibility"
+                      width={20}
+                      height={20}
+                      className="h-3 w-3 md:h-5 md:w-5"
+                    />
+                    <div className="text-contents-neutral-tertiary mobile-badge-sm md:web-summary">
+                      387
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="border-l-base-neutral-border border-b-base-neutral-border flex h-[82px] w-[84px] cursor-pointer flex-col items-center justify-center border-b border-l px-2">
+            <div className="border-base-neutral-border flex w-12 flex-col self-stretch border-l md:w-[84px]">
+              <button
+                aria-label="북마크"
+                className="flex flex-1 items-center justify-center"
+              >
                 <Image
-                  src={'/icons/bookmark.svg'}
+                  src="/icons/bookmark.svg"
                   alt="bookmark"
                   width={28}
                   height={28}
-                  className="h-7 w-7"
+                  className="h-5 w-5 md:h-7 md:w-7"
                 />
-              </div>
-              <div className="border-l-base-neutral-border flex h-[84px] w-[84px] items-center justify-center border-l px-2">
-                <div className="text-contents-neutral-tertiary web-subtitle1">
+              </button>
+              <div className="border-base-neutral-border flex flex-1 items-center justify-center border-t">
+                <div className="text-contents-neutral-tertiary mobile-subtitle2 md:web-subtitle1">
                   {job.status}
                 </div>
               </div>
@@ -90,6 +138,15 @@ const ManyBookmark = () => {
           </div>
         ))}
       </div>
+
+      <Pagination
+        total={jobList.length}
+        page={page}
+        pageSize={pageSize}
+        onChange={setPage}
+        windowSize={5}
+        className="mt-8"
+      />
     </div>
   );
 };
