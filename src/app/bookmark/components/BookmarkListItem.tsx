@@ -50,20 +50,26 @@ const BookmarkListItem = ({
             height={24}
           />
         </div>
-        <div className="relative flex w-[56px] items-center justify-center">
-          <input
-            type="checkbox"
-            checked={item.selected} // 상태 관리
-            className="peer absolute flex h-[16px] w-[16px] cursor-pointer opacity-0"
-            onChange={onToggleSelect}
-            aria-checked={item.selected}
-          />
-          <Image
-            src={item.selected ? '/icons/checked.svg' : '/icons/unchecked.svg'}
-            alt={item.selected ? 'checked' : 'unchecked'}
-            width={24}
-            height={24}
-          />
+        <div className="flex w-[56px] items-center justify-center">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect?.();
+            }}
+            aria-pressed={item.selected}
+            aria-label={item.selected ? '선택 해제' : '선택'}
+            className="flex h-[24px] w-[24px] items-center justify-center"
+          >
+            <Image
+              src={
+                item.selected ? '/icons/checked.svg' : '/icons/unchecked.svg'
+              }
+              alt={item.selected ? 'checked' : 'unchecked'}
+              width={24}
+              height={24}
+            />
+          </button>
         </div>
         <span className="flex w-[64px] justify-center">
           {typeof item.dday === 'number' ? (
