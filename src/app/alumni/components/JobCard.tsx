@@ -117,7 +117,7 @@ const JobCard = () => {
               className="flex flex-1 items-center justify-center"
             >
               <Image
-                src="/icons/bookmark.svg"
+                src="/icons/bookmark_gray.svg"
                 alt="bookmark"
                 width={28}
                 height={28}

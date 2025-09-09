@@ -93,7 +93,7 @@ const PopularCompany = () => {
             className="border-l-base-neutral-border flex w-12 cursor-pointer items-center justify-center border-l px-2 md:w-[84px]"
           >
             <Image
-              src="/icons/bookmark.svg"
+              src="/icons/bookmark_gray.svg"
               alt="bookmark"
               width={28}
               height={28}
