@@ -1,17 +1,13 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const AnalyzeCard = () => {
   return (
     <div className="md:px-auto flex flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
-      <div className="flex items-center justify-between">
-        <span className="heading-sm-semibold md:heading-1xl-semibold">
-          00님이 북마크한 공고들을 분석했어요!
-        </span>
-        <span className="body-2xl-medium text-contents-primary-default hidden underline decoration-solid underline-offset-4 md:block">
-          내 유형에 맞는 공고 탐색
-        </span>
-      </div>
+      <span className="heading-sm-semibold md:heading-1xl-semibold">
+        00님이 북마크한 공고들을 분석했어요!
+      </span>
       <div className="bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px]">
         <Image
           className="w-full object-contain md:mr-[32px] md:w-[360px]"
@@ -122,6 +118,12 @@ const AnalyzeCard = () => {
           </div>
         </div>
       </div>
+      <Link
+        href="/"
+        className="body-lg-medium md:heading-sm-medium text-contents-neutral-primary active:bg-base-primary-default active:text-contents-state-inverse border-base-neutral-border bg-base-neutral-alternative hover:bg-base-primary-alternative flex h-[52px] items-center justify-center rounded-[16px] border-[1px] md:h-[72px]"
+      >
+        직행이들의 스토리가 궁금하다면? 👀
+      </Link>
     </div>
   );
 };
