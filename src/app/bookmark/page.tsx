@@ -1,20 +1,15 @@
 'use client';
-import Image from 'next/image';
 import Footer from '../_components/common/Footer';
 import Header from '../_components/common/Header';
-import { Toggle } from '../_components/common/Toggle';
 import SearchBar from '../home/components/SearchBar';
-import { useEffect, useRef, useState } from 'react';
 import BookmarkList from './components/BookmarkList';
 import BookMarkFilter from './components/BookmarkFilter';
 import AnalyzeCard from './components/AnalyzeCard';
 import ArrayButton from './components/ArrayButton';
+import EntireToggle from './components/EntireToggle';
 
 const page = () => {
   // TODO: 로그인 및 데이터 관리 추후 페이지에서 적용
-
-  const [showClosed, setShowClosed] = useState(false);
-
   return (
     <>
       <Header />
@@ -58,19 +53,7 @@ const page = () => {
           {/* 필터 */}
           <div className="flex flex-col gap-[16px]">
             <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-[4px] md:flex-row md:items-center md:gap-0">
-                <div className="flex">
-                  <span className="body-2xl-semibold text-contents-neutral-primary">
-                    총 00건
-                  </span>
-                  <div className="bg-base-neutral-border mx-[12px] h-[16px] w-px self-center" />
-                </div>
-                <Toggle
-                  checked={showClosed}
-                  onChange={setShowClosed}
-                  label="마감된 공고도 보기"
-                />
-              </div>
+              <EntireToggle />
               <ArrayButton />
             </div>
             <BookMarkFilter />

@@ -10,7 +10,8 @@ import NavigationPanel from './NavigationPanel';
 export default function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 추후 로그인 상태 관리 로직으로 변경
+  // const [isLoggedIn, setIsLoggedIn] = useState(false); // 추후 로그인 상태 관리 로직으로 변경
+  const isLoggedIn = false; // 추후 상태 관리로 변경
 
   return (
     <>
