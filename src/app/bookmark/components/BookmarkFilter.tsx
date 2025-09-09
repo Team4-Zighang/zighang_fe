@@ -26,8 +26,10 @@ const BookMarkFilter = () => {
   });
 
   const handleApplyFromModal = (next: Record<string, string[]>) => {
-    setSelectedFilters(next);
-    // 데이터 refech
+    setSelectedFilters({
+      ...next,
+      career: [careerRange.min.toString(), careerRange.max.toString()],
+    }); // 데이터 refech
   };
 
   // 스크롤 좌우 관리
@@ -108,7 +110,10 @@ const BookMarkFilter = () => {
 
   const getFilterText = (key: string, label: string, values: string[]) => {
     if (key === 'career') {
-      return careerChipLabel(careerRange.min, careerRange.max);
+      // values: [min, max] 형태로 저장
+      const min = Number(values[0] ?? 0);
+      const max = Number(values[1] ?? 10);
+      return careerChipLabel(min, max);
     }
     if (values.length === 0) return label;
     if (values.length === 1) return values[0];
@@ -116,8 +121,11 @@ const BookMarkFilter = () => {
   };
 
   const isChipSelected = (key: string, values: string[]) => {
-    if (key === 'career')
-      return careerRange.min !== 0 || careerRange.max !== 10;
+    if (key === 'career') {
+      const min = Number(values[0] ?? 0);
+      const max = Number(values[1] ?? 10);
+      return min !== 0 || max !== 10;
+    }
     return values.length > 0;
   };
 
