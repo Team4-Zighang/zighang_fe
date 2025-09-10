@@ -5,19 +5,26 @@ import StarRates from './StarRates';
 import Image from 'next/image';
 import JobRateItem from './JobRateItem';
 import Link from 'next/link';
+import JobRateModal from './JobRateModal';
 
 const JobRate = () => {
-  const [isloggedin] = useState(false); // 나중에 로그인 여부로 바꾸기
-  const [isOpen, setIsOpen] = useState(false);
+  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
+  const [isRateOpen, setIsRateOpen] = useState(false);
 
   const onRateClick = () => {
-    setIsOpen(!isOpen);
+    setIsRateOpen(!isRateOpen);
   };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const onApplyClick = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       <div
         onClick={onRateClick}
-        className={`bg-base-neutral-alternative flex cursor-pointer flex-col gap-[12px] rounded-[8px] px-[20px] py-[16px] ${isOpen ? 'max-h-[480px]' : ''}`}
+        className={`bg-base-neutral-alternative flex cursor-pointer flex-col gap-[12px] rounded-[8px] px-[20px] py-[16px] ${isRateOpen ? 'max-h-[480px]' : ''}`}
       >
         <div className="flex w-full gap-[12px] md:gap-0">
           <div className="flex w-full flex-col justify-between md:flex-row">
@@ -40,13 +47,13 @@ const JobRate = () => {
             </div>
           </div>
           <Image
-            src={isOpen ? '/icons/arrow_up.svg' : '/icons/arrow_down.svg'}
+            src={isRateOpen ? '/icons/arrow_up.svg' : '/icons/arrow_down.svg'}
             alt="info"
             width={24}
             height={24}
           />
         </div>
-        {isOpen && (
+        {isRateOpen && (
           <div className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto">
             {isloggedin ? (
               <>
@@ -84,9 +91,26 @@ const JobRate = () => {
             )}
           </div>
         )}
-        {isOpen && isloggedin && (
-          <div className="bg-base-primary-default body-md-semibold flex justify-center rounded-[12px] px-[24px] py-[12px] text-[#FFEAEA]">
+        {isRateOpen && isloggedin && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onApplyClick();
+            }}
+            className="bg-base-primary-default body-md-semibold flex justify-center rounded-[12px] px-[24px] py-[12px] text-[#FFEAEA]"
+          >
             지원하셨나요? 공고평 등록하기
+          </div>
+        )}
+        {isModalOpen && (
+          <div
+            className="fixed inset-0 z-20 flex items-center justify-center bg-black/40"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsModalOpen(false);
+            }}
+          >
+            <JobRateModal />
           </div>
         )}
       </div>
