@@ -4,6 +4,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Pagination, {
   useResponsivePageSize,
 } from '../_components/common/Pagination';
+import { Toggle } from '../_components/common/Toggle';
+import ArrayButton from '../bookmark/components/ArrayButton';
 
 const jobs = [
   {
@@ -33,6 +35,7 @@ const jobList = Array.from({ length: 24 }, (_, i) => ({
 const ManyBookmark = () => {
   const pageSize = useResponsivePageSize(3, 6);
   const [page, setPage] = useState(1);
+  const [showClosed, setShowClosed] = useState(false);
 
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(jobList.length / pageSize));
@@ -55,18 +58,30 @@ const ManyBookmark = () => {
       </div>
 
       <div className="mt-4 w-full text-sm md:mt-8 md:text-base">
-        <div className="flex items-center">
-          <div className="text-contents-neutral-primary body-xl-semibold md:body-2xl-semibold">
-            총 {jobList.length}건
+        <div className="flex w-full flex-row items-center justify-between">
+          <div className="flex items-center">
+            <div className="text-contents-neutral-primary body-xl-semibold md:body-2xl-semibold">
+              총 {jobList.length}건
+            </div>
+            <div className="text-base-neutral-border mx-2 md:mx-3">|</div>
+
+            <Toggle
+              checked={showClosed}
+              onChange={setShowClosed}
+              label="마감된 공고도 보기"
+              className="hidden md:flex"
+            />
           </div>
-          <div className="text-base-neutral-border mx-2 md:mx-3">|</div>
-          <div className="text-contents-neutral-secondary body-lg-medium hidden md:block">
-            마감된 공고도 보기
-          </div>
+          <ArrayButton />
         </div>
-        <div className="text-contents-neutral-secondary body-md-medium mt-1 md:hidden">
-          마감된 공고도 보기
-        </div>
+
+        {/* 모바일 */}
+        <Toggle
+          checked={showClosed}
+          onChange={setShowClosed}
+          label="마감된 공고도 보기"
+          className="mt-1 md:hidden"
+        />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:mt-8 md:grid-cols-2 md:gap-x-4 md:gap-y-6">
