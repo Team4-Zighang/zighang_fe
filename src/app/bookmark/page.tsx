@@ -3,7 +3,7 @@ import SearchBar from '../home/components/SearchBar';
 import BookmarkList from './components/BookmarkList';
 import BookMarkFilter from './components/BookmarkFilter';
 import AnalyzeCard from './components/AnalyzeCard';
-import ArrayButton from './components/ArrayButton';
+import ArrayButton from '../_components/common/ArrayButton';
 import EntireToggle from './components/EntireToggle';
 
 const page = () => {

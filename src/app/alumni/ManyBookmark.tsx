@@ -5,7 +5,7 @@ import Pagination, {
   useResponsivePageSize,
 } from '../_components/common/Pagination';
 import { Toggle } from '../_components/common/Toggle';
-import ArrayButton from '../bookmark/components/ArrayButton';
+import ArrayButton from '../_components/common/ArrayButton';
 
 const jobs = [
   {
