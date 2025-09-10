@@ -6,7 +6,9 @@ const SimilarJob = () => {
   return (
     <div className="py-36px flex flex-col gap-[20px]">
       <div className="flex flex-col gap-[8px]">
-        <span className="text-contents-neutral-primary">비슷한 채용공고</span>
+        <span className="heading-sm-bold text-contents-neutral-primary">
+          비슷한 채용공고
+        </span>
         <div className="flex gap-[8px] py-[8px]">
           <div className="flex gap-[6px]">
             <span className="body-sm-medium bg-base-neutral-alternative text-contents-neutral-tertiary flex h-[36px] items-center rounded-[8px] px-[16px]">
