@@ -24,13 +24,13 @@ const SimilarJobItem = () => {
             (주)삼성전자
           </span>
           <div className="flex gap-[6px]">
-            <span className="web-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
+            <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
               서비스 기획자
             </span>
-            <span className="web-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
+            <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
               정규직
             </span>
-            <span className="web-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
+            <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
               3년차 이상
             </span>
           </div>

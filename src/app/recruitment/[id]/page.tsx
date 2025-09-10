@@ -7,16 +7,17 @@ import Image from 'next/image';
 import SimilarJob from './components/SimilarJob';
 import JobExitTab from './components/JobExitTab';
 import BookmarkMemo from './components/BookmarkMemo';
+import RecruitFooter from './components/RecruitFooter';
 
 const page = () => {
   return (
     <>
       {/* 상단 배너 */}
       <JobInfoBanner />
-      <div className="flex flex-col items-center">
+      <div className="flex w-full flex-col items-center pb-[72px] md:pb-0">
         <div className="flex w-full justify-between md:w-[1200px]">
           {/* 채용 상세정보 */}
-          <div className="flex flex-col gap-[48px] py-[48px] md:w-[640px]">
+          <div className="flex w-full flex-col gap-[20px] px-[16px] md:w-[640px] md:gap-[48px] md:px-0 md:py-[48px]">
             <JobTitleArea />
             <div className="flex flex-col gap-[8px]">
               {/* 마감일 */}
@@ -38,12 +39,14 @@ const page = () => {
             <SimilarJob />
           </div>
           {/* 메모 구역 */}
-          <div className="flex flex-col gap-[16px] py-[52px] md:w-[380px]">
+          <div className="hidden flex-col gap-[16px] py-[52px] md:flex md:w-[380px]">
             <JobExitTab />
             <BookmarkMemo />
           </div>
         </div>
       </div>
+      {/* 모바일 하단 고정 버튼 바 */}
+      <RecruitFooter />
     </>
   );
 };

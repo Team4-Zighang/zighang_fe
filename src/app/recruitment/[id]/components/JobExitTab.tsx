@@ -28,16 +28,16 @@ const JobExitTab = () => {
             className="m-auto"
           />
         </button>
-        <button className="body-xl-semibold bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
+        <button className="web-action bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
           공유하기
         </button>
-        <button className="body-xl-semibold bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white">
+        <button className="web-action bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white">
           지원하기
         </button>
       </div>
       {/* 폰트 디자인 적용 */}
       <div className="bg-base-neutral-alternative flex h-[48px] items-center justify-center rounded-[8px]">
-        <div className="text-contents-neutral-secondary flex flex-1 justify-center">
+        <div className="text-contents-neutral-secondary web-badge-lg flex flex-1 justify-center">
           <span className="">내 이력서의&nbsp;</span>
           <span className="text-contents-primary-default">기아자동차</span>
           <span className="">&nbsp;서류합격률은?</span>

@@ -1,7 +1,7 @@
 const JobDetailInfo = () => {
   return (
     <>
-      <div className="bg-base-neutral-alternative flex rounded-[8px] px-[24px] py-[20px]">
+      <div className="bg-base-neutral-alternative body-sm-medium flex flex-col gap-[12px] rounded-[8px] px-[24px] py-[20px] md:flex-row md:gap-0">
         <div className="flex flex-1 flex-col gap-[12px]">
           <div className="flex">
             <span className="text-contents-neutral-tertiary w-[80px]">
