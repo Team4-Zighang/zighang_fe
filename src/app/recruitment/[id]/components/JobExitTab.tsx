@@ -3,10 +3,12 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 
-const JobExitTab = () => {
+const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const onBookmarkClick = () => {
-    // 북마크 클릭 시
+    if (!isBookmarked) {
+      onBookmarked();
+    }
     setIsBookmarked(!isBookmarked);
   };
   return (

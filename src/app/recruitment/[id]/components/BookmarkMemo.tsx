@@ -2,13 +2,14 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 
-const BookmarkMemo = () => {
+const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
   const [memo, setMemo] = useState('');
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved] = useState(false);
+  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
 
   const onSaveClick = () => {
     if (!memo) return;
-    setIsSaved(true);
+    onSaved?.(); // 저장 시 부모에 알림 요청
   };
 
   return (
@@ -33,7 +34,7 @@ const BookmarkMemo = () => {
           저장하기
         </button>
       </div>
-      {isSaved && (
+      {isSaved && !isloggedin && (
         <div className="absolute top-[98%] right-[15%] z-10 flex w-[320px] translate-x-1/2 flex-col items-center">
           <Image
             src="/icons/polygon.svg"

@@ -1,3 +1,4 @@
+'use client';
 import JobTitleArea from './components/JobTitleArea';
 import JobInfoBanner from './components/JobInfoBanner';
 import JobDetailDate from './components/JobDetailDate';
@@ -8,10 +9,20 @@ import SimilarJob from './components/SimilarJob';
 import JobExitTab from './components/JobExitTab';
 import BookmarkMemo from './components/BookmarkMemo';
 import RecruitFooter from './components/RecruitFooter';
+import { useState } from 'react';
+import TopAlert from './components/TopAlert';
 
 const page = () => {
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
   return (
     <>
+      {alertMessage && (
+        <TopAlert
+          message={alertMessage}
+          onClose={() => setAlertMessage(null)}
+        />
+      )}
       {/* 상단 배너 */}
       <JobInfoBanner />
       <div className="flex w-full flex-col items-center pb-[72px] md:pb-0">
@@ -40,8 +51,8 @@ const page = () => {
           </div>
           {/* 메모 구역 */}
           <div className="hidden flex-col gap-[16px] py-[52px] md:flex md:w-[380px]">
-            <JobExitTab />
-            <BookmarkMemo />
+            <JobExitTab onBookmarked={() => setAlertMessage('북마크')} />
+            <BookmarkMemo onSaved={() => setAlertMessage('메모')} />
           </div>
         </div>
       </div>
