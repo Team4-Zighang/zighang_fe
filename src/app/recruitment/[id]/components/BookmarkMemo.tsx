@@ -11,14 +11,13 @@ const BookmarkMemo = () => {
     setIsSaved(true);
   };
 
-  // 폰트 디자인 적용
   return (
-    <div className="relative flex flex-col rounded-[12px] border-[1px] border-[#D2CB9B10]">
+    <div className="relative flex w-full flex-col rounded-[12px] border-[1px] border-[#D2CB9B10] px-[8px] md:px-0">
       <div className="h-[16px] w-full rounded-t-[12px] bg-[#FEF9C8]"></div>
-      <div className="flex w-full flex-col gap-[24px] bg-[#FFFCDD] px-[20px] py-[12px]">
+      <div className="flex h-[224px] w-full flex-col gap-[12px] rounded-b-[12px] bg-[#FFFCDD] px-[20px] py-[12px] md:h-full md:gap-[24px]">
         <textarea
-          className="body-lg-medium h-[300px] outline-none"
-          placeholder="채용공고 메모장입니다. 자유롭게 사용해보세요!"
+          className="body-lg-medium h-[144px] outline-none placeholder:text-[#D6CD7C] md:h-[300px]"
+          placeholder="작성한 메모는 북마크에 같이 저장돼요"
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         ></textarea>
@@ -44,7 +43,7 @@ const BookmarkMemo = () => {
             className="z-10"
           />
           <div className="flex w-full flex-col gap-[16px] rounded-[12px] bg-white px-[12px] py-[16px] shadow-[0_-8px_24px_rgba(0,0,0,0.12)]">
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center">
               <span className="body-lg-semibold">
                 마음에 든다면 메모와 함께 저장하세요!
               </span>
