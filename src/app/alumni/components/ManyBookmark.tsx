@@ -1,11 +1,11 @@
 'use client';
-import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
+import ArrayButton from '@/app/_components/common/ArrayButton';
 import Pagination, {
   useResponsivePageSize,
-} from '../_components/common/Pagination';
-import { Toggle } from '../_components/common/Toggle';
-import ArrayButton from '../_components/common/ArrayButton';
+} from '@/app/_components/common/Pagination';
+import { Toggle } from '@/app/_components/common/Toggle';
+import Image from 'next/image';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const jobs = [
   {
