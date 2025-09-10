@@ -49,9 +49,9 @@ export default function Header() {
                 기업관
               </Link>
               <Link
-                href="/"
+                href="/alumni"
                 className={`relative ${
-                  pathname === '/'
+                  pathname === '/alumni'
                     ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
                     : ''
                 }`}
