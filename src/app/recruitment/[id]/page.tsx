@@ -5,6 +5,8 @@ import JobDetailInfo from './components/JobDetailInfo';
 import JobRate from './components/JobRate';
 import Image from 'next/image';
 import SimilarJob from './components/SimilarJob';
+import JobExitTab from './components/JobExitTab';
+import BookmarkMemo from './components/BookmarkMemo';
 
 const page = () => {
   return (
@@ -36,7 +38,10 @@ const page = () => {
             <SimilarJob />
           </div>
           {/* 메모 구역 */}
-          <div className="flex flex-col gap-[16px] py-[52px] md:w-[380px]"></div>
+          <div className="flex flex-col gap-[16px] py-[52px] md:w-[380px]">
+            <JobExitTab />
+            <BookmarkMemo />
+          </div>
         </div>
       </div>
     </>
