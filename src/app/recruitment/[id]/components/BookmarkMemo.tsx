@@ -4,11 +4,12 @@ import React, { useState } from 'react';
 
 const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
   const [memo, setMemo] = useState('');
-  const [isSaved] = useState(false);
-  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
+  const [isSaved, setIsSaved] = useState(false);
+  const [isloggedin] = useState(false); // 나중에 로그인 여부로 바꾸기
 
   const onSaveClick = () => {
     if (!memo) return;
+    setIsSaved(true);
     onSaved?.(); // 저장 시 부모에 알림 요청
   };
 
