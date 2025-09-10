@@ -81,7 +81,11 @@ const JobCard = () => {
                 className="flex flex-1 items-center justify-center"
               >
                 <Image
-                  src="/icons/bookmark_gray.svg"
+                  src={
+                    hotpost.isSaved
+                      ? '/icons/bookmark_selected.svg'
+                      : '/icons/bookmark_gray.svg'
+                  }
                   alt="bookmark"
                   width={28}
                   height={28}
@@ -102,7 +106,11 @@ const JobCard = () => {
               className="border-base-neutral-border flex w-12 items-center justify-center self-stretch border-l px-2 md:hidden"
             >
               <Image
-                src="/icons/bookmark.svg"
+                src={
+                  hotpost.isSaved
+                    ? '/icons/bookmark_selected.svg'
+                    : '/icons/bookmark_gray.svg'
+                }
                 alt="bookmark"
                 width={24}
                 height={24}

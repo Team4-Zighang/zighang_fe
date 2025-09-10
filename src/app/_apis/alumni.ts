@@ -9,7 +9,6 @@ export async function GetHotPosting(): Promise<jobPostingTop3Response[]> {
     '/alumni/similar/job-postings/top3'
   );
 
-  console.log(res.data);
   return res.data.data;
 }
 
@@ -18,6 +17,5 @@ export async function GetCompany(): Promise<companiesTop3Response[]> {
     '/alumni/similar/companies/top3'
   );
 
-  console.log('인기있는기업', res.data);
   return res.data.data;
 }
