@@ -35,7 +35,9 @@ const JobRateModal = () => {
         className="flex h-full flex-col justify-center gap-[20px] bg-white p-[24px] md:h-auto md:w-[560px] md:rounded-[16px]"
       >
         <div className="flex flex-col items-center gap-[8px]">
-          <span className="heading-md-semibold">공고 평가하기</span>
+          <span className="heading-md-semibold text-contents-neutral-primary">
+            공고 평가하기
+          </span>
           <div className="flex gap-[4px]">
             {[...Array(5)].map((_, i) => (
               <button
@@ -61,7 +63,9 @@ const JobRateModal = () => {
           ></textarea>
         </div>
         <div className="flex flex-col gap-[8px]">
-          <span className="body-lg-semibold">어디까지 진행되셨나요?</span>
+          <span className="body-lg-semibold text-contents-neutral-primary">
+            어디까지 진행되셨나요?
+          </span>
           <div className="flex flex-wrap gap-[6px]">
             {STEP_OPTIONS.map((step) => (
               <ItemButton
