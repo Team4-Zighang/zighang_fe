@@ -12,7 +12,7 @@ import RecruitFooter from './components/RecruitFooter';
 import { useState } from 'react';
 import TopAlert from './components/TopAlert';
 
-const page = () => {
+const Page = () => {
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   return (
@@ -62,4 +62,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

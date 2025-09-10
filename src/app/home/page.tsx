@@ -2,7 +2,6 @@ import React from 'react';
 import PostingLotto from './components/PostingLotto';
 import Image from 'next/image';
 import Footer from '../_components/common/Footer';
-import Header from '../_components/common/Header';
 import SearchBar from './components/SearchBar';
 import NavigateGroup from './components/NavigateGroup';
 import JobGroup from './components/JobGroup';

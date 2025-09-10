@@ -1,9 +1,10 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 
 const SimilarJobItem = () => {
   return (
-    <a
+    <Link
       href="/recruitment/1" // 추후 id로 변경
       className="border-base-neutral-border flex cursor-pointer justify-between rounded-[12px] border-[1px] p-[16px]"
     >
@@ -42,7 +43,7 @@ const SimilarJobItem = () => {
         width={24}
         height={24}
       />
-    </a>
+    </Link>
   );
 };
 
