@@ -1,0 +1,346 @@
+import Image from 'next/image';
+
+export type BookmarkListItemProps = {
+  id: number;
+  dday: number | '상시' | '마감'; // D-DAY
+  title: string; // 공고명
+  company: string; // 기업명
+  requirement: string; // 자격요건
+  preference: string; // 우대사항
+  memo?: string; // 메모
+  docs?: boolean; // 서류 제출 여부
+  selected: boolean; // 선택 여부
+  expanded: boolean; // 상세보기 여부
+  bookmarked?: boolean; // 북마크 여부
+};
+
+type Props = {
+  item: BookmarkListItemProps;
+  onToggleSelect?: () => void;
+  onToggleExpand?: () => void;
+  onBookmarkSelect?: () => void;
+};
+
+function getDisabledClass(dday: BookmarkListItemProps['dday']) {
+  return dday === '마감' ? 'text-contents-state-disabled' : '';
+}
+
+const BookmarkListItem = ({
+  item,
+  onToggleSelect,
+  onToggleExpand,
+  onBookmarkSelect,
+}: Props) => {
+  return (
+    <>
+      {/* Desktop View */}
+      <div
+        className={`hover:bg-base-primary-alternative body-md-medium hidden h-[56px] cursor-pointer items-center rounded-[12px] transition-colors md:flex ${getDisabledClass(item.dday)} text-contents-neutral-secondary`}
+        onClick={onToggleExpand}
+      >
+        <div className="flex w-[40px] items-center justify-center">
+          <Image
+            src={
+              item.expanded
+                ? '/icons/arrow_under.svg'
+                : '/icons/arrow_right.svg'
+            }
+            alt="arrow"
+            width={24}
+            height={24}
+          />
+        </div>
+        <div className="flex w-[56px] items-center justify-center">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect?.();
+            }}
+            aria-pressed={item.selected}
+            aria-label={item.selected ? '선택 해제' : '선택'}
+            className="flex h-[24px] w-[24px] items-center justify-center"
+          >
+            <Image
+              src={
+                item.selected ? '/icons/checked.svg' : '/icons/unchecked.svg'
+              }
+              alt={item.selected ? 'checked' : 'unchecked'}
+              width={24}
+              height={24}
+            />
+          </button>
+        </div>
+        <span className="flex w-[64px] justify-center">
+          {typeof item.dday === 'number' ? (
+            item.dday <= 5 ? (
+              <div className="text-contents-state-inverse rounded-full bg-red-500 px-[12px]">
+                D-{item.dday}
+              </div>
+            ) : (
+              <div className="text-contents-neutral-secondary px-[12px]">
+                D-{item.dday}
+              </div>
+            )
+          ) : (
+            <div
+              className={`text-contents-neutral-secondary px-[12px] ${getDisabledClass(item.dday)}`}
+            >
+              {item.dday}
+            </div>
+          )}
+        </span>
+        <span className="w-[200px] px-[12px]">{item.title}</span>
+        <span className="w-[128px] px-[12px]">{item.company}</span>
+        <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
+          {item.requirement}
+        </span>
+        <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
+          {item.preference}
+        </span>
+        <span
+          className={`flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap`}
+        >
+          <span
+            className={
+              getDisabledClass(item.dday) ||
+              (item.memo
+                ? 'text-contents-neutral-secondary'
+                : 'text-contents-state-unselected')
+            }
+          >
+            {item.memo ? `${item.memo}` : '메모 없음'}
+          </span>
+        </span>
+        <span
+          className={`w-[104px] px-[12px] ${
+            getDisabledClass(item.dday) ||
+            (item.docs
+              ? 'text-contents-primary-default'
+              : 'text-contents-state-unselected')
+          }`}
+        >
+          {item.docs ? '업로드 완료' : '미업로드'}
+        </span>
+      </div>
+      {/* Mobile View */}
+      <div
+        className={`body-sm-medium flex justify-start md:hidden ${getDisabledClass(item.dday)}`}
+        onClick={onToggleExpand}
+      >
+        <div className="flex w-[40px] items-start justify-center p-[8px]">
+          <Image
+            src={
+              item.expanded
+                ? '/icons/arrow_under.svg'
+                : '/icons/arrow_right.svg'
+            }
+            alt="arrow"
+            width={24}
+            height={24}
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-[4px] py-[8px]">
+          <div className="flex justify-between">
+            <div className="flex flex-col">
+              {typeof item.dday === 'number' ? (
+                <div
+                  className={`${item.dday <= 5 ? 'text-red-500' : 'text-contents-neutral-secondary'}`}
+                >
+                  D-{item.dday}
+                </div>
+              ) : (
+                <div
+                  className={`text-contents-neutral-secondary ${getDisabledClass(item.dday)}`}
+                >
+                  {item.dday}
+                </div>
+              )}
+              <span className="body-lg-medium">{item.title}</span>
+              <span
+                className={
+                  item.dday === '마감'
+                    ? 'text-contents-state-disabled'
+                    : 'text-contents-neutral-secondary'
+                }
+              >
+                {item.company}
+              </span>
+            </div>
+            <button
+              className="flex h-[40px] w-[40px] items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                onBookmarkSelect?.();
+              }}
+            >
+              <Image
+                src={
+                  item.bookmarked
+                    ? '/icons/bookmark_selected.svg'
+                    : '/icons/bookmark_unselected.svg'
+                }
+                alt=""
+                width={24}
+                height={24}
+              />
+            </button>
+          </div>
+          <div className="flex justify-between">
+            <div>
+              <span
+                className={
+                  getDisabledClass(item.dday) ||
+                  (item.memo
+                    ? 'text-contents-primary-default'
+                    : 'text-contents-state-unselected')
+                }
+              >
+                {item.memo ? '메모 있음' : '메모 없음'}
+              </span>
+              <span className="text-contents-state-unselected">·</span>
+              <span
+                className={
+                  getDisabledClass(item.dday) ||
+                  (item.docs
+                    ? 'text-contents-primary-default'
+                    : 'text-contents-state-unselected')
+                }
+              >
+                {item.docs ? '서류 업로드' : '서류 미업로드'}
+              </span>
+            </div>
+            <a
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex cursor-pointer items-center gap-[4px]"
+            >
+              <Image
+                src="/icons/open_in_new.svg"
+                alt="Open in new tab"
+                width={20}
+                height={20}
+              />
+              <div className="text-blue-600">공고 원문 보기</div>
+            </a>
+          </div>
+        </div>
+      </div>
+      {item.expanded && (
+        <div className="body-sm-medium md:body-md-medium flex flex-col gap-[8px]">
+          <div className="bg-base-neutral-alternative hidden flex-col gap-[16px] rounded-[12px] px-[24px] py-[20px] md:flex">
+            <div className="flex gap-[24px]">
+              <span className="text-contents-neutral-tertiary w-[108px]">
+                자격요건
+              </span>
+              <div className="text-contents-neutral-secondary">
+                {item.requirement}
+              </div>
+            </div>
+            <div className="flex gap-[24px]">
+              <span className="text-contents-neutral-tertiary w-[108px]">
+                우대사항
+              </span>
+              <div className="text-contents-neutral-secondary">
+                {item.preference}
+              </div>
+            </div>
+            <div className="flex gap-[24px]">
+              <span className="w-[108px]"></span>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex cursor-pointer items-center gap-[4px]"
+              >
+                <Image
+                  src="/icons/open_in_new.svg"
+                  alt="Open in new tab"
+                  width={20}
+                  height={20}
+                />
+                <div className="text-blue-600">공고 원문 보기</div>
+              </a>
+            </div>
+          </div>
+          <div className="bg-base-neutral-alternative flex flex-col gap-[16px] rounded-[12px] px-[24px] py-[20px]">
+            <div className="flex flex-col gap-[4px] md:flex-row md:gap-[24px]">
+              <span className="text-contents-neutral-tertiary w-[108px]">
+                메모
+              </span>
+              <div className="text-contents-neutral-secondary">
+                {item.memo || '없음'}
+              </div>
+            </div>
+            <div className="flex flex-col gap-[16px] md:flex-row">
+              <span className="text-contents-neutral-tertiary hidden md:block">
+                이력서/포트폴리오
+              </span>
+              <div className="body-sm-semibold bg-base-neutral-default flex flex-1 flex-col gap-[12px] rounded-[12px] p-[16px] md:gap-[12px] md:px-[24px] md:py-[12px]">
+                <div className="flex flex-col md:flex-row">
+                  <span className="text-contents-neutral-primary w-[80px]">
+                    이력서
+                  </span>
+                  <span className="text-contents-neutral-secondary body-sm-medium flex-1">
+                    김선화_이력서.pdf
+                  </span>
+                  <div className="flex gap-[16px] py-[5px] md:gap-[24px] md:py-0">
+                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                      <Image
+                        src="/icons/download.svg"
+                        width={20}
+                        height={20}
+                        alt="Download"
+                      />
+                      <span>내려받기</span>
+                    </button>
+                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                      <Image
+                        src="/icons/upload.svg"
+                        width={20}
+                        height={20}
+                        alt="Upload"
+                      />
+                      <span>재업로드</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row">
+                  <span className="text-contents-neutral-primary w-[80px]">
+                    포트폴리오
+                  </span>
+                  <span className="text-contents-neutral-secondary body-sm-medium flex-1">
+                    김선화_포트폴리오.pdf
+                  </span>
+                  <div className="flex gap-[16px] py-[5px] md:gap-[24px] md:py-0">
+                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                      <Image
+                        src="/icons/download.svg"
+                        width={20}
+                        height={20}
+                        alt="Download"
+                      />
+                      <span>내려받기</span>
+                    </button>
+                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                      <Image
+                        src="/icons/upload.svg"
+                        width={20}
+                        height={20}
+                        alt="Upload"
+                      />
+                      <span>재업로드</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default BookmarkListItem;
