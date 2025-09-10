@@ -46,7 +46,7 @@ const data: CareerJourneyItem[] = [
     name: '윤창현',
     school: '한국대학교',
     department: ['디자인학부'],
-    journey: [{ src: '/images/jobfootstep/jobfootstep1.png', alt: '첫번째' }],
+    journey: [{ src: '/images/jobfootstep/jobfootstep2.png', alt: '첫번째' }],
     badges: ['현) UIUX·프로덕트', '전) 콘텐츠 디자이너'],
     type: '대외활동형',
     description:
@@ -171,7 +171,7 @@ const CareerJourney = () => {
                     {item.journey.map((j, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-center overflow-hidden rounded-[12px]"
+                        className="flex items-start overflow-hidden rounded-[12px]"
                       >
                         <Image
                           src={j.src}
