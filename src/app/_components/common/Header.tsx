@@ -31,7 +31,7 @@ export default function Header() {
               <Link
                 href="/home"
                 className={`relative ${
-                  pathname === '/home'
+                  pathname === '/home' || pathname === '/recruitment/:id'
                     ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
                     : ''
                 }`}
