@@ -3,6 +3,8 @@ import JobInfoBanner from './components/JobInfoBanner';
 import JobDetailDate from './components/JobDetailDate';
 import JobDetailInfo from './components/JobDetailInfo';
 import JobRate from './components/JobRate';
+import Image from 'next/image';
+import SimilarJob from './components/SimilarJob';
 
 const page = () => {
   return (
@@ -22,6 +24,16 @@ const page = () => {
               {/* 공고평 정보 */}
               <JobRate />
             </div>
+            <div className="flex justify-center">
+              <Image
+                className="object-fit w-full"
+                alt="상세 이미지"
+                src="/images/example.png"
+                width={712}
+                height={2610}
+              />
+            </div>
+            <SimilarJob />
           </div>
           {/* 메모 구역 */}
           <div className="flex flex-col gap-[16px] py-[52px] md:w-[380px]"></div>
