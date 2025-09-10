@@ -60,13 +60,22 @@ export default function NavigationPanel({ onClose }: MobileMenuProps) {
                 기업관
               </span>
             </Link>
+
             <Link
               className="relative inline-block p-[8px]"
-              href="/"
+              href="/alumni"
               onClick={onClose}
             >
+              <span
+                className={`relative inline-block ${
+                  pathname === '/alumni'
+                    ? 'text-contents-primary-accent after:bg-contents-primary-accent after:absolute after:-bottom-[2px] after:left-0 after:h-[1px] after:w-full'
+                    : ''
+                }`}
+              ></span>
               동문관
             </Link>
+
             <Link className="p-[8px]" href="/" onClick={onClose}>
               공고 제보
             </Link>

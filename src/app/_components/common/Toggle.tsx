@@ -2,14 +2,17 @@ type ToggleProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label?: string;
+  className?: string;
 };
 
-export function Toggle({ checked, onChange, label }: ToggleProps) {
+export function Toggle({ checked, onChange, label, className }: ToggleProps) {
   return (
-    <div className="flex items-center gap-[8px]">
-      <span className="body-lg-medium text-contents-neutral-secondary">
-        {label}
-      </span>
+    <div className={`flex items-center gap-[8px] ${className ?? ''}`}>
+      {label && (
+        <span className="body-lg-medium text-contents-neutral-secondary">
+          {label}
+        </span>
+      )}
       <label className="inline-flex cursor-pointer items-center">
         <input
           type="checkbox"
