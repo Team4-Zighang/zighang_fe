@@ -4,8 +4,10 @@ import { useState } from 'react';
 import StarRates from './StarRates';
 import Image from 'next/image';
 import JobRateItem from './JobRateItem';
+import Link from 'next/link';
 
 const JobRate = () => {
+  const [isloggedin] = useState(false); // 나중에 로그인 여부로 바꾸기
   const [isOpen, setIsOpen] = useState(false);
 
   const onRateClick = () => {
@@ -21,7 +23,7 @@ const JobRate = () => {
           <div className="flex w-full flex-col justify-between md:flex-row">
             <div>
               <span className="text-contents-primary-default body-lg-semibold">
-                한국대학교 &nbsp;
+                {isloggedin ? '한국대학교' : '??대학교'}&nbsp;
               </span>
               <span className="text-contents-neutral-primary body-lg-medium">
                 동문의 공고평
@@ -29,11 +31,11 @@ const JobRate = () => {
             </div>
             <div className="flex items-center gap-[4px]">
               <span className="body-lg-semibold text-contents-neutral-primary">
-                3.4
+                {isloggedin ? '4.2' : '??'}
               </span>
-              <StarRates rate={3.4} />
+              <StarRates rate={isloggedin ? 4.2 : 0} />
               <span className="caption-md-medium text-contents-neutral-tertiary">
-                (00개)
+                ({isloggedin ? '00개' : '??개'})
               </span>
             </div>
           </div>
@@ -46,13 +48,43 @@ const JobRate = () => {
         </div>
         {isOpen && (
           <div className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto">
-            <JobRateItem />
-            <JobRateItem />
-            <JobRateItem />
-            <JobRateItem />
+            {isloggedin ? (
+              <>
+                <JobRateItem />
+                <JobRateItem />
+                <JobRateItem />
+                <JobRateItem />
+              </>
+            ) : (
+              <>
+                <div className="flex h-[272px] flex-col items-center justify-center gap-[12px] rounded-[8px] bg-white md:h-[252px]">
+                  <Image
+                    src="/icons/star_circle.svg"
+                    alt="star"
+                    width={48}
+                    height={48}
+                  />
+                  <div className="flex flex-col items-center gap-[4px]">
+                    <span className="body-2xl-semibold text-contents-neutral-primary">
+                      로그인이 필요해요 😢
+                    </span>
+                    <span className="body-md-medium text-contents-neutral-tertiary">
+                      로그인하고 동문들의 공고 평가를 확인해보세요
+                    </span>
+                  </div>
+                  <Link
+                    onClick={(e) => e.stopPropagation()}
+                    href="/onboarding"
+                    className="bg-base-primary-default body-md-semibold text-contents-state-inverse cursor-pointer rounded-[12px] px-[24px] py-[12px]"
+                  >
+                    로그인하고 동문들의 공고 평가 보기
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         )}
-        {isOpen && (
+        {isOpen && isloggedin && (
           <div className="bg-base-primary-default body-md-semibold flex justify-center rounded-[12px] px-[24px] py-[12px] text-[#FFEAEA]">
             지원하셨나요? 공고평 등록하기
           </div>
