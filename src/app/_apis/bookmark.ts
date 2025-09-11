@@ -1,4 +1,5 @@
 import {
+  BookmarkPersonalityResponse,
   BookmarkScrapResponse,
   type BookmarkCommonResponse,
 } from '@/app/_apis/schemas/bookmarkResponse';
@@ -29,4 +30,10 @@ export async function DeleteBookmark(idList: number[]): Promise<void> {
       idList,
     },
   });
+}
+
+export async function GetPersonalityAnalysis(): Promise<BookmarkPersonalityResponse> {
+  const { data } =
+    await api.get<BookmarkPersonalityResponse>('scrap/personality');
+  return data;
 }

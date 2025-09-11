@@ -36,3 +36,25 @@ export interface BookmarkScrapResponse {
   timestamp: string;
   data: boolean;
 }
+
+export interface BookmarkPersonalityResponse {
+  success: boolean;
+  timestamp: string;
+  data: PersonalityResponse;
+}
+
+export interface PersonalityResponse {
+  characterName: string;
+  companyValue: {
+    majorValue: number;
+    startUpValue: number;
+  };
+  workTypeValue: {
+    officeValue: number;
+    remoteValue: number;
+  };
+  pursuitOfValue: {
+    welfareFeeValue: number;
+    personalGrowthValue: number;
+  };
+}

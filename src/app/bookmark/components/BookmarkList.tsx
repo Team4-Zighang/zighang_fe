@@ -29,14 +29,18 @@ const BookmarkList = () => {
 
   const loadPage = useCallback(
     async (p: number = page, s: number = size) => {
-      const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, s);
-      setItems(res.data);
-      setTotalPages(res.totalPages);
-      setTotalElements(res.totalElements);
+      try {
+        const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, s);
+        setItems(res.data);
+        setTotalPages(res.totalPages);
+        setTotalElements(res.totalElements);
 
-      // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
-      setSelectedIds([]);
-      setExpandedIds([]);
+        // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
+        setSelectedIds([]);
+        setExpandedIds([]);
+      } catch (error) {
+        console.error('북마크 목록 조회 실패:', error);
+      }
     },
     [page, size]
   );
