@@ -1,6 +1,7 @@
 import {
   GetAlumniScrap,
   GetCompany,
+  GetDetailInfo,
   GetHotPosting,
   GetInfo,
 } from '@/app/_apis/alumni';
@@ -44,5 +45,12 @@ export function useAlumniInfo() {
   return useQuery({
     queryKey: ['Info'],
     queryFn: () => GetInfo(),
+  });
+}
+
+export function useAlumniDetailInfo(memberId: number) {
+  return useQuery({
+    queryKey: ['DetailInfo', memberId],
+    queryFn: () => GetDetailInfo(memberId),
   });
 }

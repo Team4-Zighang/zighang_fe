@@ -25,7 +25,7 @@ export default function Header() {
   return (
     <>
       <header className="relative w-full">
-        <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] px-[16px] py-[12px] md:px-[40px]">
+        <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] bg-white px-[16px] py-[12px] md:z-100 md:px-[40px]">
           <div className="flex flex-shrink-0 gap-[20px]">
             <Link className="cursor-pointer" href="/home">
               <Image

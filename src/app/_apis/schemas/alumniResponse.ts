@@ -56,3 +56,23 @@ export interface AlumniInfoResponse {
     },
   ];
 }
+
+export interface AlumniDetailInfoResponse {
+  memberId: number;
+  memberName: string;
+  major: string;
+  jobRole: string;
+  scrapList: {
+    postingId: number;
+    postingTitle: string;
+    companyName: string;
+    companyImageUrl: string;
+    career: string;
+    recruitmentType: string;
+    education: string;
+    region: string;
+    totalViews: number;
+    dday: number;
+    isSaved: boolean;
+  }[];
+}
