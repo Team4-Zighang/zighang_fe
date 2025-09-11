@@ -38,7 +38,14 @@ export default function Header() {
             </Link>
 
             <div className="web-navi text-contents-neutral-primary hidden items-center gap-[32px] md:flex">
-              <Link href="/home" className={`relative ${isActive('/home')}`}>
+              <Link
+                href="/home"
+                className={`relative ${
+                  pathname === '/home' || pathname.startsWith('/recruitment/')
+                    ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
+                    : ''
+                }`}
+              >
                 채용 공고
               </Link>
               <Link

@@ -11,7 +11,7 @@ const AnalyzeCard = () => {
       <div className="bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px]">
         <Image
           className="w-full object-contain md:mr-[32px] md:w-[360px]"
-          src="/images/zighang_character_1.png"
+          src="/images/characters/zighang_character_1.png"
           alt="zighang character"
           width={360}
           height={360}
