@@ -1,104 +1,179 @@
 import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
-import BookmarkListItem, { BookmarkListItemProps } from './BookmarkListItem';
+import BookmarkListItem from './BookmarkListItem';
 import { useMemo, useState } from 'react';
+import { BookmarkItem } from '@/app/_apis/schemas/bookmarkResponse';
 
 // 더미데이터, 추후 API 연동 필요
-const data: BookmarkListItemProps[] = [
+const data: BookmarkItem[] = [
   /**/
   {
-    id: 1,
-    dday: '마감',
-    title: 'Product Management',
-    company: '(주)삼성전자',
-    requirement: '• B2B 서비스 기획/PM/PMO 관련 업무 경험이 있는 분',
-    preference:
-      '• 개발, 해킹 및 보안에 대한 지식이 있으신 분• 신규 제품 기획부터 오픈• 지 프로세스를 경험해보신 분• 영어 커뮤니케이션 원활하신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: true,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
+    scrapId: 13,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 23252,
+      title: '(주)제일 레져(낚시 쇼핑몰)에서 웹 디자이너를 모집합니다.',
+      companyName: '주식회사 제일레져',
+      expiredDate: null,
+      qualification: '• 학력 무관\n• 경력 무관\n• 컴퓨터 활용 능력 보유자',
+      preferentialTreatment:
+        '• 카페24, 오픈마켓(스마트스토어, 옥션, G마켓, 11번가, 쿠팡) 경험자 우대\n• 쇼핑몰 홍보 및 광고 경험자 우대\n• 유튜브나 SNS 홍보 경험자 우대\n• 낚시 관련 지식 보유자 우대\n• 전공 또는 기타 디자인/웹디자인 학과 출신 우대',
+      dday: 5,
+    },
+    fileResponse: {
+      fileUrl: 'null',
+      originalFileName: '이력서명',
+    },
+    portfolioResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
   },
   {
-    id: 2,
-    dday: '상시',
-    title: 'Product Designer',
-    company: '당근마켓',
-    requirement: '• 5년 이상의 모바일, 웹 서비스 디자인 경험이 있으신 분',
-    preference: '• 금융 및 핀테크 서비스에 대한 이해도가 높고 경험이 있는 분',
-    memo: '',
-    docs: true,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
+    scrapId: 15,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 23254,
+      title: '웹 디자이너 모집',
+      companyName: '주식회사 제일레져',
+      expiredDate: '2025-07-24T12:05:00',
+      qualification:
+        '• 경력 1년 이상의 웹 디자이너를 모집합니다.\n• 학력 무관으로 누구나 지원 가능합니다.\n• 월급 210만원 이상을 지급하며, 기간은 정함이 없는 근로계약입니다.',
+      preferentialTreatment:
+        '• 컴퓨터 활용 능력이 뛰어난 자를 우대합니다.\n• 관련 자격증 소지자 우대합니다.',
+      dday: 49,
+    },
+    fileResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+    portfolioResponse: {
+      fileUrl: 'null',
+      originalFileName: '포트폴리오명',
+    },
   },
   {
-    id: 3,
-    dday: 3,
-    title: 'NCP 프로덕트 디자인',
-    company: '네이버클라우드',
-    requirement: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    preference: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: false,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
+    scrapId: 16,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 23256,
+      title: '플러터 개발자',
+      companyName: '메디패스',
+      expiredDate: null,
+      qualification: null,
+      preferentialTreatment:
+        '<p>우대 조건</p><hr><p>우대 조건은 말 그대로 우대 조건일 뿐입니다. 만약 우대 조건에 해당하는 사항이 없으시더라도, 팀과 함께 성장하실 수 있습니다.</p><ul><li><p>Flutter, Dart에 대해 깊은 이해가 있으신 분</p></li><li><p>Clean Architecture, MVVM, DI 등 디자인 패턴 적용에 대한 경험이 있으신 분</p></li><li><p>커뮤니티, SNS 서비스 운영/구현 경험이 있으신 분</p></li><li><p>앱 성능 최적화 및 코드 리팩토링 경험이 있으신 분</p></li><li><p>테스트 코드 작성 경험이 있으신 분</p></li><li><p>모바일 OS 별 다양한 트러블 슈팅 경험이 있으신 분</p></li><li><p>기획 &amp; 디자이너와 함께 모바일 앱 기획에 참여하실 분 (개발자의 의견을 적극 반영하는 팀!)</p></li><li><p>백엔드 개발자와 협업한 경험이 있고, 백엔드 개발자 업무에 대한 최소한의 이해도가 있으신 분</p></li><li><p>개발 직군이 아닌 팀원들에게 자신이 어떤 문제를 해결했는지 쉽게 이야기할 수 있는 분</p></li></ul>',
+      dday: null,
+    },
+    fileResponse: {
+      fileUrl: 'null',
+      originalFileName: '이력서명',
+    },
+    portfolioResponse: {
+      fileUrl: 'null',
+      originalFileName: '포트폴리오명',
+    },
   },
   {
-    id: 4,
-    dday: 10,
-    title: 'NCP 프로덕트 디자인',
-    company: '네이버클라우드',
-    requirement: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    preference: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: false,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
+    scrapId: 17,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 23257,
+      title: '[메디패스] Flutter 플러터 개발자',
+      companyName: '메디패스',
+      expiredDate: '2025-07-25T14:01:00',
+      qualification: null,
+      preferentialTreatment:
+        '•  서비스 오픈 및 운영 경험이 있으신 분\n•  Flutter를 활용한 개발 경험이 있으신 분\n•  Clean Architecture, Reactive Programming 에 대한 이해가 높으신 분\n•  확장 가능한 구조 설계를 위한 고민을 하시는 분\n•  기술 부채를 해결하고 리팩토링에 대한 거부감이 없으신 분\n•  모바일 앱을 사용하는 유저들을 위한 UI/UX 에 관심이 많으신 분\n•  개발 뿐만 아니라 서비스 전체에 대한 문제를 함께 해결함으로써 성취감을 느끼시는 분\n',
+      dday: -48,
+    },
+    fileResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+    portfolioResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+  },
+  {
+    scrapId: 26,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 22109,
+      title: '생산직 채용 (플라스틱 용기 생산 및 포장)',
+      companyName: '주식회사 세진에스엠',
+      expiredDate: null,
+      qualification:
+        '• 학력: 중졸 ~ 대졸 (4년)\n• 경력: 관계 없음\n• 고용형태: 기간의 정함이 없는 근로계약',
+      preferentialTreatment:
+        '• 컴퓨터 활용 능력이 있는 경우 우대합니다.\n• 관련 자격증 소지자 우대합니다.',
+      dday: null,
+    },
+    fileResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+    portfolioResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+  },
+  {
+    scrapId: 27,
+    memoId: null,
+    memoContent: null,
+    jobPostingResponse: {
+      postingId: 22110,
+      title: '생산직 직원 및 사무직 직원 모집',
+      companyName: '주식회사 세진에스엠',
+      expiredDate: null,
+      qualification: '• 학력 무관\n• 경력 무관',
+      preferentialTreatment: '• 컴퓨터 활용 능력 우대\n• 외국어 능력 우대',
+      dday: null,
+    },
+    fileResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
+    portfolioResponse: {
+      fileUrl: null,
+      originalFileName: null,
+    },
   },
 ];
 
 const BookmarkList = () => {
   const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
 
-  const [items, setItems] = useState<BookmarkListItemProps[]>(data);
+  const [items, setItems] = useState<BookmarkItem[]>(data);
   const [isPublic, setIsPublic] = useState(true);
 
-  const selectedCount = useMemo(
-    () => items.filter((item) => item.selected).length,
-    [items]
-  );
+  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const allSelected = useMemo(
-    () => items.length > 0 && selectedCount === items.length,
-    [items, selectedCount]
-  );
+  const handleToggleExpand = (id: number) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleSelect = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
+  };
+
+  const selectedCount = selectedIds.length;
+  const allSelected = items.length > 0 && selectedIds.length === items.length;
 
   const toggleSelectAll = () => {
-    setItems((prev) => prev.map((i) => ({ ...i, selected: !allSelected })));
-  };
-
-  const toggleSelectOne = (id: number) => {
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, selected: !i.selected } : i))
-    );
-  };
-
-  const toggleExpand = (id: number) => {
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, expanded: !i.expanded } : i))
-    );
-  };
-
-  const toggleBookmark = (id: number) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, bookmarked: !item.bookmarked } : item
-      )
-    );
+    setSelectedIds(allSelected ? [] : items.map((i) => i.scrapId));
   };
 
   if (!isLoggedIn) {
@@ -213,11 +288,13 @@ const BookmarkList = () => {
         {/* 북마크 요소 리스트 */}
         {items.map((item) => (
           <BookmarkListItem
-            key={item.id}
+            key={item.scrapId} // ✅ key 필수
             item={item}
-            onToggleSelect={() => toggleSelectOne(item.id)}
-            onToggleExpand={() => toggleExpand(item.id)}
-            onBookmarkSelect={() => toggleBookmark(item.id)}
+            selected={selectedIds.includes(item.scrapId)}
+            expanded={expandedIds.includes(item.scrapId)}
+            onToggleSelect={() => handleToggleSelect(item.scrapId)}
+            onToggleExpand={() => handleToggleExpand(item.scrapId)}
+            // onBookmarkSelect={...}  // (북마크 별도 상태면 여기서)
           />
         ))}
       </div>
