@@ -58,3 +58,19 @@ export interface PersonalityResponse {
     personalGrowthValue: number;
   };
 }
+
+export type BookmarkFileType = 'RESUME' | 'PORTFOLIO';
+
+export const BOOKMARK_FILE_TYPE = {
+  RESUME: 'RESUME',
+  PORTFOLIO: 'PORTFOLIO',
+} as const;
+
+export interface BookmarkFileResponse {
+  success: boolean;
+  timestamp: string;
+  data: {
+    fileUrl: string;
+    originalFileName: string;
+  };
+}

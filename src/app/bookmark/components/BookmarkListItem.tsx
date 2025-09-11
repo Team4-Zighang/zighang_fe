@@ -1,5 +1,10 @@
-import { BookmarkItem } from '@/app/_apis/schemas/bookmarkResponse';
+import { PostBookmarkFile } from '@/app/_apis/bookmark';
+import {
+  BookmarkFileType,
+  BookmarkItem,
+} from '@/app/_apis/schemas/bookmarkResponse';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 type Props = {
   item: BookmarkItem;
@@ -34,6 +39,23 @@ const BookmarkListItem = ({
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onBookmarkToggle?.(item.jobPostingResponse.postingId, !isBookmarked);
+  };
+
+  const resumeInputRef = useRef<HTMLInputElement>(null);
+  const portfolioInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = async (
+    fileType: BookmarkFileType,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (item.scrapId === null) return;
+    try {
+      await PostBookmarkFile(item.scrapId, fileType, file);
+    } catch (error) {
+      console.error('파일 업로드 실패:', error);
+    }
   };
 
   return (
@@ -292,7 +314,11 @@ const BookmarkListItem = ({
                     <button
                       className={`flex gap-[4px] ${!item.fileResponse.fileUrl ? 'text-contents-state-disabled' : 'text-contents-primary-accent cursor-pointer'}`}
                       disabled={!item.fileResponse.fileUrl}
-                      onClick={() => {}}
+                      onClick={() => {
+                        if (item.fileResponse.fileUrl) {
+                          window.open(item.fileResponse.fileUrl, '_blank');
+                        }
+                      }}
                     >
                       <Image
                         src={
@@ -306,7 +332,10 @@ const BookmarkListItem = ({
                       />
                       <span>내려받기</span>
                     </button>
-                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                    <button
+                      onClick={() => resumeInputRef.current?.click()}
+                      className="text-contents-primary-accent flex cursor-pointer gap-[4px]"
+                    >
                       <Image
                         src="/icons/upload.svg"
                         width={20}
@@ -315,6 +344,12 @@ const BookmarkListItem = ({
                       />
                       <span>재업로드</span>
                     </button>
+                    <input
+                      type="file"
+                      ref={resumeInputRef}
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileUpload('RESUME', e)}
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col md:flex-row">
@@ -328,7 +363,11 @@ const BookmarkListItem = ({
                     <button
                       className={`flex gap-[4px] ${!item.portfolioResponse.fileUrl ? 'text-contents-state-disabled' : 'text-contents-primary-accent cursor-pointer'}`}
                       disabled={!item.portfolioResponse.fileUrl}
-                      onClick={() => {}}
+                      onClick={() => {
+                        if (item.portfolioResponse.fileUrl) {
+                          window.open(item.portfolioResponse.fileUrl, '_blank');
+                        }
+                      }}
                     >
                       <Image
                         src={
@@ -342,7 +381,10 @@ const BookmarkListItem = ({
                       />
                       <span>내려받기</span>
                     </button>
-                    <button className="text-contents-primary-accent flex cursor-pointer gap-[4px]">
+                    <button
+                      onClick={() => portfolioInputRef.current?.click()}
+                      className="text-contents-primary-accent flex cursor-pointer gap-[4px]"
+                    >
                       <Image
                         src="/icons/upload.svg"
                         width={20}
@@ -351,6 +393,12 @@ const BookmarkListItem = ({
                       />
                       <span>재업로드</span>
                     </button>
+                    <input
+                      type="file"
+                      ref={portfolioInputRef}
+                      style={{ display: 'none' }}
+                      onChange={(e) => handleFileUpload('PORTFOLIO', e)}
+                    />
                   </div>
                 </div>
               </div>

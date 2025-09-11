@@ -1,4 +1,6 @@
 import {
+  BookmarkFileResponse,
+  BookmarkFileType,
   BookmarkPersonalityResponse,
   BookmarkScrapResponse,
   type BookmarkCommonResponse,
@@ -35,5 +37,25 @@ export async function DeleteBookmark(idList: number[]): Promise<void> {
 export async function GetPersonalityAnalysis(): Promise<BookmarkPersonalityResponse> {
   const { data } =
     await api.get<BookmarkPersonalityResponse>('scrap/personality');
+  return data;
+}
+
+export async function PostBookmarkFile(
+  scrapId: number,
+  fileType: BookmarkFileType,
+  file: File
+): Promise<BookmarkFileResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { data } = await api.post<BookmarkFileResponse>(
+    `scrap/${scrapId}/file/${fileType}`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
   return data;
 }
