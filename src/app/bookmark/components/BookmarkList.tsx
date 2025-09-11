@@ -95,16 +95,16 @@ const BookmarkList = () => {
     );
     if (idx === -1) return;
 
-    const target = items[idx];
+    setItems((prev) => {
+      const copy = [...prev];
+      copy[idx] = { ...copy[idx], scrapId: next ? 9999 : null };
+      return copy;
+    });
 
     try {
       if (!next) {
-        if (target.scrapId != null) await DeleteBookmark([target.scrapId]);
-        setItems((prev) => {
-          const copy = [...prev];
-          copy[idx] = { ...target, scrapId: null };
-          return copy;
-        });
+        if (items[idx].scrapId != null)
+          await DeleteBookmark([items[idx].scrapId]);
       } else {
         await PostBookmark(postingId);
         const res = await GetBookmarkList(page - 1, size);
@@ -119,8 +119,14 @@ const BookmarkList = () => {
           });
         }
       }
+      console.log('북마크 토글 성공');
     } catch (e) {
       console.error('bookmark toggle failed', e);
+      setItems((prev) => {
+        const copy = [...prev];
+        copy[idx] = items[idx];
+        return copy;
+      });
     }
   };
 
