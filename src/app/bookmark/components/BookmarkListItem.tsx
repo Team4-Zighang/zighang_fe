@@ -5,14 +5,13 @@ type Props = {
   item: BookmarkItem;
   expanded?: boolean;
   selected?: boolean;
-  bookmarked?: boolean;
   onToggleSelect?: () => void;
   onToggleExpand?: () => void;
-  onBookmarkSelect?: () => void;
+  onBookmarkToggle?: (postingId: number, nextState: boolean) => void;
 };
 
 function isClosed(dday: number | null) {
-  return dday === 0; // 0이면 마감
+  return dday !== null && dday <= 0;
 }
 
 function getDisabledClass(dday: number | null) {
@@ -23,13 +22,19 @@ const BookmarkListItem = ({
   item,
   expanded,
   selected,
-  bookmarked = true,
   onToggleSelect,
   onToggleExpand,
-  onBookmarkSelect,
+  onBookmarkToggle,
 }: Props) => {
   const docs =
     !!item.fileResponse?.fileUrl || !!item.portfolioResponse?.fileUrl;
+
+  const isBookmarked = item.scrapId !== null;
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onBookmarkToggle?.(item.jobPostingResponse.postingId, !isBookmarked);
+  };
 
   return (
     <>
@@ -148,7 +153,7 @@ const BookmarkListItem = ({
                 <div
                   className={`${item.jobPostingResponse.dday <= 5 ? 'text-red-500' : 'text-contents-neutral-secondary'}`}
                 >
-                  D{item.jobPostingResponse.dday}
+                  D-{item.jobPostingResponse.dday}
                 </div>
               ) : (
                 <div
@@ -172,14 +177,13 @@ const BookmarkListItem = ({
             </div>
             <button
               className="flex h-[40px] w-[40px] items-center justify-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                onBookmarkSelect?.();
-              }}
+              onClick={handleBookmarkClick}
+              aria-pressed={isBookmarked}
+              aria-label={isBookmarked ? '북마크 해제' : '북마크'}
             >
               <Image
                 src={
-                  bookmarked
+                  isBookmarked
                     ? '/icons/bookmark_selected.svg'
                     : '/icons/bookmark_unselected.svg'
                 }

@@ -1,12 +1,16 @@
 import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
 import BookmarkListItem from './BookmarkListItem';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   BookmarkCommonResponse,
   BookmarkItem,
 } from '@/app/_apis/schemas/bookmarkResponse';
-import { GetBookmarkList } from '@/app/_apis/bookmark';
+import {
+  DeleteBookmark,
+  GetBookmarkList,
+  PostBookmark,
+} from '@/app/_apis/bookmark';
 import Pagination from '@/app/_components/common/Pagination';
 
 const BookmarkList = () => {
@@ -23,19 +27,25 @@ const BookmarkList = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  // BookmarkList.tsx (핵심만)
-  useEffect(() => {
-    async function fetchData() {
-      const res = await GetBookmarkList(page - 1, size); // ← 클라 1-based → 서버 0-based
+  const loadPage = useCallback(
+    async (p: number = page, s: number = size) => {
+      const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, s);
       setItems(res.data);
       setTotalPages(res.totalPages);
       setTotalElements(res.totalElements);
 
+      // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
       setSelectedIds([]);
       setExpandedIds([]);
-    }
-    fetchData();
-  }, [page, size]);
+    },
+    [page, size]
+  );
+
+  useEffect(() => {
+    loadPage(page, size).catch((e) =>
+      console.error('북마크 목록 조회 실패:', e)
+    );
+  }, [page, size, loadPage]);
 
   const handleToggleExpand = (id: number) => {
     setExpandedIds((prev) =>
@@ -53,7 +63,65 @@ const BookmarkList = () => {
   const allSelected = items.length > 0 && selectedIds.length === items.length;
 
   const toggleSelectAll = () => {
-    setSelectedIds(allSelected ? [] : items.map((i) => i.scrapId));
+    setSelectedIds(
+      allSelected
+        ? []
+        : items.map((i) => i.scrapId).filter((id): id is number => id !== null)
+    );
+  };
+
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) return;
+
+    if (!window.confirm(`${selectedIds.length}개의 북마크를 삭제하시겠습니까?`))
+      return;
+
+    try {
+      await DeleteBookmark(selectedIds);
+
+      const deletingAllOnPage = selectedIds.length === items.length;
+      const nextPage = deletingAllOnPage && page > 1 ? page - 1 : page;
+
+      setPage(nextPage);
+      await loadPage(nextPage, size);
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
+  };
+
+  const handleBookmarkToggle = async (postingId: number, next: boolean) => {
+    const idx = items.findIndex(
+      (i) => i.jobPostingResponse.postingId === postingId
+    );
+    if (idx === -1) return;
+
+    const target = items[idx];
+
+    try {
+      if (!next) {
+        if (target.scrapId != null) await DeleteBookmark([target.scrapId]);
+        setItems((prev) => {
+          const copy = [...prev];
+          copy[idx] = { ...target, scrapId: null };
+          return copy;
+        });
+      } else {
+        await PostBookmark(postingId);
+        const res = await GetBookmarkList(page - 1, size);
+        const fresh = res.data.find(
+          (it) => it.jobPostingResponse.postingId === postingId
+        );
+        if (fresh) {
+          setItems((prev) => {
+            const copy = [...prev];
+            copy[idx] = fresh;
+            return copy;
+          });
+        }
+      }
+    } catch (e) {
+      console.error('bookmark toggle failed', e);
+    }
   };
 
   if (!isLoggedIn) {
@@ -122,11 +190,7 @@ const BookmarkList = () => {
           <div className="border-base-neutral-border h-[16px] border-l" />
           <button
             className={`body-md-semibold ${selectedCount > 0 ? 'cursor-pointer text-red-500' : 'text-contents-state-disabled'}`}
-            onClick={() => {
-              if (selectedCount > 0) {
-                alert(`${selectedCount}개 삭제하기`);
-              }
-            }}
+            onClick={handleDelete}
           >
             삭제하기
           </button>
@@ -168,13 +232,21 @@ const BookmarkList = () => {
         {/* 북마크 요소 리스트 */}
         {items.map((item) => (
           <BookmarkListItem
-            key={item.scrapId} // ✅ key 필수
+            key={item.jobPostingResponse.postingId}
             item={item}
-            selected={selectedIds.includes(item.scrapId)}
-            expanded={expandedIds.includes(item.scrapId)}
-            onToggleSelect={() => handleToggleSelect(item.scrapId)}
-            onToggleExpand={() => handleToggleExpand(item.scrapId)}
-            // onBookmarkSelect={...}  // (북마크 별도 상태면 여기서)
+            selected={
+              item.scrapId !== null && selectedIds.includes(item.scrapId)
+            }
+            expanded={
+              item.scrapId !== null && expandedIds.includes(item.scrapId)
+            }
+            onToggleSelect={() =>
+              item.scrapId !== null && handleToggleSelect(item.scrapId)
+            }
+            onToggleExpand={() =>
+              item.scrapId !== null && handleToggleExpand(item.scrapId)
+            }
+            onBookmarkToggle={handleBookmarkToggle}
           />
         ))}
         <Pagination totalPages={totalPages} page={page} onChange={setPage} />

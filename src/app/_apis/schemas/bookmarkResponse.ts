@@ -4,7 +4,7 @@ export interface BookmarkFile {
 }
 
 export interface BookmarkItem {
-  scrapId: number;
+  scrapId: number | null;
   memoId: number | null;
   memoContent: string | null;
   jobPostingResponse: {
@@ -29,4 +29,10 @@ export interface BookmarkCommonResponse {
   size: number;
   success: boolean;
   timestamp: string;
+}
+
+export interface BookmarkScrapResponse {
+  success: boolean;
+  timestamp: string;
+  data: boolean;
 }
