@@ -166,11 +166,7 @@ const BookmarkListItem = ({
                 {item.jobPostingResponse.title}
               </span>
               <span
-                className={
-                  item.jobPostingResponse.dday === 0
-                    ? 'text-contents-state-disabled'
-                    : 'text-contents-neutral-secondary'
-                }
+                className={`text-contents-neutral-secondary ${getDisabledClass(item.jobPostingResponse.dday)}`}
               >
                 {item.jobPostingResponse.companyName}
               </span>
