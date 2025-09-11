@@ -37,7 +37,7 @@ export default function NavigationPanel({ onClose }: MobileMenuProps) {
             >
               <span
                 className={`relative inline-block ${
-                  pathname === '/home'
+                  pathname === '/home' || pathname.startsWith('/recruitment/')
                     ? 'text-contents-primary-accent after:bg-contents-primary-accent after:absolute after:-bottom-[2px] after:left-0 after:h-[1px] after:w-full'
                     : ''
                 }`}

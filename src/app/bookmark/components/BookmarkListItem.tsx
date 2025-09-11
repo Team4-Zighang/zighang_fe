@@ -211,7 +211,7 @@ const BookmarkListItem = ({
               </span>
             </div>
             <a
-              href="#"
+              href={`recruitment/${item.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex cursor-pointer items-center gap-[4px]"
@@ -249,7 +249,7 @@ const BookmarkListItem = ({
             <div className="flex gap-[24px]">
               <span className="w-[108px]"></span>
               <a
-                href="#"
+                href={`recruitment/${item.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex cursor-pointer items-center gap-[4px]"

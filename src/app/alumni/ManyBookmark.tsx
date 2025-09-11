@@ -40,7 +40,7 @@ const ManyBookmark = () => {
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(jobList.length / pageSize));
     if (page > totalPages) setPage(totalPages);
-  }, [pageSize]);
+  }, [page, pageSize]);
 
   const paged = useMemo(() => {
     const start = (page - 1) * pageSize;
