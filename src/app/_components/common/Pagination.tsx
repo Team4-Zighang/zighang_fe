@@ -2,33 +2,27 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-export function useResponsivePageSize(mobile = 3, desktop = 6) {
-  const [isMdUp, setIsMdUp] = useState(false);
+type PaginationProps = {
+  totalPages: number;
+  page: number;
+  onChange: (p: number, isMobile: boolean) => void;
+  className?: string;
+};
+
+export const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(min-width: 768px)');
-    const onChange = (e: MediaQueryListEvent) => setIsMdUp(e.matches);
-    setIsMdUp(mq.matches);
-    if (mq.addEventListener) mq.addEventListener('change', onChange);
-    else mq.addListener(onChange);
+    const mq = window.matchMedia('(max-width: 768px)');
+    const update = () => setIsMobile(mq.matches);
 
-    return () => {
-      if (mq.removeEventListener) mq.removeEventListener('change', onChange);
-      else mq.removeListener(onChange);
-    };
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
   }, []);
 
-  return isMdUp ? desktop : mobile;
-}
-
-type PaginationProps = {
-  total: number;
-  page: number;
-  pageSize: number;
-  onChange: (p: number) => void;
-  windowSize?: number;
-  className?: string;
+  return isMobile;
 };
 
 function range(a: number, b: number) {
@@ -36,14 +30,13 @@ function range(a: number, b: number) {
 }
 
 function Pagination({
-  total,
+  totalPages,
   page,
-  pageSize,
   onChange,
-  windowSize = 5,
   className = '',
 }: PaginationProps) {
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const isMobile = useIsMobile();
+  const windowSize = isMobile ? 3 : 6;
   const clamp = (p: number) => Math.min(totalPages, Math.max(1, p));
 
   const start = Math.max(
@@ -72,7 +65,7 @@ function Pagination({
       <button
         className={btnIcon(page === 1)}
         disabled={page === 1}
-        onClick={() => onChange(1)}
+        onClick={() => onChange(1, isMobile)}
         aria-label="처음"
       >
         <Image
@@ -80,14 +73,13 @@ function Pagination({
           alt="first page"
           width={24}
           height={24}
-          className="pointer-events-none"
         />
       </button>
 
       <button
         className={`${btnIcon(page === 1)} hidden md:flex`}
         disabled={page === 1}
-        onClick={() => onChange(clamp(page - 1))}
+        onClick={() => onChange(clamp(page - 1), isMobile)}
         aria-label="이전"
       >
         <Image
@@ -95,7 +87,6 @@ function Pagination({
           alt="prev page"
           width={24}
           height={24}
-          className="pointer-events-none"
         />
       </button>
 
@@ -103,7 +94,7 @@ function Pagination({
         <button
           key={p}
           className={btnNum(p)}
-          onClick={() => onChange(p)}
+          onClick={() => onChange(p, isMobile)}
           aria-current={p === page ? 'page' : undefined}
         >
           {p}
@@ -113,7 +104,7 @@ function Pagination({
       <button
         className={`${btnIcon(page === totalPages)} hidden md:flex`}
         disabled={page === totalPages}
-        onClick={() => onChange(clamp(page + 1))}
+        onClick={() => onChange(clamp(page + 1), isMobile)}
         aria-label="다음"
       >
         <Image
@@ -121,14 +112,13 @@ function Pagination({
           alt="next page"
           width={24}
           height={24}
-          className="pointer-events-none"
         />
       </button>
 
       <button
         className={btnIcon(page === totalPages)}
         disabled={page === totalPages}
-        onClick={() => onChange(totalPages)}
+        onClick={() => onChange(totalPages, isMobile)}
         aria-label="마지막"
       >
         <Image
@@ -136,7 +126,6 @@ function Pagination({
           alt="last page"
           width={24}
           height={24}
-          className="pointer-events-none"
         />
       </button>
     </nav>

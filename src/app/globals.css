@@ -8,6 +8,37 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+  .shadow-modal {
+    box-shadow: 0 4px 30px 0 rgba(0, 0, 0, 0.03);
+  }
+
+  .custom-scrollbar {
+    --sb-track: #7a52ff; /* 회색 트랙 */
+    --sb-thumb: #7a52ff; /* 보라색 thumb */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--sb-thumb) var(--sb-track);
+  }
+
+  /* Chrome, Edge, Safari */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--sb-track);
+    border-radius: 9999px; /* 트랙 전체 pill 모양 */
+    margin: 4px 0; /* 위/아래 여백 → 캡이 둥글게 보이도록 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb);
+    border-radius: 9999px; /* thumb도 pill 모양 */
+    border: 2px solid var(--sb-track); /* 트랙 색으로 테두리 → thumb이 공중에 떠있는 느낌 */
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6c3dff;
+  }
 }
 
 @theme {
