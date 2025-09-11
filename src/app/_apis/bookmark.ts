@@ -1,18 +1,12 @@
-///scrap?page=1&size=10
-
+import type { BookmarkCommonResponse } from '@/app/_apis/schemas/bookmarkResponse';
 import api from './api';
-import { BookmarkItem } from './schemas/bookmarkResponse';
 
 export async function GetBookmarkList(
-  page?: number,
-  size?: number
-): Promise<BookmarkItem[]> {
-  const res = await api.get<{ data: BookmarkItem[] }>('scrap', {
-    params: {
-      page,
-      size,
-    },
+  page: number,
+  size: number
+): Promise<BookmarkCommonResponse> {
+  const { data } = await api.get<BookmarkCommonResponse>('scrap', {
+    params: { page, size },
   });
-
-  return res.data.data;
+  return data;
 }

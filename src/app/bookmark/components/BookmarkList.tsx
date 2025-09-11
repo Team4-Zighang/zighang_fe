@@ -2,8 +2,12 @@ import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
 import BookmarkListItem from './BookmarkListItem';
 import { useEffect, useMemo, useState } from 'react';
-import { BookmarkItem } from '@/app/_apis/schemas/bookmarkResponse';
+import {
+  BookmarkCommonResponse,
+  BookmarkItem,
+} from '@/app/_apis/schemas/bookmarkResponse';
 import { GetBookmarkList } from '@/app/_apis/bookmark';
+import Pagination from '@/app/_components/common/Pagination';
 
 const BookmarkList = () => {
   const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
@@ -11,16 +15,27 @@ const BookmarkList = () => {
   const [items, setItems] = useState<BookmarkItem[]>([]);
   const [isPublic, setIsPublic] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
+  // BookmarkList.tsx (핵심만)
   useEffect(() => {
     async function fetchData() {
-      const result = await GetBookmarkList(1, 10); // 기본값 1, 10
-      setItems(result);
+      const res = await GetBookmarkList(page - 1, size); // ← 클라 1-based → 서버 0-based
+      setItems(res.data);
+      setTotalPages(res.totalPages);
+      setTotalElements(res.totalElements);
+
+      setSelectedIds([]);
+      setExpandedIds([]);
     }
     fetchData();
-  }, []);
+  }, [page, size]);
 
   const handleToggleExpand = (id: number) => {
     setExpandedIds((prev) =>
@@ -162,6 +177,7 @@ const BookmarkList = () => {
             // onBookmarkSelect={...}  // (북마크 별도 상태면 여기서)
           />
         ))}
+        <Pagination totalPages={totalPages} page={page} onChange={setPage} />
       </div>
     </div>
   );
