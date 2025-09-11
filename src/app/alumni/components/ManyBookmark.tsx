@@ -1,51 +1,25 @@
 'use client';
+
 import ArrayButton from '@/app/_components/common/ArrayButton';
-import Pagination, {
-  useResponsivePageSize,
-} from '@/app/_components/common/Pagination';
+import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
+import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
+
 import Image from 'next/image';
-import React, { useEffect, useMemo, useState } from 'react';
-
-const jobs = [
-  {
-    company: '가우디오랩',
-    title: 'Backend Developer (Java) - 1년 이상',
-    certifications: ['신입~8년차', '정규직', '학력 무관', '서울'],
-    status: '상시',
-  },
-  {
-    company: '네이버',
-    title: 'Backend Developer (Java) - 1년 이상',
-    certifications: ['신입~8년차', '정규직', '학력 무관', '서울'],
-    status: '상시',
-  },
-  {
-    company: '카카오',
-    title: 'Senior Product Manager (SCM Demand Forecasting Science)',
-    certifications: ['5~10년차', '정규직', '학력 무관', '서울'],
-    status: '상시',
-  },
-];
-
-const jobList = Array.from({ length: 24 }, (_, i) => ({
-  ...jobs[i % jobs.length],
-}));
+import React, { useEffect, useState } from 'react';
 
 const ManyBookmark = () => {
-  const pageSize = useResponsivePageSize(3, 6);
   const [page, setPage] = useState(1);
   const [showClosed, setShowClosed] = useState(false);
 
-  useEffect(() => {
-    const totalPages = Math.max(1, Math.ceil(jobList.length / pageSize));
-    if (page > totalPages) setPage(totalPages);
-  }, [pageSize]);
+  const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
 
-  const paged = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return jobList.slice(start, start + pageSize);
-  }, [page, pageSize]);
+  useEffect(() => {}, [page]);
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>에러가 발생했습니다.</div>;
+
+  const items = Array.isArray(scrapdata?.data) ? scrapdata!.data : [];
 
   return (
     <div className="flex flex-col items-start px-5 pt-24 pb-12 md:px-[120px] md:pt-0 md:pb-8">
@@ -61,10 +35,9 @@ const ManyBookmark = () => {
         <div className="flex w-full flex-row items-center justify-between">
           <div className="flex items-center">
             <div className="text-contents-neutral-primary body-xl-semibold md:body-2xl-semibold">
-              총 {jobList.length}건
+              총 {scrapdata?.totalElements ?? 0}건
             </div>
             <div className="text-base-neutral-border mx-2 md:mx-3">|</div>
-
             <Toggle
               checked={showClosed}
               onChange={setShowClosed}
@@ -85,16 +58,16 @@ const ManyBookmark = () => {
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:mt-8 md:grid-cols-2 md:gap-x-4 md:gap-y-6">
-        {paged.map((job, idx) => (
+        {items.map((scrap) => (
           <div
-            key={`${page}-${idx}`}
-            className="border-base-neutral-border flex rounded-[12px] border bg-white"
+            key={scrap.postingId}
+            className="border-base-neutral-border flex rounded-[12px] border bg-white md:w-[592px]"
           >
             <div className="flex min-w-0 flex-1 items-center gap-[10px] px-2 py-4 md:gap-4 md:p-4">
               <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
                 <Image
-                  src="/images/sampleimage.png"
-                  alt={`${job.company} logo`}
+                  src={scrap.companyImageUrl || '/images/sampleimage.png'}
+                  alt={`${scrap.companyName} logo`}
                   fill
                   sizes="(min-width: 768px) 80px, 44px"
                   className="object-contain"
@@ -103,14 +76,19 @@ const ManyBookmark = () => {
 
               <div className="flex min-w-0 flex-1 flex-col">
                 <div className="text-contents-neutral-tertiary md:web-summary mobile-summary">
-                  {job.company}
+                  {scrap.companyName}
                 </div>
                 <div className="text-contents-neutral-primary mobile-title2 md:web-title2 mt-[6px] md:mt-3">
-                  {job.title}
+                  {scrap.postingTitle}
                 </div>
                 <div className="mt-[6px] flex flex-row items-center md:mt-3">
                   <div className="text-contents-neutral-tertiary mobile-badge-lg md:body-lg-medium truncate">
-                    {job.certifications.join(' · ')}
+                    {[
+                      scrap.career,
+                      scrap.recruitmentType,
+                      scrap.education,
+                      scrap.region,
+                    ].join(' · ')}
                   </div>
                   <div className="text-base-neutral-border mx-[6px] md:mx-3">
                     |
@@ -124,7 +102,7 @@ const ManyBookmark = () => {
                       className="h-3 w-3 md:h-5 md:w-5"
                     />
                     <div className="text-contents-neutral-tertiary mobile-badge-sm md:web-summary">
-                      387
+                      {scrap.totalViews}
                     </div>
                   </div>
                 </div>
@@ -137,7 +115,11 @@ const ManyBookmark = () => {
                 className="flex flex-1 items-center justify-center"
               >
                 <Image
-                  src="/icons/bookmark_gray.svg"
+                  src={
+                    scrap.isSaved
+                      ? '/icons/bookmark_selected.svg'
+                      : '/icons/bookmark_gray.svg'
+                  }
                   alt="bookmark"
                   width={28}
                   height={28}
@@ -146,7 +128,7 @@ const ManyBookmark = () => {
               </button>
               <div className="border-base-neutral-border flex flex-1 items-center justify-center border-t">
                 <div className="text-contents-neutral-tertiary mobile-subtitle2 md:web-subtitle1">
-                  {job.status}
+                  {scrap.dday}
                 </div>
               </div>
             </div>
@@ -155,11 +137,9 @@ const ManyBookmark = () => {
       </div>
 
       <Pagination
-        total={jobList.length}
-        page={page}
-        pageSize={pageSize}
+        totalPages={scrapdata?.totalPages ?? 1}
+        page={(scrapdata?.page ?? 0) + 1}
         onChange={setPage}
-        windowSize={5}
         className="mt-8"
       />
     </div>

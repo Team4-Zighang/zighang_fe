@@ -17,3 +17,28 @@ export interface companiesTop3Response {
   companyImageUrl: string;
   isSaved: boolean;
 }
+
+export interface AlumniScrapItem {
+  postingId: number;
+  postingTitle: string;
+  companyName: string;
+  companyImageUrl: string;
+  career: string;
+  recruitmentType: string;
+  education: string;
+  region: string;
+  totalViews: number;
+  dday: string;
+  isSaved: boolean;
+}
+
+export interface AlumniScrapResponse {
+  data: AlumniScrapItem[];
+  totalPages: number;
+  last: boolean;
+  totalElements: number;
+  page: number;
+  size: number;
+  success: boolean;
+  timestamp: string;
+}
