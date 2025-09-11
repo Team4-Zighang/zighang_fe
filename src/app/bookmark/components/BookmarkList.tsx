@@ -20,20 +20,18 @@ const BookmarkList = () => {
   const [isPublic, setIsPublic] = useState(true);
 
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
+  const size = 10;
   const [totalPages, setTotalPages] = useState(1);
-  const [totalElements, setTotalElements] = useState(0);
 
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const loadPage = useCallback(
-    async (p: number = page, s: number = size) => {
+    async (p: number = page) => {
       try {
-        const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, s);
+        const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, size);
         setItems(res.data);
         setTotalPages(res.totalPages);
-        setTotalElements(res.totalElements);
 
         // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
         setSelectedIds([]);
@@ -46,10 +44,8 @@ const BookmarkList = () => {
   );
 
   useEffect(() => {
-    loadPage(page, size).catch((e) =>
-      console.error('북마크 목록 조회 실패:', e)
-    );
-  }, [page, size, loadPage]);
+    loadPage(page).catch((e) => console.error('북마크 목록 조회 실패:', e));
+  }, [page, loadPage]);
 
   const handleToggleExpand = (id: number) => {
     setExpandedIds((prev) =>
@@ -87,7 +83,7 @@ const BookmarkList = () => {
       const nextPage = deletingAllOnPage && page > 1 ? page - 1 : page;
 
       setPage(nextPage);
-      await loadPage(nextPage, size);
+      await loadPage(nextPage);
     } catch (error) {
       console.error('삭제 실패:', error);
     }
