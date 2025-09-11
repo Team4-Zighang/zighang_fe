@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
+import HorizontalScroll from '@/app/_components/common/HorizontalScroll';
 
 type CareerJourneyItem = {
   id: number;
@@ -13,19 +14,6 @@ type CareerJourneyItem = {
   type?: string;
   description?: string;
 };
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(min-width: 768px)');
-    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    setIsMobile(mq.matches);
-    mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
-  }, []);
-  return isMobile;
-}
 
 const data: CareerJourneyItem[] = [
   {
@@ -72,24 +60,8 @@ const data: CareerJourneyItem[] = [
   },
 ];
 
-const CARD_W_MOBILE = 306;
-const CARD_W_WEB = 356;
-const GAP = 24;
-
 const CareerJourney = () => {
-  const scrollerRef = useRef<HTMLDivElement>(null);
   const [openId, setOpenId] = useState<number | null>(null);
-  const isMobile = useIsMobile();
-
-  const scroll = (dir: 'left' | 'right') => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const cardWidth = isMobile ? CARD_W_WEB : CARD_W_MOBILE;
-    el.scrollBy({
-      left: (cardWidth + GAP) * (dir === 'left' ? -1 : 1),
-      behavior: 'smooth',
-    });
-  };
 
   const toggle = (id: number) => setOpenId((prev) => (prev === id ? null : id));
 
@@ -104,9 +76,12 @@ const CareerJourney = () => {
       </div>
 
       <div className="mt-6">
-        <div
-          ref={scrollerRef}
-          className="no-scrollbar flex snap-x snap-mandatory items-start gap-3 overflow-x-auto px-1 md:gap-6 md:px-2"
+        <HorizontalScroll
+          cardWidthMobile={308}
+          cardWidthWeb={384}
+          gap={24}
+          className="items-start px-1 md:px-2"
+          controlsClassName="pointer-events-none mt-6 flex justify-end gap-2 px-6 md:px-[100px]"
         >
           {data.map((item) => {
             const departments = Array.isArray(item.department)
@@ -200,51 +175,24 @@ const CareerJourney = () => {
                       alt="열기"
                       width={24}
                       height={24}
-                      className={`cursor-pointer ${openId === item.id ? 'rotate-90' : ''}`}
+                      className={`cursor-pointer ${
+                        openId === item.id ? 'rotate-90' : ''
+                      }`}
                     />
                   </button>
                 )}
 
                 {openId === item.id && (
                   <div className="text-contents-neutral-tertiary body-md-medium mt-6 rounded-[12px] bg-white px-6 py-3">
-                    {isMobile
-                      ? (item.description || '')
-                          .split('\n')
-                          .map((line, i) => <p key={i}>{line}</p>)
-                      : (item.description || '').replace(/\n/g, ' ')}
+                    {(item.description || '').split('\n').map((line, i) => (
+                      <p key={i}>{line}</p>
+                    ))}
                   </div>
                 )}
               </div>
             );
           })}
-        </div>
-
-        <div className="pointer-events-none mt-6 flex justify-end gap-2 px-6 md:px-[100px]">
-          <button
-            onClick={() => scroll('left')}
-            className="pointer-events-auto grid cursor-pointer rounded-md p-1 hover:bg-gray-100"
-            aria-label="이전"
-          >
-            <Image
-              src="/icons/chevron_left.svg"
-              alt="이전"
-              width={32}
-              height={32}
-            />
-          </button>
-          <button
-            onClick={() => scroll('right')}
-            className="pointer-events-auto grid cursor-pointer rounded-md p-1 hover:bg-gray-100"
-            aria-label="다음"
-          >
-            <Image
-              src="/icons/chevron_right.svg"
-              alt="다음"
-              width={32}
-              height={32}
-            />
-          </button>
-        </div>
+        </HorizontalScroll>
       </div>
     </div>
   );

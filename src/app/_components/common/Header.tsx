@@ -4,14 +4,23 @@ import SearchBar from '@/app/home/components/SearchBar';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
 
 export default function Header() {
   const pathname = usePathname();
+  const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  // const [isLoggedIn, setIsLoggedIn] = useState(false); // 추후 로그인 상태 관리 로직으로 변경
   const isLoggedIn = false; // 추후 상태 관리로 변경
+
+  useEffect(() => {
+    setCurrentPath(pathname);
+  }, [pathname]);
+
+  const isActive = (path: string) =>
+    currentPath === path
+      ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
+      : '';
 
   return (
     <>
@@ -27,6 +36,7 @@ export default function Header() {
                 height={24}
               />
             </Link>
+
             <div className="web-navi text-contents-neutral-primary hidden items-center gap-[32px] md:flex">
               <Link
                 href="/home"
@@ -40,21 +50,13 @@ export default function Header() {
               </Link>
               <Link
                 href="/company"
-                className={`relative ${
-                  pathname === '/company'
-                    ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
-                    : ''
-                }`}
+                className={`relative ${isActive('/company')}`}
               >
                 기업관
               </Link>
               <Link
                 href="/alumni"
-                className={`relative ${
-                  pathname === '/alumni'
-                    ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
-                    : ''
-                }`}
+                className={`relative ${isActive('/alumni')}`}
               >
                 동문관
               </Link>
@@ -74,6 +76,7 @@ export default function Header() {
                 북마크
               </span>
             </Link>
+
             {isLoggedIn ? (
               <Image
                 src="/icons/profile.svg"
@@ -92,6 +95,7 @@ export default function Header() {
                 </div>
               </>
             )}
+
             <Image
               src="/icons/menu.svg"
               alt="menu"
@@ -103,6 +107,7 @@ export default function Header() {
           </div>
         </div>
       </header>
+
       {menuOpen && <NavigationPanel onClose={() => setMenuOpen(false)} />}
     </>
   );
