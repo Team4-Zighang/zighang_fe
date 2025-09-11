@@ -13,6 +13,7 @@ type Props = {
   onToggleSelect?: () => void;
   onToggleExpand?: () => void;
   onBookmarkToggle?: (postingId: number, nextState: boolean) => void;
+  onFileUploaded?: (scrapId: number) => void;
 };
 
 function isClosed(dday: number | null) {
@@ -30,6 +31,7 @@ const BookmarkListItem = ({
   onToggleSelect,
   onToggleExpand,
   onBookmarkToggle,
+  onFileUploaded,
 }: Props) => {
   const docs =
     !!item.fileResponse?.fileUrl || !!item.portfolioResponse?.fileUrl;
@@ -53,6 +55,7 @@ const BookmarkListItem = ({
     if (item.scrapId === null) return;
     try {
       await PostBookmarkFile(item.scrapId, fileType, file);
+      onFileUploaded?.(item.scrapId);
     } catch (error) {
       console.error('파일 업로드 실패:', error);
     }

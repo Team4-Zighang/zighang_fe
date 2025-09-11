@@ -35,13 +35,17 @@ const BookmarkList = () => {
 
         // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
         setSelectedIds([]);
-        setExpandedIds([]);
+        // setExpandedIds([]);
       } catch (error) {
         console.error('북마크 목록 조회 실패:', error);
       }
     },
     [page, size]
   );
+
+  const handleFileUploaded = async (scrapId: number) => {
+    await loadPage(page); // 전체 리스트 재조회
+  };
 
   useEffect(() => {
     loadPage(page).catch((e) => console.error('북마크 목록 조회 실패:', e));
@@ -253,6 +257,7 @@ const BookmarkList = () => {
               item.scrapId !== null && handleToggleExpand(item.scrapId)
             }
             onBookmarkToggle={handleBookmarkToggle}
+            onFileUploaded={handleFileUploaded}
           />
         ))}
         <Pagination totalPages={totalPages} page={page} onChange={setPage} />
