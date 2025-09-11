@@ -42,3 +42,17 @@ export interface AlumniScrapResponse {
   success: boolean;
   timestamp: string;
 }
+
+export interface AlumniInfoResponse {
+  memberId: number;
+  memberName: string;
+  school: string;
+  jobRole: string;
+  major: string;
+  companyLists: [
+    {
+      companyName: string;
+      companyImageUrl: string;
+    },
+  ];
+}

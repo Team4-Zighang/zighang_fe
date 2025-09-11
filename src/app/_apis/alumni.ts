@@ -1,5 +1,6 @@
 import api from './api';
 import {
+  AlumniInfoResponse,
   AlumniScrapResponse,
   companiesTop3Response,
   jobPostingTop3Response,
@@ -33,6 +34,14 @@ export async function GetAlumniScrap(
         isMobile,
       },
     }
+  );
+
+  return res.data.data;
+}
+
+export async function GetInfo(): Promise<AlumniInfoResponse[]> {
+  const res = await api.get<{ data: AlumniInfoResponse[] }>(
+    '/alumni/similar/info'
   );
 
   return res.data.data;

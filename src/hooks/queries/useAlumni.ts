@@ -1,4 +1,9 @@
-import { GetAlumniScrap, GetCompany, GetHotPosting } from '@/app/_apis/alumni';
+import {
+  GetAlumniScrap,
+  GetCompany,
+  GetHotPosting,
+  GetInfo,
+} from '@/app/_apis/alumni';
 import { AlumniScrapResponse } from '@/app/_apis/schemas/alumniResponse';
 import { useIsMobile } from '@/app/_components/common/Pagination';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -32,5 +37,12 @@ export function useGetAlumniScrap(page: number) {
     staleTime: 1000 * 30,
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
+  });
+}
+
+export function useAlumniInfo() {
+  return useQuery({
+    queryKey: ['Info'],
+    queryFn: () => GetInfo(),
   });
 }
