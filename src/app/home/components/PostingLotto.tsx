@@ -66,11 +66,13 @@ const PostingLotto = () => {
       };
 
       backStates[idx] = true;
+
+      openSync(idx, oc.cardOpenTime);
     });
 
     setCards(newCards);
     syncBackState(backStates);
-  }, [openedCards, syncBackState]);
+  }, [openedCards, openSync, syncBackState]);
 
   const handleFlip = (i: number) => {
     const alreadyOpened = openedCards?.some(
