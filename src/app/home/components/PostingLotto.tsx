@@ -62,6 +62,7 @@ const PostingLotto = () => {
           back: (
             <CardBack
               index={idx}
+              jobPostingId={oc.cardJobPosting.jobPostingId}
               companyImageUrl={oc.cardJobPosting.companyImageUrl ?? ''}
               bank={oc.cardJobPosting.companyName ?? ''}
               title={oc.cardJobPosting.title ?? ''}
@@ -69,6 +70,7 @@ const PostingLotto = () => {
               recruitmentType={oc.cardJobPosting.recruitmentType}
               academicConditions={oc.cardJobPosting.academicConditions}
               address={oc.cardJobPosting.address}
+              isScrap={oc.cardJobPosting.isScrap}
             />
           ),
         };
@@ -104,6 +106,7 @@ const PostingLotto = () => {
                     ...card,
                     back: (
                       <CardBack
+                        jobPostingId={job.jobPostingId}
                         index={idx}
                         companyImageUrl={job.companyImageUrl ?? ''}
                         bank={job.companyName}
@@ -112,6 +115,7 @@ const PostingLotto = () => {
                         recruitmentType={job.recruitmentType}
                         academicConditions={job.academicConditions}
                         address={job.address}
+                        isScrap={job.isScrap}
                       />
                     ),
                   }
