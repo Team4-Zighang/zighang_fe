@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
@@ -33,9 +34,12 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
         <button className="web-action bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
           공유하기
         </button>
-        <button className="web-action bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white">
+        <Link
+          href={localStorage.getItem('recruitmentOriginalUrl') || '/'}
+          className="web-action bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white"
+        >
           지원하기
-        </button>
+        </Link>
       </div>
       {/* 폰트 디자인 적용 */}
       <div className="bg-base-neutral-alternative flex h-[48px] items-center justify-center rounded-[8px]">

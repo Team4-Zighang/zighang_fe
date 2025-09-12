@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
+import Link from 'next/link';
 
 const RecruitFooter = () => {
   const [isMemoOpen, setIsMemoOpen] = useState(false);
@@ -38,9 +39,12 @@ const RecruitFooter = () => {
         <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008]">
           <Image src="/icons/share.svg" alt="share" width={28} height={28} />
         </button>
-        <button className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white">
+        <Link
+          href={localStorage.getItem('recruitmentOriginalUrl') || '/'}
+          className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white"
+        >
           지원하기
-        </button>
+        </Link>
       </div>
       {isMemoOpen && (
         <div
