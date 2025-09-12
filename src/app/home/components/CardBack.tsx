@@ -4,6 +4,7 @@ import React from 'react';
 
 type CardBackProps = {
   index: number;
+  jobPostingId: number;
   companyImageUrl: string | null;
   bank: string;
   title: string;
@@ -11,6 +12,7 @@ type CardBackProps = {
   recruitmentType: string;
   academicConditions: string;
   address: string;
+  isScrap: boolean;
 };
 
 const CardBack = ({
@@ -22,6 +24,7 @@ const CardBack = ({
   recruitmentType,
   academicConditions,
   address,
+  isScrap,
 }: CardBackProps) => {
   const ImageUrl =
     !companyImageUrl ||
@@ -42,7 +45,11 @@ const CardBack = ({
         />
 
         <Image
-          src="/icons/bookmark_unselected.svg"
+          src={
+            isScrap
+              ? '/icons/bookmark_selected.svg'
+              : '/icons/bookmark_unselected.svg'
+          }
           alt="북마크"
           width={24}
           height={24}

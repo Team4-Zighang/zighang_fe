@@ -1,6 +1,8 @@
 import api from './api';
 import {
+  CardReplaceResponse,
   CardResponse,
+  CardScrapResponse,
   CardShowOpenResponse,
   CardShowResponse,
 } from './schemas/cardResponse';
@@ -25,6 +27,20 @@ export async function GetShowOpen(): Promise<CardShowOpenResponse[]> {
   const res = await api.get<{ data: CardShowOpenResponse[] }>(
     '/card/show/open'
   );
+
+  return res.data.data;
+}
+
+export async function CardReplace(
+  body: CardShowBody
+): Promise<CardReplaceResponse> {
+  const res = await api.post<CardReplaceResponse>(`/card/replace`, body);
+
+  return res.data;
+}
+
+export async function GetScrap(): Promise<CardScrapResponse> {
+  const res = await api.get<{ data: CardScrapResponse }>('/card/remain-scrap');
 
   return res.data.data;
 }

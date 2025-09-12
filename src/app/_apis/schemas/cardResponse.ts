@@ -9,6 +9,7 @@ export interface CardShowResponse {
   data: {
     position: string;
     cardJobPosting: {
+      jobPostingId: number;
       companyImageUrl: string;
       companyName: string;
       title: string;
@@ -16,6 +17,7 @@ export interface CardShowResponse {
       recruitmentType: string;
       academicConditions: string;
       address: string;
+      isScrap: boolean;
     };
   };
   cardOpenTime: string;
@@ -25,6 +27,7 @@ export interface CardShowOpenResponse {
   timestamp: string;
   position: string;
   cardJobPosting: {
+    jobPostingId: number;
     companyImageUrl: string;
     companyName: string;
     title: string;
@@ -32,6 +35,19 @@ export interface CardShowOpenResponse {
     recruitmentType: string;
     academicConditions: string;
     address: string;
+    isScrap: boolean;
   };
   cardOpenTime: string;
+}
+
+export interface CardReplaceResponse {
+  success: boolean;
+  timestamp: string;
+  data: boolean;
+}
+
+export interface CardScrapResponse {
+  success: boolean;
+  timestamp: string;
+  scrapCount: number;
 }
