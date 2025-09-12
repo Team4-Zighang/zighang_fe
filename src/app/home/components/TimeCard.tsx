@@ -8,7 +8,7 @@ type TimeCardProps = {
   card: CardProps;
   index: number;
   widthClass: string;
-  isBack: (i: number) => boolean;
+  isBack: boolean[];
   isLocked: (i: number) => boolean;
   remainTime: number[];
   toggle: (i: number) => void;
@@ -25,7 +25,7 @@ const TimeCard = ({
   toggle,
   formatHMS,
 }: TimeCardProps) => {
-  const backShown = isBack(index);
+  const backShown = isBack[index];
   const locked = isLocked(index);
   const secLeft = backShown ? Math.max(0, remainTime[index]) : 0;
 

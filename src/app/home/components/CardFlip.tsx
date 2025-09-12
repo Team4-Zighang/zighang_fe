@@ -40,7 +40,7 @@ const CardFlip = ({
             src={img}
             alt="card"
             fill
-            className="object-cover"
+            className="cursor-pointer object-cover"
             sizes="280px"
             priority
           />
