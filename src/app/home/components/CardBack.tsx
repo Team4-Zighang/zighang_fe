@@ -4,7 +4,7 @@ import React from 'react';
 
 type CardBackProps = {
   index: number;
-  companyImageUrl: string;
+  companyImageUrl: string | null;
   bank: string;
   title: string;
   career: string;
@@ -23,11 +23,18 @@ const CardBack = ({
   academicConditions,
   address,
 }: CardBackProps) => {
+  const ImageUrl =
+    !companyImageUrl ||
+    companyImageUrl.trim() === '' ||
+    companyImageUrl.toLowerCase().includes('null')
+      ? '/images/sampleimage.png'
+      : companyImageUrl;
+
   return (
     <div className="flex flex-col items-start">
       <div className="flex w-full flex-row items-start justify-between">
         <Image
-          src={companyImageUrl}
+          src={ImageUrl}
           alt="companyImageUrl"
           width={64}
           height={64}
@@ -60,7 +67,7 @@ const CardBack = ({
           <div className="flex w-full flex-row items-center gap-1">
             <Image
               src="/icons/article.svg"
-              alt="북마크"
+              alt="career"
               width={20}
               height={20}
               className="aspect-[1/1]"
