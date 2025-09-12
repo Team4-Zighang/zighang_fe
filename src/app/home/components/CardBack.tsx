@@ -60,7 +60,7 @@ const CardBack = ({
         <div className="body-md-medium text-contents-neutral-tertiary mt-2">
           {bank}
         </div>
-        <div className="heading-sm-semibold text-contents-neutral-primary max-w-[241px] text-start text-ellipsis">
+        <div className="heading-sm-semibold text-contents-neutral-primary line-clamp-2 max-w-[241px] text-start text-ellipsis">
           {title}
         </div>
 
