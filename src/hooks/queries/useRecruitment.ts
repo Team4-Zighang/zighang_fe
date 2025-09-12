@@ -1,4 +1,7 @@
-import { GetRecruitmentDetail } from '@/app/_apis/recruitment';
+import {
+  GetRecruitmentDetail,
+  GetRecruitmentEvalList,
+} from '@/app/_apis/recruitment';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -15,3 +18,26 @@ export const useRecruitmentDetail = ({ id }: { id: number }) => {
     refetchOnReconnect: false,
   });
 };
+
+/**
+ * 공고평 목록 불러오기
+ */
+export function useRecruitmentEvalList({
+  id,
+  page = 0,
+  size = 10,
+}: {
+  id: number;
+  page?: number;
+  size?: number;
+}) {
+  return useQuery({
+    queryKey: ['recruitmentEvalList', id, page, size],
+    queryFn: () => GetRecruitmentEvalList(id),
+    enabled: Number.isFinite(id) && id > 0,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+}

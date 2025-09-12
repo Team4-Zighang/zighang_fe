@@ -6,8 +6,20 @@ import Image from 'next/image';
 import JobRateItem from './JobRateItem';
 import Link from 'next/link';
 import JobRateModal from './JobRateModal';
+import { useParams } from 'next/navigation';
+import { useRecruitmentEvalList } from '@/hooks/queries/useRecruitment';
 
 const JobRate = () => {
+  const { id } = useParams();
+  const { data, isLoading, isFetching, isError } = useRecruitmentEvalList({
+    id: Number(id),
+    page: 0,
+    size: 10,
+  });
+
+  const evalList = data?.data;
+  console.log('evalList', evalList);
+
   const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
   const [isRateOpen, setIsRateOpen] = useState(false);
 
@@ -30,7 +42,7 @@ const JobRate = () => {
           <div className="flex w-full flex-col justify-between md:flex-row">
             <div>
               <span className="text-contents-primary-default body-lg-semibold">
-                {isloggedin ? '한국대학교' : '??대학교'}&nbsp;
+                {isloggedin ? `${evalList?.schoolName}` : '??대학교'}&nbsp;
               </span>
               <span className="text-contents-neutral-primary body-lg-medium">
                 동문의 공고평
@@ -38,11 +50,11 @@ const JobRate = () => {
             </div>
             <div className="flex items-center gap-[4px]">
               <span className="body-lg-semibold text-contents-neutral-primary">
-                {isloggedin ? '4.2' : '??'}
+                {isloggedin ? `${evalList?.avgScore.toFixed(1)}` : '??'}
               </span>
-              <StarRates rate={isloggedin ? 4.2 : 0} />
+              <StarRates rate={isloggedin ? evalList?.avgScore : 0} />
               <span className="caption-md-medium text-contents-neutral-tertiary">
-                ({isloggedin ? '00개' : '??개'})
+                ({isloggedin ? `${evalList?.totalCount}개` : '??개'})
               </span>
             </div>
           </div>

@@ -2,11 +2,11 @@ import Image from 'next/image';
 import React from 'react';
 
 type StarRatesProps = {
-  rate: number;
+  rate?: number;
 };
 
 const StarRates = ({ rate }: StarRatesProps) => {
-  const count = Math.floor(rate);
+  const count = Math.floor(rate || 0);
   const total = 5;
   return (
     <div className="flex">
