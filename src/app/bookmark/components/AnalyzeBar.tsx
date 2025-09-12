@@ -42,7 +42,9 @@ const AnalyzeBar = ({
         className={`bg-base-neutral-alternative flex h-[22px] w-full ${isLeftAccent ? '' : 'justify-end'} rounded-[50px] shadow-inner`}
       >
         <div
-          className={`h-full rounded-[50px] bg-gradient-${gradientDir} from-[#9E80FF60] to-[#7A52FF]`}
+          className={`h-full rounded-[50px] ${
+            isLeftAccent ? 'bg-gradient-to-r' : 'bg-gradient-to-l'
+          } from-[#9E80FF60] to-[#7A52FF]`}
           style={{ width: `${percent}%` }}
         />
       </div>
