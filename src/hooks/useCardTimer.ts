@@ -17,12 +17,22 @@ export const useCardTimer = (cardCount: number, duration: number) => {
     if (intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
-      setRemainTime((prev) =>
-        prev.map((t, i) => {
-          if (!isBackRef.current[i]) return t;
-          return t > 0 ? t - 1 : 0;
-        })
-      );
+      setRemainTime((prev) => {
+        const next = [...prev];
+        next.forEach((t, i) => {
+          if (isBackRef.current[i]) {
+            if (t > 1) {
+              next[i] = t - 1;
+            } else if (t === 1) {
+              next[i] = 0;
+              setIsBack((prevBack) =>
+                prevBack.map((v, j) => (j === i ? false : v))
+              );
+            }
+          }
+        });
+        return next;
+      });
     }, 1000);
 
     return () => {
@@ -50,7 +60,13 @@ export const useCardTimer = (cardCount: number, duration: number) => {
             const openedAt = new Date(openTime).getTime();
             const now = Date.now();
             const elapsed = Math.floor((now - openedAt) / 1000);
-            return Math.max(0, duration - elapsed);
+            const remain = Math.max(0, duration - elapsed);
+
+            if (remain <= 0) {
+              setIsBack((prev) => prev.map((v, j) => (j === idx ? false : v)));
+              return 0;
+            }
+            return remain;
           } else {
             return duration;
           }
