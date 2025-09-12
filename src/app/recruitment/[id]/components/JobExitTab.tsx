@@ -2,10 +2,19 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const [originalUrl, setOriginalUrl] = useState('/');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOriginalUrl(localStorage.getItem('recruitmentOriginalUrl') || '/');
+    }
+  }, []);
+
   const onBookmarkClick = () => {
     if (!isBookmarked) {
       onBookmarked();
@@ -35,7 +44,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           공유하기
         </button>
         <Link
-          href={localStorage.getItem('recruitmentOriginalUrl') || '/'}
+          href={originalUrl}
           className="web-action bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white"
         >
           지원하기

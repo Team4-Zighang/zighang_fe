@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
 
@@ -15,6 +15,14 @@ const RecruitFooter = () => {
   const onBookmarkClick = () => {
     setIsBookmarked(!isBookmarked);
   };
+
+  const [originalUrl, setOriginalUrl] = useState('/');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOriginalUrl(localStorage.getItem('recruitmentOriginalUrl') || '/');
+    }
+  }, []);
 
   return (
     <>
@@ -40,7 +48,7 @@ const RecruitFooter = () => {
           <Image src="/icons/share.svg" alt="share" width={28} height={28} />
         </button>
         <Link
-          href={localStorage.getItem('recruitmentOriginalUrl') || '/'}
+          href={originalUrl}
           className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white"
         >
           지원하기
