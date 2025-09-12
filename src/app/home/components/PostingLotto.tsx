@@ -48,29 +48,39 @@ const PostingLotto = () => {
     if (!openedCards || openedCards.length === 0) return;
 
     const backStates = [false, false, false];
-    const newCards = [...cards];
 
-    openedCards.forEach((oc) => {
-      const pos = oc.position as 'LEFT' | 'CENTER' | 'RIGHT';
-      const idx = positions.indexOf(pos);
-      if (idx === -1) return;
+    setCards((prev) => {
+      const newCards = [...prev];
 
-      newCards[idx] = {
-        ...newCards[idx],
-        back: (
-          <CardBack
-            bank={oc.cardJobPosting.companyName ?? ''}
-            title={oc.cardJobPosting.title ?? ''}
-          />
-        ),
-      };
+      openedCards.forEach((oc) => {
+        const pos = oc.position as 'LEFT' | 'CENTER' | 'RIGHT';
+        const idx = positions.indexOf(pos);
+        if (idx === -1) return;
 
-      backStates[idx] = true;
+        newCards[idx] = {
+          ...newCards[idx],
+          back: (
+            <CardBack
+              index={idx}
+              companyImageUrl={oc.cardJobPosting.companyImageUrl ?? ''}
+              bank={oc.cardJobPosting.companyName ?? ''}
+              title={oc.cardJobPosting.title ?? ''}
+              career={oc.cardJobPosting.career}
+              recruitmentType={oc.cardJobPosting.recruitmentType}
+              academicConditions={oc.cardJobPosting.academicConditions}
+              address={oc.cardJobPosting.address}
+            />
+          ),
+        };
 
-      openSync(idx, oc.cardOpenTime);
+        backStates[idx] = true;
+
+        openSync(idx, oc.cardOpenTime);
+      });
+
+      return newCards;
     });
 
-    setCards(newCards);
     syncBackState(backStates);
   }, [openedCards, openSync, syncBackState]);
 
@@ -92,7 +102,18 @@ const PostingLotto = () => {
               idx === i
                 ? {
                     ...card,
-                    back: <CardBack bank={job.companyName} title={job.title} />,
+                    back: (
+                      <CardBack
+                        index={idx}
+                        companyImageUrl={job.companyImageUrl ?? ''}
+                        bank={job.companyName}
+                        title={job.title}
+                        career={job.career}
+                        recruitmentType={job.recruitmentType}
+                        academicConditions={job.academicConditions}
+                        address={job.address}
+                      />
+                    ),
                   }
                 : card
             )
