@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import JobTitleArea from './JobTitleArea';
 import JobDetailDate from './JobDetailDate';
 import JobDetailInfo from './JobDetailInfo';
@@ -17,8 +17,14 @@ const JobDetail = () => {
 
   const job = data?.data;
   const recruitmentOriginalUrl = job?.recruitmentOriginalUrl;
-  localStorage.setItem('recruitmentOriginalUrl', recruitmentOriginalUrl || '');
-
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        'recruitmentOriginalUrl',
+        recruitmentOriginalUrl || ''
+      );
+    }
+  }, [recruitmentOriginalUrl]);
   if (isLoading || isFetching) {
     return <div>Loading...</div>;
   }
