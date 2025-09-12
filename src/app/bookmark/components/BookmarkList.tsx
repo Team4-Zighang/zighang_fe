@@ -1,55 +1,40 @@
 import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
 import BookmarkListItem from './BookmarkListItem';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  BookmarkCommonResponse,
-  BookmarkItem,
-} from '@/app/_apis/schemas/bookmarkResponse';
-import {
-  DeleteBookmark,
-  GetBookmarkList,
-  PostBookmark,
-} from '@/app/_apis/bookmark';
+import { useState } from 'react';
 import Pagination from '@/app/_components/common/Pagination';
+import {
+  useBookmarkList,
+  useDeleteBookmark,
+  useToggleBookmark,
+} from '@/hooks/queries/useBookmark';
+import { useQueryClient } from '@tanstack/react-query';
 
 const BookmarkList = () => {
   const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
-
-  const [items, setItems] = useState<BookmarkItem[]>([]);
+  const queryClient = useQueryClient();
   const [isPublic, setIsPublic] = useState(true);
 
   const [page, setPage] = useState(1);
   const size = 10;
-  const [totalPages, setTotalPages] = useState(1);
 
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const loadPage = useCallback(
-    async (p: number = page) => {
-      try {
-        const res: BookmarkCommonResponse = await GetBookmarkList(p - 1, size);
-        setItems(res.data);
-        setTotalPages(res.totalPages);
+  const { data, isLoading, isError, isFetching } = useBookmarkList({
+    page: page - 1,
+    size,
+  });
 
-        // 페이지가 바뀌거나 새로 가져올 때 선택/펼침 초기화
-        setSelectedIds([]);
-        // setExpandedIds([]);
-      } catch (error) {
-        console.error('북마크 목록 조회 실패:', error);
-      }
-    },
-    [page, size]
-  );
+  const { mutate: deleteBookmark } = useDeleteBookmark();
+
+  const items = data?.data || [];
+  const totalPages = data?.totalPages || 1;
 
   const handleFileUploaded = async (scrapId: number) => {
-    await loadPage(page); // 전체 리스트 재조회
+    // 전체 리스트 재조회
+    queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
   };
-
-  useEffect(() => {
-    loadPage(page).catch((e) => console.error('북마크 목록 조회 실패:', e));
-  }, [page, loadPage]);
 
   const handleToggleExpand = (id: number) => {
     setExpandedIds((prev) =>
@@ -80,58 +65,24 @@ const BookmarkList = () => {
     if (!window.confirm(`${selectedIds.length}개의 북마크를 삭제하시겠습니까?`))
       return;
 
-    try {
-      await DeleteBookmark(selectedIds);
-
-      const deletingAllOnPage = selectedIds.length === items.length;
-      const nextPage = deletingAllOnPage && page > 1 ? page - 1 : page;
-
-      setPage(nextPage);
-      await loadPage(nextPage);
-    } catch (error) {
-      console.error('삭제 실패:', error);
-    }
+    deleteBookmark(selectedIds, {
+      onSuccess: () => {
+        setSelectedIds([]);
+        setExpandedIds([]);
+      },
+      onError: (error) => {
+        console.error('삭제 실패:', error);
+      },
+    });
   };
 
-  const handleBookmarkToggle = async (postingId: number, next: boolean) => {
-    const idx = items.findIndex(
+  const toggleMobile = useToggleBookmark(page - 1, size);
+  const handleBookmarkToggle = (postingId: number, next: boolean) => {
+    const item = items.find(
       (i) => i.jobPostingResponse.postingId === postingId
     );
-    if (idx === -1) return;
-
-    setItems((prev) => {
-      const copy = [...prev];
-      copy[idx] = { ...copy[idx], scrapId: next ? 9999 : null };
-      return copy;
-    });
-
-    try {
-      if (!next) {
-        if (items[idx].scrapId != null)
-          await DeleteBookmark([items[idx].scrapId]);
-      } else {
-        await PostBookmark(postingId);
-        const res = await GetBookmarkList(page - 1, size);
-        const fresh = res.data.find(
-          (it) => it.jobPostingResponse.postingId === postingId
-        );
-        if (fresh) {
-          setItems((prev) => {
-            const copy = [...prev];
-            copy[idx] = fresh;
-            return copy;
-          });
-        }
-      }
-      console.log('북마크 토글 성공');
-    } catch (e) {
-      console.error('bookmark toggle failed', e);
-      setItems((prev) => {
-        const copy = [...prev];
-        copy[idx] = items[idx];
-        return copy;
-      });
-    }
+    if (!item) return;
+    toggleMobile.mutate({ postingId, next, scrapId: item.scrapId ?? null });
   };
 
   if (!isLoggedIn) {
@@ -181,6 +132,9 @@ const BookmarkList = () => {
       </div>
     );
   }
+
+  if (isFetching || isLoading) return <div>로딩 중...</div>;
+  if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
     <div className="flex flex-col gap-[16px]">
@@ -244,6 +198,7 @@ const BookmarkList = () => {
           <BookmarkListItem
             key={item.jobPostingResponse.postingId}
             item={item}
+            // 데스크톱 선택/펼침은 scrapId가 있을 때만 (기존 로직 유지)
             selected={
               item.scrapId !== null && selectedIds.includes(item.scrapId)
             }

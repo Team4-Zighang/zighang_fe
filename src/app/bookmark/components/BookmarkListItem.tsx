@@ -4,7 +4,7 @@ import {
   BookmarkItem,
 } from '@/app/_apis/schemas/bookmarkResponse';
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 type Props = {
   item: BookmarkItem;
@@ -36,10 +36,11 @@ const BookmarkListItem = ({
   const docs =
     !!item.fileResponse?.fileUrl || !!item.portfolioResponse?.fileUrl;
 
-  const isBookmarked = item.scrapId !== null;
+  const [isBookmarked, setIsBookmarked] = useState(item.scrapId !== null);
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsBookmarked(!isBookmarked);
     onBookmarkToggle?.(item.jobPostingResponse.postingId, !isBookmarked);
   };
 
@@ -175,17 +176,27 @@ const BookmarkListItem = ({
           <div className="flex justify-between">
             <div className="flex flex-col">
               {typeof item.jobPostingResponse.dday === 'number' ? (
-                <div
-                  className={`${item.jobPostingResponse.dday <= 5 ? 'text-red-500' : 'text-contents-neutral-secondary'}`}
-                >
-                  D-{item.jobPostingResponse.dday}
-                </div>
+                item.jobPostingResponse.dday > 0 ? (
+                  item.jobPostingResponse.dday <= 5 ? (
+                    <div
+                      className={`${item.jobPostingResponse.dday <= 5 ? 'text-red-500' : 'text-contents-neutral-secondary'}`}
+                    >
+                      D-{item.jobPostingResponse.dday}
+                    </div>
+                  ) : (
+                    <div className="text-contents-neutral-secondary">
+                      D-{item.jobPostingResponse.dday}
+                    </div>
+                  )
+                ) : (
+                  <div
+                    className={` ${getDisabledClass(item.jobPostingResponse.dday)}`}
+                  >
+                    마감
+                  </div>
+                )
               ) : (
-                <div
-                  className={`text-contents-neutral-secondary ${getDisabledClass(item.jobPostingResponse.dday)}`}
-                >
-                  {item.jobPostingResponse.dday}
-                </div>
+                <div className="text-contents-neutral-secondary">상시</div>
               )}
               <span className="body-lg-medium">
                 {item.jobPostingResponse.title}

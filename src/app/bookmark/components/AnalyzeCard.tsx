@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import AnalyzeBar from './AnalyzeBar';
 import { PersonalityResponse } from '@/app/_apis/schemas/bookmarkResponse';
+import { usePersonalityAnalysis } from '@/hooks/queries/useBookmark';
 
 const CHARACTER_MAP: Record<string, { img: string; desc: string }> = {
   듬직행: {
@@ -41,30 +42,21 @@ const CHARACTER_MAP: Record<string, { img: string; desc: string }> = {
 };
 
 const AnalyzeCard = () => {
-  const [personality, setPersonality] = useState<PersonalityResponse>();
-  const [isNotFound, setIsNotFound] = useState(false);
+  const {
+    data: personality,
+    isLoading: isLoadingPersonality,
+    isFetching,
+    isError,
+  } = usePersonalityAnalysis();
 
   const characterInfo =
-    personality?.characterName && CHARACTER_MAP[personality.characterName]
-      ? CHARACTER_MAP[personality.characterName]
+    personality?.data.characterName &&
+    CHARACTER_MAP[personality.data.characterName]
+      ? CHARACTER_MAP[personality.data.characterName]
       : CHARACTER_MAP['듬직행'];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await GetPersonalityAnalysis();
-        if (res && res.success) {
-          setPersonality(res.data);
-          setIsNotFound(false);
-        }
-        console.log('Personality Analysis Data:', res.data);
-      } catch (error) {
-        setIsNotFound(true);
-        console.error('Error fetching personality analysis:', error);
-      }
-    };
-    fetchData();
-  }, []);
+  if (isLoadingPersonality || isFetching) return <div>로딩중...</div>;
+  if (isError) return <div>분석중입니다...</div>;
 
   return (
     <div className="md:px-auto flex w-full flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
@@ -72,7 +64,7 @@ const AnalyzeCard = () => {
         지우님이 북마크한 공고들을 분석했어요!
       </span>
       <div className="bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px]">
-        {isNotFound ? (
+        {isError ? (
           <div className="">분석중입니다...</div>
         ) : (
           <>
@@ -89,7 +81,7 @@ const AnalyzeCard = () => {
                   당신의 취업 유형은 바로...
                 </span>
                 <span className="text-contents-neutral-primary heading-2xl-semibold md:title-lg-semibold">
-                  {personality?.characterName ?? '...'}
+                  {personality?.data.characterName ?? '...'}
                 </span>
               </div>
               <span className="body-md-medium md:body-xl-regular text-contents-neutral-tertiary">
@@ -101,22 +93,26 @@ const AnalyzeCard = () => {
                 label="기업 규모"
                 leftLabel="스타트업"
                 rightLabel="대기업"
-                leftValue={personality?.companyValue.startUpValue ?? 0}
-                rightValue={personality?.companyValue.majorValue ?? 0}
+                leftValue={personality?.data.companyValue.startUpValue ?? 0}
+                rightValue={personality?.data.companyValue.majorValue ?? 0}
               />
               <AnalyzeBar
                 label="근무 형태"
                 leftLabel="오피스"
                 rightLabel="원격/탄력"
-                leftValue={personality?.workTypeValue.officeValue ?? 0}
-                rightValue={personality?.workTypeValue.remoteValue ?? 0}
+                leftValue={personality?.data.workTypeValue.officeValue ?? 0}
+                rightValue={personality?.data.workTypeValue.remoteValue ?? 0}
               />
               <AnalyzeBar
                 label="가치 추구"
                 leftLabel="개인 성장"
                 rightLabel="연봉/복지"
-                leftValue={personality?.pursuitOfValue.personalGrowthValue ?? 0}
-                rightValue={personality?.pursuitOfValue.welfareFeeValue ?? 0}
+                leftValue={
+                  personality?.data.pursuitOfValue.personalGrowthValue ?? 0
+                }
+                rightValue={
+                  personality?.data.pursuitOfValue.welfareFeeValue ?? 0
+                }
               />
             </div>
           </>
