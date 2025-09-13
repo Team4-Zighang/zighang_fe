@@ -1,26 +1,46 @@
 'use client';
 
+import {
+  useDeleteBookmark,
+  useToggleBookmark,
+} from '@/hooks/queries/useBookmark';
+import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import React from 'react';
 
 const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { id } = useParams();
+  const { data, isLoading, isFetching, isError } = useRecruitmentDetail({
+    id: Number(id),
+  });
 
-  const [originalUrl, setOriginalUrl] = useState('/');
+  const job = data?.data;
+  const isBookmarked = job?.isSaved ?? false;
+  console.log('isBookmarked', isBookmarked);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setOriginalUrl(localStorage.getItem('recruitmentOriginalUrl') || '/');
-    }
-  }, []);
+  const deleteBookmark = useDeleteBookmark();
+  const postBookmark = useToggleBookmark();
 
   const onBookmarkClick = () => {
-    if (!isBookmarked) {
-      onBookmarked();
+    if (isBookmarked) {
+      if (job?.scrapId !== null && job?.scrapId !== undefined) {
+        deleteBookmark.mutate([job.scrapId]);
+      }
+      console.log('북마크 삭제');
+    } else {
+      if (job?.postingId !== undefined) {
+        postBookmark.mutate({
+          postingId: job.postingId,
+          next: true,
+          scrapId: job.scrapId ?? null,
+        });
+      }
+      console.log('북마크 등록');
     }
-    setIsBookmarked(!isBookmarked);
   };
+
   return (
     <>
       <div className="flex gap-[8px]">
@@ -44,7 +64,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           공유하기
         </button>
         <Link
-          href={originalUrl}
+          href={job?.recruitmentOriginalUrl || '/'}
           className="web-action bg-base-primary-default flex flex-1 items-center justify-center rounded-[8px] text-white"
         >
           지원하기

@@ -1,5 +1,7 @@
 // /posting/{postingId} get 응답
 export interface RecruitmentItem {
+  isSaved: boolean;
+  scrapId: number | null;
   postingId: number;
   title: string;
   education: string;

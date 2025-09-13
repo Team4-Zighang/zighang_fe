@@ -77,7 +77,7 @@ export function usePostBookmark() {
   });
 }
 
-export function useToggleBookmark(page: number, size: number) {
+export function useToggleBookmark(page?: number, size?: number) {
   const qc = useQueryClient();
   const key = ['bookmarkList', page, size];
 
