@@ -5,6 +5,7 @@ import {
   CardScrapResponse,
   CardShowOpenResponse,
   CardShowResponse,
+  ScrapResponse,
 } from './schemas/cardResponse';
 
 interface CardShowBody {
@@ -43,4 +44,14 @@ export async function GetScrap(): Promise<CardScrapResponse> {
   const res = await api.get<{ data: CardScrapResponse }>('/card/remain-scrap');
 
   return res.data.data;
+}
+
+interface ScrapBody {
+  scrapId: null;
+  jobPostingId: number;
+}
+export async function CardScrap(body: ScrapBody): Promise<ScrapResponse> {
+  const res = await api.post<ScrapResponse>(`/scrap`, body);
+
+  return res.data;
 }

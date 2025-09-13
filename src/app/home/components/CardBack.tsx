@@ -1,4 +1,5 @@
 'use client';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import Image from 'next/image';
 import React from 'react';
 
@@ -13,6 +14,7 @@ type CardBackProps = {
   academicConditions: string;
   address: string;
   isScrap: boolean;
+  scrapId: null;
 };
 
 const CardBack = ({
@@ -25,7 +27,11 @@ const CardBack = ({
   academicConditions,
   address,
   isScrap,
+  jobPostingId,
+  scrapId,
 }: CardBackProps) => {
+  const mutate = useCardScrapMutation();
+
   const ImageUrl =
     !companyImageUrl ||
     companyImageUrl.trim() === '' ||
@@ -44,16 +50,24 @@ const CardBack = ({
           className="border-base-neutral-border h-16 w-16 rounded-[8px] border"
         />
 
-        <Image
-          src={
-            isScrap
-              ? '/icons/bookmark_selected.svg'
-              : '/icons/bookmark_unselected.svg'
-          }
-          alt="북마크"
-          width={24}
-          height={24}
-        />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            mutate.mutate({ scrapId, jobPostingId });
+          }}
+          className="cursor-pointer"
+        >
+          <Image
+            src={
+              isScrap
+                ? '/icons/bookmark_selected.svg'
+                : '/icons/bookmark_unselected.svg'
+            }
+            alt="북마크"
+            width={24}
+            height={24}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col items-start">
@@ -77,19 +91,18 @@ const CardBack = ({
               alt="career"
               width={20}
               height={20}
-              className="aspect-[1/1]"
             />
             <div className="text-contents-neutral-secondary body-sm-medium">
               {career}
             </div>
           </div>
+
           <div className="flex flex-row items-center gap-1">
             <Image
               src="/icons/work.svg"
               alt="recruitmentType"
               width={20}
               height={20}
-              className="aspect-[1/1]"
             />
             <div className="text-contents-neutral-secondary body-sm-medium">
               {recruitmentType}
@@ -102,7 +115,6 @@ const CardBack = ({
               alt="academicConditions"
               width={20}
               height={20}
-              className="aspect-[1/1]"
             />
             <div className="text-contents-neutral-secondary body-sm-medium">
               {academicConditions}
@@ -115,7 +127,6 @@ const CardBack = ({
               alt="address"
               width={20}
               height={20}
-              className="aspect-[1/1]"
             />
             <div className="text-contents-neutral-secondary body-sm-medium max-w-[217px] truncate">
               {address}

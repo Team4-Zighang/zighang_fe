@@ -90,6 +90,7 @@ const PostingLotto = () => {
               academicConditions={oc.cardJobPosting.academicConditions}
               address={oc.cardJobPosting.address}
               isScrap={oc.cardJobPosting.isScrap}
+              scrapId={null}
             />
           ),
         };
@@ -125,6 +126,7 @@ const PostingLotto = () => {
                     back: (
                       <CardBack
                         jobPostingId={job.jobPostingId}
+                        scrapId={null}
                         index={idx}
                         companyImageUrl={
                           job.companyImageUrl ?? '/images/sampleimage.png'
@@ -196,7 +198,7 @@ const PostingLotto = () => {
               height={20}
             />
             <span className="text-contents-primary-default body-lg-medium">
-              {cardMutation.isPending ? '뽑는 중...' : '새로 뽑기'}
+              {cardMutation.isPending ? '뽑는 중' : '새로 뽑기'}
             </span>
           </button>
           <div ref={iconWrapRef} className="relative">

@@ -51,3 +51,9 @@ export interface CardScrapResponse {
   timestamp: string;
   scrapCount: number;
 }
+
+export interface ScrapResponse {
+  success: boolean;
+  timestamp: string;
+  data: boolean;
+}

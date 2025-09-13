@@ -1,4 +1,4 @@
-import { Card, CardReplace, CardShow } from '@/app/_apis/card';
+import { Card, CardReplace, CardScrap, CardShow } from '@/app/_apis/card';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useCardShowMutation() {
@@ -37,6 +37,20 @@ export function useCardReplaceMutation() {
     },
     onError: (error) => {
       console.error('카드 교체 실패:', error);
+    },
+  });
+}
+
+export function useCardScrapMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { scrapId: null; jobPostingId: number }) =>
+      CardScrap(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+    },
+    onError: (error) => {
+      console.error('카드 스크랩 실패:', error);
     },
   });
 }
