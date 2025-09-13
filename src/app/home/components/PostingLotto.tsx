@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useCardTimer } from '@/hooks/useCardTimer';
 import {
   useCardMutation,
+  useCardReplaceMutation,
   useCardShowMutation,
 } from '@/hooks/mutation/useCardMutation';
 import CardBack from './CardBack';
@@ -19,15 +20,10 @@ const frontImgs = [
 const positions = ['LEFT', 'CENTER', 'RIGHT'] as const;
 
 const PostingLotto = () => {
-  const {
-    remainTime,
-    isBack,
-    isLocked,
-    toggle,
-    formatHMS,
-    openSync,
-    syncBackState,
-  } = useCardTimer(3, 900);
+  const cardShowMutation = useCardShowMutation();
+  const cardMutation = useCardMutation();
+  const cardReplaceMutation = useCardReplaceMutation();
+  const { data: openedCards } = useCardOpen();
 
   const [scrapBubble, setScrapBubble] = useState(false);
   const iconWrapRef = useRef<HTMLDivElement>(null);
@@ -36,22 +32,43 @@ const PostingLotto = () => {
     frontImgs.map((img, idx) => ({
       id: String(idx + 1),
       frontImg: img,
-      back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
+      // back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
     }))
   );
 
-  const cardShowMutation = useCardShowMutation();
-  const cardMutation = useCardMutation();
-  const { data: openedCards } = useCardOpen();
+  const {
+    remainTime,
+    isBack,
+    isLocked,
+    toggle,
+    formatHMS,
+    openSync,
+    syncBackState,
+  } = useCardTimer(3, 900, (idx) => {
+    const position = positions[idx];
+    cardReplaceMutation.mutate({ position });
+  });
+
+  const lastSigRef = useRef<string>('');
 
   useEffect(() => {
     if (!openedCards || openedCards.length === 0) return;
+
+    const sig = openedCards
+      .map(
+        (oc) =>
+          `${oc.position}:${oc.cardJobPosting.jobPostingId}:${oc.cardOpenTime}`
+      )
+      .sort()
+      .join('|');
+
+    if (sig === lastSigRef.current) return;
+    lastSigRef.current = sig;
 
     const backStates = [false, false, false];
 
     setCards((prev) => {
       const newCards = [...prev];
-
       openedCards.forEach((oc) => {
         const pos = oc.position as 'LEFT' | 'CENTER' | 'RIGHT';
         const idx = positions.indexOf(pos);
@@ -63,7 +80,9 @@ const PostingLotto = () => {
             <CardBack
               index={idx}
               jobPostingId={oc.cardJobPosting.jobPostingId}
-              companyImageUrl={oc.cardJobPosting.companyImageUrl ?? ''}
+              companyImageUrl={
+                oc.cardJobPosting.companyImageUrl ?? '/images/sampleimage.png'
+              }
               bank={oc.cardJobPosting.companyName ?? ''}
               title={oc.cardJobPosting.title ?? ''}
               career={oc.cardJobPosting.career}
@@ -76,16 +95,15 @@ const PostingLotto = () => {
         };
 
         backStates[idx] = true;
-
         openSync(idx, oc.cardOpenTime);
       });
-
       return newCards;
     });
 
     syncBackState(backStates);
-  }, [openedCards, openSync, syncBackState]);
+  }, [openedCards]);
 
+  //카드 클릭했을때
   const handleFlip = (i: number) => {
     const alreadyOpened = openedCards?.some(
       (oc) => oc?.position === positions[i]
@@ -108,7 +126,9 @@ const PostingLotto = () => {
                       <CardBack
                         jobPostingId={job.jobPostingId}
                         index={idx}
-                        companyImageUrl={job.companyImageUrl ?? ''}
+                        companyImageUrl={
+                          job.companyImageUrl ?? '/images/sampleimage.png'
+                        }
                         bank={job.companyName}
                         title={job.title}
                         career={job.career}
@@ -128,6 +148,7 @@ const PostingLotto = () => {
     );
   };
 
+  // 새로 뽑기
   const handleRefresh = () => {
     cardMutation.mutate(undefined, {
       onSuccess: () => {
@@ -135,15 +156,15 @@ const PostingLotto = () => {
           frontImgs.map((img, idx) => ({
             id: String(idx + 1),
             frontImg: img,
-            back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
+            // back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
           }))
         );
-
         syncBackState([false, false, false]);
       },
     });
   };
 
+  // 스크랩 닫기 처리
   useEffect(() => {
     if (!scrapBubble) return;
     const onDown = (e: MouseEvent) => {

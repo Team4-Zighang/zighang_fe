@@ -1,6 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-export const useCardTimer = (cardCount: number, duration: number) => {
+export const useCardTimer = (
+  cardCount: number,
+  duration: number,
+  onExpire?: (idx: number) => void
+) => {
   const [isBack, setIsBack] = useState<boolean[]>(Array(cardCount).fill(false));
   const [remainTime, setRemainTime] = useState<number[]>(
     Array(cardCount).fill(duration)
@@ -28,6 +32,7 @@ export const useCardTimer = (cardCount: number, duration: number) => {
               setIsBack((prevBack) =>
                 prevBack.map((v, j) => (j === i ? false : v))
               );
+              onExpire?.(i);
             }
           }
         });
@@ -36,9 +41,12 @@ export const useCardTimer = (cardCount: number, duration: number) => {
     }, 1000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, []);
+  }, [onExpire]);
 
   const toggle = useCallback(
     (idx: number) => {
@@ -55,7 +63,6 @@ export const useCardTimer = (cardCount: number, duration: number) => {
       setRemainTime((prev) =>
         prev.map((t, i) => {
           if (i !== idx) return t;
-
           if (openTime) {
             const openedAt = new Date(openTime).getTime();
             const now = Date.now();
@@ -63,21 +70,31 @@ export const useCardTimer = (cardCount: number, duration: number) => {
             const remain = Math.max(0, duration - elapsed);
 
             if (remain <= 0) {
-              setIsBack((prev) => prev.map((v, j) => (j === idx ? false : v)));
+              setIsBack((prev2) =>
+                prev2.map((v, j) => (j === idx ? false : v))
+              );
+              onExpire?.(idx);
               return 0;
             }
             return remain;
-          } else {
-            return duration;
           }
+          return duration;
         })
       );
     },
-    [duration]
+    [duration, onExpire]
   );
 
   const syncBackState = useCallback((states: boolean[]) => {
-    setIsBack(states);
+    setIsBack((prev) => {
+      if (
+        prev.length === states.length &&
+        prev.every((v, i) => v === states[i])
+      ) {
+        return prev;
+      }
+      return states;
+    });
   }, []);
 
   const isLocked = useCallback((idx: number) => isBack[idx], [isBack]);

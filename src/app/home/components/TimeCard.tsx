@@ -2,7 +2,11 @@
 import React from 'react';
 import CardFlip from './CardFlip';
 
-export type CardProps = { id: string; frontImg: string; back: React.ReactNode };
+export type CardProps = {
+  id: string;
+  frontImg: string;
+  back?: React.ReactNode;
+};
 
 type TimeCardProps = {
   card: CardProps;

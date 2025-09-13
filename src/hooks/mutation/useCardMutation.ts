@@ -1,11 +1,12 @@
-import { Card, CardShow } from '@/app/_apis/card';
-import { useMutation } from '@tanstack/react-query';
+import { Card, CardReplace, CardShow } from '@/app/_apis/card';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useCardShowMutation() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (body: { position: string }) => CardShow(body),
-    onSuccess: (data) => {
-      console.log('성공', data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
     },
     onError: (error) => {
       console.error('카드 오픈 실패:', error);
@@ -14,13 +15,28 @@ export function useCardShowMutation() {
 }
 
 export function useCardMutation() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => Card(),
-    onSuccess: (data) => {
-      console.log('성공', data);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
     },
     onError: (error) => {
       console.error('카드 불러오기 실패:', error);
+    },
+  });
+}
+
+export function useCardReplaceMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (body: { position: string }) => CardReplace(body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+    },
+    onError: (error) => {
+      console.error('카드 교체 실패:', error);
     },
   });
 }
