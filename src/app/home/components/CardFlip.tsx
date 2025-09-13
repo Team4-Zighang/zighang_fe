@@ -18,10 +18,12 @@ const CardFlip = ({
   onToggle,
 }: CardFlipProps) => {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      disabled={locked}
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => {
+        if (!locked) onToggle();
+      }}
       aria-pressed={backShown}
       className="relative h-[386px] w-full gap-4 overflow-hidden rounded-3xl"
     >
@@ -40,7 +42,7 @@ const CardFlip = ({
             src={img}
             alt="card"
             fill
-            className="object-cover"
+            className="cursor-pointer object-cover"
             sizes="280px"
             priority
           />
@@ -53,7 +55,7 @@ const CardFlip = ({
           {back}
         </div>
       </div>
-    </button>
+    </div>
   );
 };
 

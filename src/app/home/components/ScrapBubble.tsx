@@ -1,10 +1,14 @@
 'use client';
+
+import { useScrap } from '@/hooks/queries/useCard';
+
 type ScrapBubbleProps = {
   onClose?: () => void;
   className?: string;
 };
 
 const ScrapBubble = ({ onClose, className = '' }: ScrapBubbleProps) => {
+  const { data: scrapcard } = useScrap();
   return (
     <div className={`${className}`} onClick={(e) => e.stopPropagation()}>
       {/* 데스크탑 */}
@@ -29,7 +33,7 @@ const ScrapBubble = ({ onClose, className = '' }: ScrapBubbleProps) => {
             <br />
             지금까지{' '}
             <span className="text-contents-primary-default body-sm-medium">
-              3개 중 2개
+              3개 중 {scrapcard?.scrapCount}개
             </span>
             를 저장했어요
           </div>
@@ -57,7 +61,7 @@ const ScrapBubble = ({ onClose, className = '' }: ScrapBubbleProps) => {
               <br />
               지금까지{' '}
               <span className="text-contents-primary-default body-sm-medium">
-                3개 중 2개
+                3개 중 {scrapcard?.scrapCount}개
               </span>
               를 저장했어요
             </div>
