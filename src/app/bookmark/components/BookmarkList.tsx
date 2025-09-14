@@ -77,13 +77,13 @@ const BookmarkList = () => {
     });
   };
 
-  const toggleMobile = useToggleBookmark(page - 1, size);
+  const { mutate } = useToggleBookmark(page - 1, size);
   const handleBookmarkToggle = (postingId: number, next: boolean) => {
     const item = items.find(
       (i) => i.jobPostingResponse.postingId === postingId
     );
     if (!item) return;
-    toggleMobile.mutate({ postingId, next, scrapId: item.scrapId ?? null });
+    mutate({ postingId, next, scrapId: item.scrapId ?? null });
   };
 
   if (!isLoggedIn) {
@@ -205,7 +205,6 @@ const BookmarkList = () => {
           <BookmarkListItem
             key={item.jobPostingResponse.postingId}
             item={item}
-            // 데스크톱 선택/펼침은 scrapId가 있을 때만 (기존 로직 유지)
             selected={
               item.scrapId !== null && selectedIds.includes(item.scrapId)
             }

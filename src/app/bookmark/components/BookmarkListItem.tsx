@@ -3,6 +3,7 @@ import {
   BookmarkFileType,
   BookmarkItem,
 } from '@/app/_apis/schemas/bookmarkResponse';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
@@ -33,10 +34,19 @@ const BookmarkListItem = ({
   onBookmarkToggle,
   onFileUploaded,
 }: Props) => {
+  const { mutate } = useDeleteBookmark();
+
   const docs =
     !!item.fileResponse?.fileUrl || !!item.portfolioResponse?.fileUrl;
 
   const [isBookmarked, setIsBookmarked] = useState(item.scrapId !== null);
+
+  const onBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // 북마크 삭제
+    setIsBookmarked(!isBookmarked);
+    mutate([item.scrapId!]);
+  };
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -209,7 +219,7 @@ const BookmarkListItem = ({
             </div>
             <button
               className="flex h-[40px] w-[40px] items-center justify-center"
-              onClick={handleBookmarkClick}
+              onClick={onBookmarkClick}
               aria-pressed={isBookmarked}
               aria-label={isBookmarked ? '북마크 해제' : '북마크'}
             >
