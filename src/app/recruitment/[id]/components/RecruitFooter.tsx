@@ -79,7 +79,7 @@ const RecruitFooter = () => {
           <Image src="/icons/share.svg" alt="share" width={28} height={28} />
         </button>
         <Link
-          href={originalUrl}
+          href={job?.recruitmentOriginalUrl || '/'}
           className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white"
         >
           지원하기
