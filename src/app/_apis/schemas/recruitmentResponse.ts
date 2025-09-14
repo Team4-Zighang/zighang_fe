@@ -14,7 +14,7 @@ export interface RecruitmentItem {
     companyImageUrl: string | null;
   };
   viewCount: number;
-  recruitmentImageUrl: string | null;
+  // recruitmentImageUrl: string | null;
   recruitmentContent: string | null;
   recruitmentOriginalUrl: string;
   uploadDate: string;

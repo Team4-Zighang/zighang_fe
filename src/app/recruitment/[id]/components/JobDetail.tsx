@@ -50,15 +50,7 @@ const JobDetail = () => {
         <JobRate />
       </div>
       <div className="flex w-full justify-center">
-        {job?.recruitmentImageUrl ? (
-          <Image
-            className="object-fit w-full"
-            alt="상세 이미지"
-            src={job.recruitmentImageUrl}
-            width={712}
-            height={2610}
-          />
-        ) : job?.recruitmentContent ? (
+        {job?.recruitmentContent ? (
           <div
             className="w-full rounded bg-white"
             dangerouslySetInnerHTML={{ __html: job.recruitmentContent }}
