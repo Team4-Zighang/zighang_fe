@@ -8,9 +8,7 @@ const JobTitleArea = ({ item }: { item: RecruitmentItem }) => {
       <div className="flex gap-[16px] py-[12px] md:gap-[20px] md:py-0">
         <section className="border-base-neutral-border h-[80px] w-[80px] overflow-hidden rounded-[16px] border-[1px] bg-white object-cover md:h-[120px] md:w-[120px]">
           <Image
-            src={
-              item.company.companyImageUrl || '/images/default-company-logo.png'
-            }
+            src={item.company.companyImageUrl || '/images/sampleimage.png'}
             width={120}
             height={120}
             alt="company_logo"
