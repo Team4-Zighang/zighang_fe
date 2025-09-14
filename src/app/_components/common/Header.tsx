@@ -6,12 +6,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
+import LoginModal from './LoginModal';
 
 export default function Header() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const isLoggedIn = false; // 추후 상태 관리로 변경
+
+  const [loginModal, setLoginModal] = useState(false);
 
   useEffect(() => {
     setCurrentPath(pathname);
@@ -87,10 +90,16 @@ export default function Header() {
               />
             ) : (
               <>
-                <div className="mobile-filter text-contents-primary-default px-[8px] md:hidden">
+                <div
+                  className="mobile-filter text-contents-primary-default px-[8px] md:hidden"
+                  onClick={() => setLoginModal(true)}
+                >
                   로그인
                 </div>
-                <div className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block">
+                <div
+                  className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
+                  onClick={() => setLoginModal(true)}
+                >
                   로그인/회원가입
                 </div>
               </>
@@ -109,6 +118,7 @@ export default function Header() {
       </header>
 
       {menuOpen && <NavigationPanel onClose={() => setMenuOpen(false)} />}
+      {loginModal && <LoginModal />}
     </>
   );
 }
