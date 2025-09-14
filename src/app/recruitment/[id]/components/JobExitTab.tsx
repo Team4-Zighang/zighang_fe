@@ -67,10 +67,6 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
     }
   };
 
-  if (isLoading || isFetching) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <div className="flex gap-[8px]">
@@ -84,9 +80,11 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           ) : (
             <Image
               src={
-                isBookmarked
-                  ? '/icons/bookmark_selected.svg'
-                  : '/icons/bookmark_unselected.svg'
+                isLoading || isFetching
+                  ? '/icons/bookmark_unselected.svg'
+                  : isBookmarked
+                    ? '/icons/bookmark_selected.svg'
+                    : '/icons/bookmark_unselected.svg'
               }
               alt="bookmark"
               width={28}

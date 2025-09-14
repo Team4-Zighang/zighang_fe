@@ -9,6 +9,7 @@ import {
   useDeleteBookmark,
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
+import Loader from '@/app/_components/common/Loader';
 
 const BookmarkList = () => {
   const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
@@ -109,6 +110,15 @@ const BookmarkList = () => {
     );
   }
 
+  if (isFetching || isLoading)
+    return (
+      <div className="flex h-[360px] w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+
+  if (isError) return <div>에러가 발생했습니다.</div>;
+
   if (data?.totalElements === 0) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
@@ -132,9 +142,6 @@ const BookmarkList = () => {
       </div>
     );
   }
-
-  if (isFetching || isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
     <div className="flex flex-col gap-[16px]">

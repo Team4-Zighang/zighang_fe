@@ -8,6 +8,7 @@ import SimilarJob from './SimilarJob';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+import Loader from '@/app/_components/common/Loader';
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -25,9 +26,13 @@ const JobDetail = () => {
       );
     }
   }, [recruitmentOriginalUrl]);
-  if (isLoading || isFetching) {
-    return <div>Loading...</div>;
-  }
+
+  if (isFetching || isLoading)
+    return (
+      <div className="flex h-[100vh] w-full items-center justify-center md:w-[640px]">
+        <Loader />
+      </div>
+    );
 
   if (isError) {
     return <div>Error occurred while fetching data.</div>;
