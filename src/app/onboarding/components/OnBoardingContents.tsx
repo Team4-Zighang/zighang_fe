@@ -18,6 +18,10 @@ const OnBoardingContents = () => {
   const [jobList, setJobList] = useState(jobs.filter((j) => j !== '전체'));
   const [tempList, setTempList] = useState(jobList);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
+    null
+  );
+  const [selectedSchool, setSelectedSchool] = useState<Option | null>(null);
 
   const removeJob = (job: string) => {
     setTempList((prev) => prev.filter((j) => j !== job));
@@ -38,36 +42,39 @@ const OnBoardingContents = () => {
           data={jobOptions}
           placeholder="검색어를 입력하세요"
           onSelect={(opt: Option) => {
-            console.log('선택됨:', opt.id, opt.category, opt.name);
+            setSelectedJobCategory(opt);
+            console.log('희망 직군 선택:', opt);
           }}
         />
       </div>
 
-      <div className="flex flex-col items-start gap-2">
-        <div className="flex w-full flex-row items-center justify-between">
-          <div className="flex flex-row items-center gap-2">
-            <div className="text-contents-neutral-primary body-2xl-semibold">
-              희망 직무
+      {selectedJobCategory && (
+        <div className="flex flex-col items-start gap-2">
+          <div className="flex w-full flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-2">
+              <div className="text-contents-neutral-primary body-2xl-semibold">
+                희망 직무
+              </div>
+              <div className="text-contents-neutral-tertiary caption-md-medium">
+                중복 선택 가능
+              </div>
             </div>
-            <div className="text-contents-neutral-tertiary caption-md-medium">
-              중복 선택 가능
+            <div
+              onClick={() => {
+                setTempList(jobList);
+                setIsModalOpen(true);
+              }}
+              className="text-contents-primary-default body-sm-medium cursor-pointer underline"
+            >
+              아직 직무를 탐색중인가요?
             </div>
           </div>
-          <div
-            onClick={() => {
-              setTempList(jobList);
-              setIsModalOpen(true);
-            }}
-            className="text-contents-primary-default body-sm-medium cursor-pointer underline"
-          >
-            아직 직무를 탐색중인가요?
-          </div>
+          <OptionSelect
+            options={jobList}
+            onChange={(v) => console.log('선택 직무:', v)}
+          />
         </div>
-        <OptionSelect
-          options={jobList}
-          onChange={(v) => console.log('선택 직무:', v)}
-        />
-      </div>
+      )}
 
       <div className="flex flex-col items-start gap-2">
         <div className="flex flex-row items-center justify-between gap-2">
@@ -100,31 +107,34 @@ const OnBoardingContents = () => {
             data={finalSchoolOption}
             placeholder="대학교"
             onSelect={(opt: Option) => {
-              console.log('선택됨:', opt);
+              setSelectedSchool(opt);
+              console.log('최종 학력 선택:', opt);
             }}
           />
           <Dropdown
             data={universityOption}
             placeholder="학교를 입력하세요"
             onSelect={(opt: Option) => {
-              console.log('선택됨:', opt);
+              console.log('학교 선택:', opt);
             }}
           />
         </div>
       </div>
 
-      <div className="flex flex-col items-start gap-2">
-        <div className="text-contents-neutral-primary body-2xl-semibold">
-          전공
+      {selectedSchool && (
+        <div className="flex flex-col items-start gap-2">
+          <div className="text-contents-neutral-primary body-2xl-semibold">
+            전공
+          </div>
+          <Dropdown
+            data={jobOptions}
+            placeholder="전공을 입력하세요"
+            onSelect={(opt: Option) => {
+              console.log('전공 선택:', opt);
+            }}
+          />
         </div>
-        <Dropdown
-          data={jobOptions}
-          placeholder="전공을 입력하세요"
-          onSelect={(opt: Option) => {
-            console.log('선택됨:', opt);
-          }}
-        />
-      </div>
+      )}
 
       <Button />
 
@@ -155,13 +165,12 @@ const OnBoardingContents = () => {
                   className="border-base-neutral-border text-contents-neutral-tertiary body-sm-medium flex items-center rounded-[8px] border py-[10px] pr-3 pl-4"
                 >
                   {job}
-
                   <Image
                     src="/icons/x_button_gray.svg"
                     alt="삭제아이콘"
                     width={20}
                     height={20}
-                    className="h-5 w-5"
+                    className="h-5 w-5 cursor-pointer"
                     onClick={() => removeJob(job)}
                   />
                 </div>
