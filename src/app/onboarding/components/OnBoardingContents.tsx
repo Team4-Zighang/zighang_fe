@@ -5,7 +5,6 @@ import Dropdown, {
   jobOptions,
   majorOption,
   Option,
-  universityOption,
 } from '@/app/_components/common/DropDown';
 import OptionSelect, {
   jobs,
@@ -17,25 +16,30 @@ import Button from '@/app/_components/common/Button';
 import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
 import { REGION_MAP } from '@/utils/regionMap';
 import { YEAR_MAP } from '@/utils/yearMapping';
+import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
 
 const OnBoardingContents = () => {
-  const [jobList, setJobList] = useState(jobs.filter((j) => j !== '전체'));
-  const [tempList, setTempList] = useState(jobList);
+  const [jobList, setJobList] = useState(jobs);
+  const [tempList, setTempList] = useState<string[]>([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
     null
   );
   const [selectedSchool, setSelectedSchool] = useState<Option | null>(null);
-  const [selectedUniversity, setSelectedUniversity] = useState<Option | null>(
-    null
-  );
+  const [selectedUniversity, setSelectedUniversity] = useState<string>('');
   const [careerYear, setCareerYear] = useState<string>('YEAR_0');
   const [selectedMajor, setSelectedMajor] = useState<Option | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
 
   const onboardingMutation = useOnboardingMutation();
+
+  const handleOpenModal = () => {
+    setTempList(jobList.filter((j) => j !== '전체'));
+    setIsModalOpen(true);
+  };
 
   const removeJob = (job: string) => {
     setTempList((prev) => prev.filter((j) => j !== job));
@@ -55,7 +59,7 @@ const OnBoardingContents = () => {
       jobRole: selectedJobRoles,
       careerYear,
       region: mappedRegions.join(', '),
-      school: selectedUniversity?.category || '',
+      school: selectedUniversity || '',
       major: selectedMajor?.category || '',
     });
   };
@@ -85,10 +89,7 @@ const OnBoardingContents = () => {
               </div>
             </div>
             <div
-              onClick={() => {
-                setTempList(jobList);
-                setIsModalOpen(true);
-              }}
+              onClick={handleOpenModal}
               className="text-contents-primary-default body-sm-medium cursor-pointer underline"
             >
               아직 직무를 탐색중인가요?
@@ -131,14 +132,14 @@ const OnBoardingContents = () => {
           <div className="max-w-[128px]">
             <Dropdown
               data={finalSchoolOption}
-              placeholder="대학교"
+              placeholder="학교급 선택"
               onSelect={(opt: Option) => setSelectedSchool(opt)}
             />
           </div>
-          <Dropdown
-            data={universityOption}
+
+          <SchoolDropDown
             placeholder="학교를 입력하세요"
-            onSelect={(opt: Option) => setSelectedUniversity(opt)}
+            onSelect={(school) => setSelectedUniversity(school)}
           />
         </div>
       </div>
@@ -158,6 +159,7 @@ const OnBoardingContents = () => {
 
       <Button onClick={handleSubmit} />
 
+      {/* 모달: 확인 후 수정예정 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/40">
           <div className="bg-base-neutral-default w-[688px] rounded-[12px] p-6">
@@ -181,7 +183,7 @@ const OnBoardingContents = () => {
               {tempList.map((job) => (
                 <div
                   key={job}
-                  className="border-base-neutral-border text-contents-neutral-tertiary body-sm-medium flex items-center rounded-[8px] border py-[10px] pr-3 pl-4"
+                  className="border-base-neutral-border text-contents-neutral-tertiary body-sm-medium flex cursor-pointer items-center rounded-[8px] border py-[10px] pr-3 pl-4"
                 >
                   {job}
                   <Image

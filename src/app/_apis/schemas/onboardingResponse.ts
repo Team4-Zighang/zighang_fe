@@ -12,3 +12,9 @@ export interface OnBoardingResponse {
   timestamp: string;
   data: boolean;
 }
+
+export interface SchoolListResponse {
+  success: boolean;
+  timestamp: string;
+  data: string[];
+}

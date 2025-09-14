@@ -2,6 +2,7 @@ import api from './api';
 import {
   OnBoardingResponse,
   OnBoardingResquest,
+  SchoolListResponse,
 } from './schemas/OnboardingResponse';
 
 export async function Onboarding(
@@ -9,6 +10,11 @@ export async function Onboarding(
 ): Promise<OnBoardingResponse> {
   const res = await api.post<OnBoardingResponse>(`/onboarding`, body);
 
-  console.log(res.data);
+  return res.data;
+}
+
+export async function GetSchoolList(): Promise<SchoolListResponse> {
+  const res = await api.get<SchoolListResponse>('/onboarding/school');
+
   return res.data;
 }
