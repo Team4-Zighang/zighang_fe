@@ -132,7 +132,7 @@ const OnBoardingContents = () => {
           <div className="max-w-[128px]">
             <Dropdown
               data={finalSchoolOption}
-              placeholder="학교급 선택"
+              placeholder="학력"
               onSelect={(opt: Option) => setSelectedSchool(opt)}
             />
           </div>
