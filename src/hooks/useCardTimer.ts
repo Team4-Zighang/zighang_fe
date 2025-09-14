@@ -1,116 +1,121 @@
-'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
-export type UseCardTimeProps = {
-  flipped: boolean[];
-  remainTime: number[];
-  isBack: (id: number) => boolean;
-  isLocked: (id: number) => boolean;
-  toggle: (id: number) => void;
-  newPick: (id: number) => void;
-  formatHMS: (sec: number) => string;
-};
-
-export function useCardTimer(
+export const useCardTimer = (
   cardCount: number,
-  countdownSec = 60
-): UseCardTimeProps {
-  const [flipped, setFlipped] = useState<boolean[]>(() =>
-    Array(cardCount).fill(false)
+  duration: number,
+  onExpire?: (idx: number) => void
+) => {
+  const [isBack, setIsBack] = useState<boolean[]>(Array(cardCount).fill(false));
+  const [remainTime, setRemainTime] = useState<number[]>(
+    Array(cardCount).fill(duration)
   );
-  const [cardUnlockTime, setcardUnlockTime] = useState<(number | null)[]>(() =>
-    Array(cardCount).fill(null)
-  );
-  const [now, setNow] = useState<number>(() => Date.now());
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isBackRef = useRef(isBack);
 
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(t);
+    isBackRef.current = isBack;
+  }, [isBack]);
+
+  useEffect(() => {
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() => {
+      setRemainTime((prev) => {
+        const next = [...prev];
+        next.forEach((t, i) => {
+          if (isBackRef.current[i]) {
+            if (t > 1) {
+              next[i] = t - 1;
+            } else if (t === 1) {
+              next[i] = 0;
+              setIsBack((prevBack) =>
+                prevBack.map((v, j) => (j === i ? false : v))
+              );
+              onExpire?.(i);
+            }
+          }
+        });
+        return next;
+      });
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [onExpire]);
+
+  const toggle = useCallback(
+    (idx: number) => {
+      setIsBack((prev) => prev.map((v, i) => (i === idx ? true : v)));
+      setRemainTime((prev) => prev.map((t, i) => (i === idx ? duration : t)));
+    },
+    [duration]
+  );
+
+  const openSync = useCallback(
+    (idx: number, openTime?: string) => {
+      setIsBack((prev) => prev.map((v, i) => (i === idx ? true : v)));
+
+      setRemainTime((prev) =>
+        prev.map((t, i) => {
+          if (i !== idx) return t;
+          if (openTime) {
+            const openedAt = new Date(openTime).getTime();
+            const now = Date.now();
+            const elapsed = Math.floor((now - openedAt) / 1000);
+            const remain = Math.max(0, duration - elapsed);
+
+            if (remain <= 0) {
+              setIsBack((prev2) =>
+                prev2.map((v, j) => (j === idx ? false : v))
+              );
+              onExpire?.(idx);
+              return 0;
+            }
+            return remain;
+          }
+          return duration;
+        })
+      );
+    },
+    [duration, onExpire]
+  );
+
+  const syncBackState = useCallback((states: boolean[]) => {
+    setIsBack((prev) => {
+      if (
+        prev.length === states.length &&
+        prev.every((v, i) => v === states[i])
+      ) {
+        return prev;
+      }
+      return states;
+    });
   }, []);
 
-  const remainTime = useMemo(
-    () =>
-      cardUnlockTime.map((unlock) =>
-        unlock ? Math.max(0, Math.floor((unlock - now) / 1000)) : 0
-      ),
-    [cardUnlockTime, now]
-  );
-
-  useEffect(() => {
-    let changedFlip = false;
-    let changedLock = false;
-
-    setFlipped((prev) => {
-      const next = [...prev];
-      for (let i = 0; i < prev.length; i++) {
-        if (prev[i] && remainTime[i] <= 0 && cardUnlockTime[i]) {
-          next[i] = false;
-          changedFlip = true;
-        }
-      }
-      return changedFlip ? next : prev;
-    });
-
-    setcardUnlockTime((prev) => {
-      const next = [...prev];
-      for (let i = 0; i < prev.length; i++) {
-        if (prev[i] && remainTime[i] <= 0 && prev[i] !== null) {
-          next[i] = null;
-          changedLock = true;
-        }
-      }
-      return changedLock ? next : prev;
-    });
-  }, [remainTime, cardUnlockTime]);
-
-  const toggle = (id: number) => {
-    setFlipped((prev) => {
-      const isBack = prev[id];
-      if (isBack && cardUnlockTime[id] && remainTime[id] > 0) return prev;
-
-      const nextFlipped = [...prev];
-      if (!isBack) {
-        nextFlipped[id] = true;
-        setcardUnlockTime((prevLU) => {
-          const unlock = [...prevLU];
-          unlock[id] = Date.now() + countdownSec * 1000;
-          return unlock;
-        });
-      } else {
-        nextFlipped[id] = false;
-        setcardUnlockTime((prevLU) => {
-          const unlock = [...prevLU];
-          unlock[id] = null;
-          return unlock;
-        });
-      }
-      return nextFlipped;
-    });
-  };
-
-  const newPick = (id: number) => {
-    setFlipped((prev) => {
-      const next = [...prev];
-      next[id] = false;
-      return next;
-    });
-    setcardUnlockTime((prev) => {
-      const next = [...prev];
-      next[id] = null;
-      return next;
-    });
-  };
-
-  const isBack = (id: number) => !!flipped[id];
-  const isLocked = (id: number) => isBack(id) && remainTime[id] > 0;
+  const isLocked = useCallback((idx: number) => isBack[idx], [isBack]);
 
   const formatHMS = (sec: number) => {
-    const s = Math.max(0, sec);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const ss = s % 60;
-    return [h, m, ss].map((v) => String(v).padStart(2, '0')).join(':');
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(
+      2,
+      '0'
+    )}:${String(s).padStart(2, '0')}`;
   };
 
-  return { flipped, remainTime, isBack, isLocked, toggle, newPick, formatHMS };
-}
+  return {
+    remainTime,
+    isBack,
+    isLocked,
+    toggle,
+    formatHMS,
+    openSync,
+    syncBackState,
+  };
+};
