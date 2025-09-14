@@ -103,14 +103,16 @@ const OnBoardingContents = () => {
           최종 학력
         </div>
         <div className="flex w-full flex-row gap-[10px]">
-          <Dropdown
-            data={finalSchoolOption}
-            placeholder="대학교"
-            onSelect={(opt: Option) => {
-              setSelectedSchool(opt);
-              console.log('최종 학력 선택:', opt);
-            }}
-          />
+          <div className="max-w-[128px]">
+            <Dropdown
+              data={finalSchoolOption}
+              placeholder="대학교"
+              onSelect={(opt: Option) => {
+                setSelectedSchool(opt);
+                console.log('최종 학력 선택:', opt);
+              }}
+            />
+          </div>
           <Dropdown
             data={universityOption}
             placeholder="학교를 입력하세요"
