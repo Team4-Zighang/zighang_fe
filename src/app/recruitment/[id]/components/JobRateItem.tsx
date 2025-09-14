@@ -11,7 +11,7 @@ const JobRateItem = ({ item }: { item: EvalContent }) => {
           <div className="flex flex-col">
             <span className="body-md-semibold">{item.major}</span>
             <span className="caption-md-medium text-contents-neutral-tertiary">
-              {item.createdAt}
+              {item.createdAt?.split('T')[0]}
             </span>
           </div>
           <span className="body-sm-medium text-contents-primary-default">

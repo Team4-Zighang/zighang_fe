@@ -79,7 +79,10 @@ const JobRate = () => {
           />
         </div>
         {isRateOpen && (
-          <div className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto"
+          >
             {isloggedin ? (
               (evalList?.totalCount ?? 0) > 0 ? (
                 evalList?.evalList.content.map((item, idx) => (
