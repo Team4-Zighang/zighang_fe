@@ -1,5 +1,5 @@
 import { Onboarding } from '@/app/_apis/onboarding';
-import { OnBoardingResquest } from '@/app/_apis/schemas/OnboardingResponse';
+import { OnBoardingResquest } from '@/app/_apis/schemas/onboardingResponse';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 

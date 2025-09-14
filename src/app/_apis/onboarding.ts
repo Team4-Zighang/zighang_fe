@@ -3,7 +3,7 @@ import {
   OnBoardingResponse,
   OnBoardingResquest,
   SchoolListResponse,
-} from './schemas/OnboardingResponse';
+} from './schemas/onboardingResponse';
 
 export async function Onboarding(
   body: OnBoardingResquest
