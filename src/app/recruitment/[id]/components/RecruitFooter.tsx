@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
@@ -13,7 +13,7 @@ import {
 
 const RecruitFooter = () => {
   const { id } = useParams();
-  const { data, isLoading, isFetching, isError } = useRecruitmentDetail({
+  const { data, isLoading, isFetching } = useRecruitmentDetail({
     id: Number(id),
   });
 

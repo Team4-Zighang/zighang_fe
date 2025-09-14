@@ -21,9 +21,9 @@ export default function Loader({
   className,
 }: LoaderProps) {
   const styleVars = {
-    ['--size' as any]: toCssSize(size, '50px'),
-    ['--color' as any]: color,
-    ['--duration' as any]: `${durationMs}ms`,
+    '--size': toCssSize(size, '50px'),
+    '--color': color,
+    '--duration': `${durationMs}ms`,
   };
 
   return (

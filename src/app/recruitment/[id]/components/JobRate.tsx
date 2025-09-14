@@ -11,7 +11,7 @@ import { useRecruitmentEvalList } from '@/hooks/queries/useRecruitment';
 
 const JobRate = () => {
   const { id } = useParams();
-  const { data, isLoading, isFetching, isError } = useRecruitmentEvalList({
+  const { data, isLoading, isFetching } = useRecruitmentEvalList({
     id: Number(id),
   });
 

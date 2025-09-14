@@ -1,4 +1,3 @@
-// AnalyzeBar.tsx
 import React from 'react';
 
 interface AnalyzeBarProps {
@@ -20,7 +19,6 @@ const AnalyzeBar = ({
   const accentValue = isLeftAccent ? leftValue : rightValue;
   const accentLabel = isLeftAccent ? leftLabel : rightLabel;
   const percent = accentValue;
-  const gradientDir = isLeftAccent ? 'to-r' : 'to-l';
 
   return (
     <div>

@@ -1,10 +1,5 @@
-import {
-  DeleteBookmark,
-  GetBookmarkList,
-  GetPersonalityAnalysis,
-  PostBookmark,
-} from '@/app/_apis/bookmark';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { GetBookmarkList, GetPersonalityAnalysis } from '@/app/_apis/bookmark';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * 북마크 리스트 불러오기

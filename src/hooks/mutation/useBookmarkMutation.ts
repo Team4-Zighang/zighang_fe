@@ -41,6 +41,12 @@ export function usePostBookmark() {
   });
 }
 
+type BookmarkItem = {
+  jobPostingResponse: { postingId: number };
+  scrapId: number | null;
+  __bookmarkedOptimistic?: boolean;
+};
+
 export function useToggleBookmark(page?: number, size?: number) {
   const qc = useQueryClient();
   const key = ['bookmarkList', page, size];
@@ -69,17 +75,17 @@ export function useToggleBookmark(page?: number, size?: number) {
       if (prev) {
         const patched = {
           ...prev,
-          data: prev.data.map((it) => {
+          data: prev.data.map((it: BookmarkItem) => {
             if (it.jobPostingResponse.postingId !== postingId) return it;
 
             if (next) {
-              return { ...it, __bookmarkedOptimistic: true } as any;
+              return { ...it, __bookmarkedOptimistic: true };
             }
             return {
               ...it,
               scrapId: null,
               __bookmarkedOptimistic: false,
-            } as any;
+            };
           }),
         };
         qc.setQueryData(key, patched);

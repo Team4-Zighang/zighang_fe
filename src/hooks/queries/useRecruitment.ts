@@ -3,7 +3,7 @@ import {
   GetRecruitmentDetail,
   GetRecruitmentEvalList,
 } from '@/app/_apis/recruitment';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * 공고 상세 불러오기

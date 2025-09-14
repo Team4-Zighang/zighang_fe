@@ -32,7 +32,7 @@ const BookmarkList = () => {
   const items = data?.data || [];
   const totalPages = data?.totalPages || 1;
 
-  const handleFileUploaded = async (scrapId: number) => {
+  const handleFileUploaded = async () => {
     // 전체 리스트 재조회
     queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
   };
