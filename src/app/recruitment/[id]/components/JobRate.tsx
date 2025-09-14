@@ -32,6 +32,21 @@ const JobRate = () => {
     setIsModalOpen(true);
   };
 
+  if (isLoading || isFetching) {
+    return (
+      <div
+        className={`bg-base-neutral-alternative flex rounded-[8px] px-[20px] py-[16px]`}
+      >
+        <span className="text-contents-primary-default body-lg-semibold">
+          ??대학교&nbsp;
+        </span>
+        <span className="text-contents-neutral-primary body-lg-medium">
+          동문의 공고평
+        </span>
+      </div>
+    );
+  }
+
   return (
     <>
       <div
@@ -68,12 +83,15 @@ const JobRate = () => {
         {isRateOpen && (
           <div className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto">
             {isloggedin ? (
-              <>
-                <JobRateItem />
-                <JobRateItem />
-                <JobRateItem />
-                <JobRateItem />
-              </>
+              (evalList?.totalCount ?? 0) > 0 ? (
+                evalList?.evalList.content.map((item, idx) => (
+                  <JobRateItem key={item.createdAt ?? idx} item={item} />
+                ))
+              ) : (
+                <div className="text-contents-neutral-tertiary">
+                  공고평이 없습니다.
+                </div>
+              )
             ) : (
               <>
                 <div className="flex h-[272px] flex-col items-center justify-center gap-[12px] rounded-[8px] bg-white md:h-[252px]">
