@@ -8,57 +8,92 @@ import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
   const { id } = useParams();
-  const { data, isLoading, isFetching, isError } = useRecruitmentDetail({
+  const { data, isLoading, isFetching } = useRecruitmentDetail({
     id: Number(id),
   });
 
   const job = data?.data;
-  const isBookmarked = job?.isSaved ?? false;
-  console.log('isBookmarked', isBookmarked);
+  const [isBookmarked, setIsBookmarked] = useState(job?.isSaved ?? false);
+
+  useEffect(() => {
+    setIsBookmarked(job?.isSaved ?? false);
+  }, [job?.isSaved]);
 
   const deleteBookmark = useDeleteBookmark();
   const postBookmark = useToggleBookmark();
 
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
   const onBookmarkClick = () => {
+    setBookmarkLoading(true);
     if (isBookmarked) {
       if (job?.scrapId !== null && job?.scrapId !== undefined) {
-        deleteBookmark.mutate([job.scrapId]);
+        deleteBookmark.mutate([job.scrapId], {
+          onSuccess: () => {
+            setIsBookmarked(false);
+            setBookmarkLoading(false);
+          },
+          onError: () => setBookmarkLoading(false),
+        });
+      } else {
+        setIsBookmarked(false);
+        setBookmarkLoading(false);
       }
-      console.log('북마크 삭제');
     } else {
       if (job?.postingId !== undefined) {
-        postBookmark.mutate({
-          postingId: job.postingId,
-          next: true,
-          scrapId: job.scrapId ?? null,
-        });
+        postBookmark.mutate(
+          {
+            postingId: job.postingId,
+            next: true,
+            scrapId: job.scrapId ?? null,
+          },
+          {
+            onSuccess: () => {
+              setIsBookmarked(true);
+              setBookmarkLoading(false);
+              onBookmarked?.();
+            },
+            onError: () => setBookmarkLoading(false),
+          }
+        );
+      } else {
+        setIsBookmarked(true);
+        setBookmarkLoading(false);
       }
-      console.log('북마크 등록');
     }
   };
+
+  if (isLoading || isFetching) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
       <div className="flex gap-[8px]">
         <button
           onClick={onBookmarkClick}
-          className={`${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} h-[48px] w-[48px] rounded-[8px] border-[1px]`}
+          disabled={bookmarkLoading}
+          className={`${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px]`}
         >
-          <Image
-            src={
-              isBookmarked
-                ? '/icons/bookmark_selected.svg'
-                : '/icons/bookmark_unselected.svg'
-            }
-            alt="bookmark"
-            width={28}
-            height={28}
-            className="m-auto"
-          />
+          {bookmarkLoading ? (
+            <span className="loader">🔄</span>
+          ) : (
+            <Image
+              src={
+                isBookmarked
+                  ? '/icons/bookmark_selected.svg'
+                  : '/icons/bookmark_unselected.svg'
+              }
+              alt="bookmark"
+              width={28}
+              height={28}
+              className="m-auto"
+            />
+          )}
         </button>
         <button className="web-action bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
           공유하기

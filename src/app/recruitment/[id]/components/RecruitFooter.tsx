@@ -4,16 +4,47 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
+import {
+  useDeleteBookmark,
+  useToggleBookmark,
+} from '@/hooks/queries/useBookmark';
+import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+import { useParams } from 'next/dist/client/components/navigation';
 
 const RecruitFooter = () => {
+  const { id } = useParams();
+  const { data, isLoading, isFetching, isError } = useRecruitmentDetail({
+    id: Number(id),
+  });
+
+  const job = data?.data;
+  const isBookmarked = job?.isSaved ?? false;
+  console.log('isBookmarked', isBookmarked);
+
+  const deleteBookmark = useDeleteBookmark();
+  const postBookmark = useToggleBookmark();
+
+  const onBookmarkClick = () => {
+    if (isBookmarked) {
+      if (job?.scrapId !== null && job?.scrapId !== undefined) {
+        deleteBookmark.mutate([job.scrapId]);
+      }
+      console.log('북마크 삭제');
+    } else {
+      if (job?.postingId !== undefined) {
+        postBookmark.mutate({
+          postingId: job.postingId,
+          next: true,
+          scrapId: job.scrapId ?? null,
+        });
+      }
+      console.log('북마크 등록');
+    }
+  };
+
   const [isMemoOpen, setIsMemoOpen] = useState(false);
   const onMemoClick = () => {
     setIsMemoOpen(!isMemoOpen);
-  };
-
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const onBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked);
   };
 
   const [originalUrl, setOriginalUrl] = useState('/');
