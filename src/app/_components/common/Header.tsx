@@ -12,12 +12,26 @@ export default function Header() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isLoggedIn = false; // 추후 상태 관리로 변경
-
   const [loginModal, setLoginModal] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     setCurrentPath(pathname);
+
+    const storedUser = localStorage.getItem('memberInfo');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser?.data?.member?.profileImageUrl) {
+          setIsLoggedIn(true);
+          setProfileImage(parsedUser.data.member.profileImageUrl);
+        }
+      } catch (err) {
+        console.error('memberInfo 파싱 실패:', err);
+      }
+    }
   }, [pathname]);
 
   const isActive = (path: string) =>
@@ -82,11 +96,11 @@ export default function Header() {
 
             {isLoggedIn ? (
               <Image
-                src="/icons/profile.svg"
+                src={profileImage || '/icons/profile.svg'}
                 alt="profile"
                 width={40}
                 height={40}
-                className="h-[40px] w-[40px] cursor-pointer"
+                className="h-[40px] w-[40px] cursor-pointer rounded-full object-cover"
               />
             ) : (
               <>

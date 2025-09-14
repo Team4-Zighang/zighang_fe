@@ -2,6 +2,10 @@ import Image from 'next/image';
 import React from 'react';
 
 const LoginModal = () => {
+  const handleKakaoLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2/authorization/kakao`;
+  };
+
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40">
       <div className="relative w-[600px] rounded-[12px] bg-white p-10 shadow-lg">
@@ -21,7 +25,10 @@ const LoginModal = () => {
         </div>
 
         <div className="mt-8 flex flex-col gap-2">
-          <button className="web-title4 flex w-full cursor-pointer items-center justify-center gap-3 rounded-[8px] border border-gray-300 bg-white px-4 py-3 text-gray-700 shadow-sm">
+          <button
+            className="web-title4 flex w-full cursor-pointer items-center justify-center gap-3 rounded-[8px] border border-gray-300 bg-white px-4 py-3 text-gray-700 shadow-sm"
+            onClick={handleKakaoLogin}
+          >
             <Image
               src="/images/login/kakao.png"
               alt="카카오"

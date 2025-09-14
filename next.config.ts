@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       'cdn.rallit.com',
       'd2juy7qzamcf56.cloudfront.net',
       'static.wanted.co.kr',
+      'k.kakaocdn.net',
     ],
   },
 };
