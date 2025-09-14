@@ -46,30 +46,28 @@ const OptionSelect = ({ options, onChange }: OptionSelectProps) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleOption = (option: string) => {
+    let newSelected: string[];
+
     if (option === '전체') {
-      if (selected.length === options.length) {
-        setSelected([]);
-        onChange?.([]);
+      if (selected.includes('전체')) {
+        newSelected = [];
       } else {
-        setSelected([...options]);
-        onChange?.([...options]);
+        newSelected = [...options];
       }
     } else {
-      setSelected((prev) => {
-        const newSelected = prev.includes(option)
-          ? prev.filter((r) => r !== option)
-          : [...prev, option];
+      if (selected.includes(option)) {
+        newSelected = selected.filter((o) => o !== option && o !== '전체');
+      } else {
+        newSelected = [...selected.filter((o) => o !== '전체'), option];
 
         if (newSelected.length === options.length - 1) {
-          onChange?.([...options]);
-          return [...options];
+          newSelected = [...options];
         }
-
-        const filtered = newSelected.filter((r) => r !== '전체');
-        onChange?.(filtered);
-        return filtered;
-      });
+      }
     }
+
+    setSelected(newSelected);
+    onChange?.(newSelected);
   };
 
   return (
