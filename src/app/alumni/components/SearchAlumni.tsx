@@ -2,10 +2,13 @@
 import HorizontalScroll from '@/app/_components/common/HorizontalScroll';
 import { useAlumniInfo } from '@/hooks/queries/useAlumni';
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
+import AlumniModal from './AlumniModal';
 
 const SearchAlumni = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { data: infoData, isLoading, isError } = useAlumniInfo();
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러가 발생했습니다.</div>;
@@ -39,8 +42,8 @@ const SearchAlumni = () => {
                       className="border-base-neutral-border flex items-center justify-center rounded-[8px] border"
                     >
                       <Image
-                        src={b.companyImageUrl}
-                        alt={b.companyImageUrl}
+                        src={b.companyImageUrl || '/images/sampleimage.png'}
+                        alt={`${b.companyName} logo`}
                         width={150}
                         height={106}
                         className="h-[89px] w-[126px] rounded-[8px] object-cover md:h-[106px] md:w-[150px]"
@@ -73,6 +76,10 @@ const SearchAlumni = () => {
                     width={24}
                     height={24}
                     className="mt-4 cursor-pointer"
+                    onClick={() => {
+                      setSelectedMemberId(info.memberId); // 선택된 memberId 저장
+                      setIsOpen(true);
+                    }}
                   />
                 </div>
 
@@ -91,6 +98,12 @@ const SearchAlumni = () => {
           })}
         </HorizontalScroll>
       </div>
+      {isOpen && selectedMemberId && (
+        <AlumniModal
+          memberId={selectedMemberId}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
     </div>
   );
 };

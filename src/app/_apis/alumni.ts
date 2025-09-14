@@ -1,5 +1,6 @@
 import api from './api';
 import {
+  AlumniDetailInfoResponse,
   AlumniInfoResponse,
   AlumniScrapResponse,
   companiesTop3Response,
@@ -42,6 +43,21 @@ export async function GetAlumniScrap(
 export async function GetInfo(): Promise<AlumniInfoResponse[]> {
   const res = await api.get<{ data: AlumniInfoResponse[] }>(
     '/alumni/similar/info'
+  );
+
+  return res.data.data;
+}
+
+export async function GetDetailInfo(
+  memberId: number
+): Promise<AlumniDetailInfoResponse> {
+  const res = await api.get<{ data: AlumniDetailInfoResponse }>(
+    `/alumni/similar/info/${memberId}`,
+    {
+      params: {
+        memberId,
+      },
+    }
   );
 
   return res.data.data;
