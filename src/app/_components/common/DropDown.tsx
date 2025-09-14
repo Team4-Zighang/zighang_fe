@@ -19,11 +19,15 @@ export const finalSchoolOption = [
 ];
 
 export const universityOption = [
-  { id: 1, category: '고등학교' },
-  { id: 2, category: '대학교' },
-  { id: 3, category: '석사' },
-  { id: 4, category: '박사' },
-  { id: 5, category: '석박 통합과정' },
+  { id: 1, category: '건국대학교' },
+  { id: 2, category: '숭실대학교' },
+  { id: 3, category: '경기대학교' },
+  { id: 4, category: '한국외국어대학교' },
+];
+
+export const majorOption = [
+  { id: 1, category: '컴퓨터공학과' },
+  { id: 2, category: '소프트웨어학부' },
 ];
 
 export type Option = {

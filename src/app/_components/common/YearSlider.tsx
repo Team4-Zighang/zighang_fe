@@ -1,10 +1,19 @@
 'use client';
 import { useState } from 'react';
 
-const YearSlider = () => {
+type Props = {
+  onChange?: (value: number) => void;
+};
+
+const YearSlider = ({ onChange }: Props) => {
   const [value, setValue] = useState(0);
 
   const percent = (value / 10) * 100;
+
+  const handleChange = (val: number) => {
+    setValue(val);
+    onChange?.(val);
+  };
 
   return (
     <div className="relative w-full">
@@ -13,8 +22,8 @@ const YearSlider = () => {
         min="0"
         max="10"
         value={value}
-        onChange={(e) => setValue(Number(e.target.value))}
-        className="bg-base-neutral-border [&::-moz-range-thumb]:border-base-neutral-border [&::-moz-range-thumb]:bg-contents-primary-accent [&::-webkit-slider-thumb]:border-base-neutral-border [&::-webkit-slider-thumb]:bg-contents-primary-accent h-1 w-full appearance-none rounded-full [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2"
+        onChange={(e) => handleChange(Number(e.target.value))}
+        className="bg-base-neutral-border [&::-moz-range-thumb]:bg-contents-primary-accent [&::-webkit-slider-thumb]:bg-contents-primary-accent h-1 w-full appearance-none rounded-full [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white"
         style={{
           background: `linear-gradient(to right, #7a52ff ${percent}%, #E2E6EB ${percent}%)`,
         }}
@@ -29,7 +38,7 @@ const YearSlider = () => {
               ? 'translateX(0%)'
               : value === 10
                 ? 'translateX(-100%)'
-                : 'translateX(-50%)',
+                : 'translateX(-30%)',
         }}
       >
         {value === 0 ? '신입' : `${value}년차`}

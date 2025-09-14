@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Dropdown, {
   finalSchoolOption,
   jobOptions,
+  majorOption,
   Option,
   universityOption,
 } from '@/app/_components/common/DropDown';
@@ -13,15 +14,28 @@ import OptionSelect, {
 import YearSlider from '@/app/_components/common/YearSlider';
 import Image from 'next/image';
 import Button from '@/app/_components/common/Button';
+import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
+import { REGION_MAP } from '@/utils/regionMap';
+import { YEAR_MAP } from '@/utils/yearMapping';
 
 const OnBoardingContents = () => {
   const [jobList, setJobList] = useState(jobs.filter((j) => j !== '전체'));
   const [tempList, setTempList] = useState(jobList);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
     null
   );
   const [selectedSchool, setSelectedSchool] = useState<Option | null>(null);
+  const [selectedUniversity, setSelectedUniversity] = useState<Option | null>(
+    null
+  );
+  const [careerYear, setCareerYear] = useState<string>('YEAR_0');
+  const [selectedMajor, setSelectedMajor] = useState<Option | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
+  const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
+
+  const onboardingMutation = useOnboardingMutation();
 
   const removeJob = (job: string) => {
     setTempList((prev) => prev.filter((j) => j !== job));
@@ -30,6 +44,20 @@ const OnBoardingContents = () => {
   const confirmJobs = () => {
     setJobList(tempList);
     setIsModalOpen(false);
+    setSelectedJobRoles(tempList);
+  };
+
+  const handleSubmit = () => {
+    const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
+
+    onboardingMutation.mutate({
+      jobCategory: selectedJobCategory?.category || '',
+      jobRole: selectedJobRoles,
+      careerYear,
+      region: mappedRegions.join(', '),
+      school: selectedUniversity?.category || '',
+      major: selectedMajor?.category || '',
+    });
   };
 
   return (
@@ -41,10 +69,7 @@ const OnBoardingContents = () => {
         <Dropdown
           data={jobOptions}
           placeholder="검색어를 입력하세요"
-          onSelect={(opt: Option) => {
-            setSelectedJobCategory(opt);
-            console.log('희망 직군 선택:', opt);
-          }}
+          onSelect={(opt: Option) => setSelectedJobCategory(opt)}
         />
       </div>
 
@@ -71,7 +96,7 @@ const OnBoardingContents = () => {
           </div>
           <OptionSelect
             options={jobList}
-            onChange={(v) => console.log('선택 직무:', v)}
+            onChange={(v) => setSelectedJobRoles(v)}
           />
         </div>
       )}
@@ -87,7 +112,7 @@ const OnBoardingContents = () => {
         </div>
         <OptionSelect
           options={regions}
-          onChange={(v) => console.log('선택 지역:', v)}
+          onChange={(v) => setSelectedRegion(v)}
         />
       </div>
 
@@ -95,7 +120,7 @@ const OnBoardingContents = () => {
         <div className="text-contents-neutral-primary body-2xl-semibold">
           경력
         </div>
-        <YearSlider />
+        <YearSlider onChange={(val) => setCareerYear(YEAR_MAP[val])} />
       </div>
 
       <div className="flex flex-col items-start gap-2">
@@ -107,18 +132,13 @@ const OnBoardingContents = () => {
             <Dropdown
               data={finalSchoolOption}
               placeholder="대학교"
-              onSelect={(opt: Option) => {
-                setSelectedSchool(opt);
-                console.log('최종 학력 선택:', opt);
-              }}
+              onSelect={(opt: Option) => setSelectedSchool(opt)}
             />
           </div>
           <Dropdown
             data={universityOption}
             placeholder="학교를 입력하세요"
-            onSelect={(opt: Option) => {
-              console.log('학교 선택:', opt);
-            }}
+            onSelect={(opt: Option) => setSelectedUniversity(opt)}
           />
         </div>
       </div>
@@ -129,16 +149,14 @@ const OnBoardingContents = () => {
             전공
           </div>
           <Dropdown
-            data={jobOptions}
+            data={majorOption}
             placeholder="전공을 입력하세요"
-            onSelect={(opt: Option) => {
-              console.log('전공 선택:', opt);
-            }}
+            onSelect={(opt: Option) => setSelectedMajor(opt)}
           />
         </div>
       )}
 
-      <Button />
+      <Button onClick={handleSubmit} />
 
       {isModalOpen && (
         <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/40">
@@ -159,7 +177,6 @@ const OnBoardingContents = () => {
                 원하지 않는 직무를 다 지웠어요
               </div>
             </div>
-
             <div className="mt-2 flex flex-wrap gap-[6px]">
               {tempList.map((job) => (
                 <div

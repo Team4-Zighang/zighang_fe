@@ -1,0 +1,18 @@
+import { Onboarding } from '@/app/_apis/onboarding';
+import { OnBoardingResquest } from '@/app/_apis/schemas/OnboardingResponse';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+
+export function useOnboardingMutation() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  return useMutation({
+    mutationFn: (data: OnBoardingResquest) => Onboarding(data),
+    onSuccess: () => {
+      router.push('/home');
+    },
+    onError: (error) => {
+      console.error('온보딩 실패:', error);
+    },
+  });
+}
