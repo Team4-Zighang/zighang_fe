@@ -4,12 +4,12 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
+import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+import { useParams } from 'next/dist/client/components/navigation';
 import {
   useDeleteBookmark,
   useToggleBookmark,
-} from '@/hooks/queries/useBookmark';
-import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
-import { useParams } from 'next/dist/client/components/navigation';
+} from '@/hooks/mutation/useBookmarkMutation';
 
 const RecruitFooter = () => {
   const { id } = useParams();

@@ -3,12 +3,12 @@ import Image from 'next/image';
 import BookmarkListItem from './BookmarkListItem';
 import { useState } from 'react';
 import Pagination from '@/app/_components/common/Pagination';
+import { useBookmarkList } from '@/hooks/queries/useBookmark';
+import { useQueryClient } from '@tanstack/react-query';
 import {
-  useBookmarkList,
   useDeleteBookmark,
   useToggleBookmark,
-} from '@/hooks/queries/useBookmark';
-import { useQueryClient } from '@tanstack/react-query';
+} from '@/hooks/mutation/useBookmarkMutation';
 
 const BookmarkList = () => {
   const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
@@ -109,7 +109,7 @@ const BookmarkList = () => {
     );
   }
 
-  if (items.length === 0) {
+  if (data?.totalElements === 0) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
         <Image

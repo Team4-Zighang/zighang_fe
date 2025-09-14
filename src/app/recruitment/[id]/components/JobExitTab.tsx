@@ -3,7 +3,7 @@
 import {
   useDeleteBookmark,
   useToggleBookmark,
-} from '@/hooks/queries/useBookmark';
+} from '@/hooks/mutation/useBookmarkMutation';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import Image from 'next/image';
 import Link from 'next/link';
