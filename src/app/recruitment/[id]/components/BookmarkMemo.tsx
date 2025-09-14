@@ -1,39 +1,78 @@
 'use client';
+import Loader from '@/app/_components/common/Loader';
+import { usePostMemo } from '@/hooks/mutation/useRecruitMutation';
+import { useGetMemo } from '@/hooks/queries/useRecruitment';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
+  const params = useParams();
+  const { data, isLoading, isFetching } = useGetMemo({ id: Number(params.id) });
   const [memo, setMemo] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const [isloggedin] = useState(false); // 나중에 로그인 여부로 바꾸기
+  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
+
+  useEffect(() => {
+    if (isloggedin) {
+      if (data?.data) setMemo(data.data);
+      else setMemo('');
+    } else {
+      const saved = localStorage.getItem(`bookmarkMemo_${params.id}`);
+      setMemo(saved ?? '');
+    }
+  }, [isloggedin, data, params.id]);
+
+  const { mutate } = usePostMemo();
 
   const onSaveClick = () => {
     if (!memo) return;
+
+    if (!isloggedin) {
+      localStorage.setItem(`bookmarkMemo_${params.id}`, memo);
+      setIsSaved(true);
+      onSaved?.();
+      return;
+    }
+
+    mutate({
+      postingId: Number(params.id),
+      content: memo,
+    });
+
     setIsSaved(true);
-    onSaved?.(); // 저장 시 부모에 알림 요청
+    onSaved?.();
   };
 
   return (
     <div className="relative flex w-full flex-col rounded-[12px] border-[1px] border-[#D2CB9B10] px-[8px] md:px-0">
       <div className="h-[16px] w-full rounded-t-[12px] bg-[#FEF9C8]"></div>
       <div className="flex h-[224px] w-full flex-col gap-[12px] rounded-b-[12px] bg-[#FFFCDD] px-[20px] py-[12px] md:h-full md:gap-[24px]">
-        <textarea
-          className="body-lg-medium h-[144px] outline-none placeholder:text-[#D6CD7C] md:h-[300px]"
-          placeholder="작성한 메모는 북마크에 같이 저장돼요"
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
-        ></textarea>
-        <button
-          onClick={onSaveClick}
-          disabled={!memo}
-          className={`self-end rounded-[4px] px-[8px] py-[4px] text-[#5F5B3E] hover:bg-[#F7F0A8] ${
-            memo
-              ? 'cursor-pointer bg-[#EDE69E]'
-              : 'cursor-not-allowed bg-[#FDF6AE] opacity-60'
-          }`}
-        >
-          저장하기
-        </button>
+        {isLoading || isFetching ? (
+          <div className="flex h-[144px] items-center justify-center md:h-[300px]">
+            <Loader size={20} />
+          </div>
+        ) : (
+          <>
+            <textarea
+              className="body-lg-medium h-[144px] outline-none placeholder:text-[#D6CD7C] md:h-[300px]"
+              placeholder="작성한 메모는 북마크에 같이 저장돼요"
+              value={memo}
+              onChange={(e) => setMemo(e.target.value)}
+            ></textarea>
+            <button
+              onClick={onSaveClick}
+              disabled={!memo}
+              className={`self-end rounded-[4px] px-[8px] py-[4px] text-[#5F5B3E] hover:bg-[#F7F0A8] ${
+                memo
+                  ? 'cursor-pointer bg-[#EDE69E]'
+                  : 'cursor-not-allowed bg-[#FDF6AE] opacity-60'
+              }`}
+            >
+              저장하기
+            </button>
+          </>
+        )}
       </div>
       {isSaved && !isloggedin && (
         <div className="absolute top-[98%] right-[15%] z-10 flex w-[320px] translate-x-1/2 flex-col items-center">
