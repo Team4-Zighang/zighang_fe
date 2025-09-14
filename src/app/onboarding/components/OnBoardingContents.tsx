@@ -12,6 +12,7 @@ import OptionSelect, {
 } from '@/app/_components/common/OptionSelect';
 import YearSlider from '@/app/_components/common/YearSlider';
 import Image from 'next/image';
+import Button from '@/app/_components/common/Button';
 
 const OnBoardingContents = () => {
   const [jobList, setJobList] = useState(jobs.filter((j) => j !== '전체'));
@@ -124,6 +125,8 @@ const OnBoardingContents = () => {
           }}
         />
       </div>
+
+      <Button />
 
       {isModalOpen && (
         <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/40">
