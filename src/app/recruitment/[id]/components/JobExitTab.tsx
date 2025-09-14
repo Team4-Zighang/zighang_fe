@@ -23,8 +23,8 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
     setIsBookmarked(job?.isSaved ?? false);
   }, [job?.isSaved]);
 
-  const deleteBookmark = useDeleteBookmark();
-  const postBookmark = useToggleBookmark();
+  const { mutate: deleteBookmark } = useDeleteBookmark();
+  const { mutate: postBookmark } = useToggleBookmark();
 
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
     setBookmarkLoading(true);
     if (isBookmarked) {
       if (job?.scrapId !== null && job?.scrapId !== undefined) {
-        deleteBookmark.mutate([job.scrapId], {
+        deleteBookmark([job.scrapId], {
           onSuccess: () => {
             setIsBookmarked(false);
             setBookmarkLoading(false);
@@ -45,7 +45,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
       }
     } else {
       if (job?.postingId !== undefined) {
-        postBookmark.mutate(
+        postBookmark(
           {
             postingId: job.postingId,
             next: true,
@@ -75,23 +75,19 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           disabled={bookmarkLoading}
           className={`${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px]`}
         >
-          {bookmarkLoading ? (
-            <span className="loader">🔄</span>
-          ) : (
-            <Image
-              src={
-                isLoading || isFetching
-                  ? '/icons/bookmark_unselected.svg'
-                  : isBookmarked
-                    ? '/icons/bookmark_selected.svg'
-                    : '/icons/bookmark_unselected.svg'
-              }
-              alt="bookmark"
-              width={28}
-              height={28}
-              className="m-auto"
-            />
-          )}
+          <Image
+            src={
+              isLoading || isFetching
+                ? '/icons/bookmark_unselected.svg'
+                : isBookmarked
+                  ? '/icons/bookmark_selected.svg'
+                  : '/icons/bookmark_unselected.svg'
+            }
+            alt="bookmark"
+            width={28}
+            height={28}
+            className={`m-auto ${bookmarkLoading ? 'opacity-50' : ''}`}
+          />
         </button>
         <button className="web-action bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
           공유하기

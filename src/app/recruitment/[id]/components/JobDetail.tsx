@@ -5,7 +5,6 @@ import JobDetailDate from './JobDetailDate';
 import JobDetailInfo from './JobDetailInfo';
 import JobRate from './JobRate';
 import SimilarJob from './SimilarJob';
-import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import Loader from '@/app/_components/common/Loader';

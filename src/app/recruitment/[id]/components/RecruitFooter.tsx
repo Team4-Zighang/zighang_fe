@@ -18,27 +18,49 @@ const RecruitFooter = () => {
   });
 
   const job = data?.data;
-  const isBookmarked = job?.isSaved ?? false;
-  console.log('isBookmarked', isBookmarked);
+  const [isBookmarked, setIsBookmarked] = useState(job?.isSaved ?? false);
 
-  const deleteBookmark = useDeleteBookmark();
-  const postBookmark = useToggleBookmark();
+  const { mutate: deleteBookmark } = useDeleteBookmark();
+  const { mutate: postBookmark } = useToggleBookmark();
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const onBookmarkClick = () => {
+    setBookmarkLoading(true);
     if (isBookmarked) {
       if (job?.scrapId !== null && job?.scrapId !== undefined) {
-        deleteBookmark.mutate([job.scrapId]);
+        deleteBookmark([job.scrapId], {
+          onSuccess: () => {
+            setIsBookmarked(false);
+            setBookmarkLoading(false);
+            console.log('북마크 해제 성공');
+          },
+          onError: () => setBookmarkLoading(false),
+        });
+      } else {
+        setIsBookmarked(false);
+        setBookmarkLoading(false);
       }
-      console.log('북마크 삭제');
     } else {
       if (job?.postingId !== undefined) {
-        postBookmark.mutate({
-          postingId: job.postingId,
-          next: true,
-          scrapId: job.scrapId ?? null,
-        });
+        postBookmark(
+          {
+            postingId: job.postingId,
+            next: true,
+            scrapId: job.scrapId ?? null,
+          },
+          {
+            onSuccess: () => {
+              setIsBookmarked(true);
+              setBookmarkLoading(false);
+              console.log('북마크 등록 성공');
+            },
+            onError: () => setBookmarkLoading(false),
+          }
+        );
+      } else {
+        setIsBookmarked(true);
+        setBookmarkLoading(false);
       }
-      console.log('북마크 등록');
     }
   };
 
@@ -46,14 +68,6 @@ const RecruitFooter = () => {
   const onMemoClick = () => {
     setIsMemoOpen(!isMemoOpen);
   };
-
-  const [originalUrl, setOriginalUrl] = useState('/');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setOriginalUrl(localStorage.getItem('recruitmentOriginalUrl') || '/');
-    }
-  }, []);
 
   return (
     <>
@@ -66,15 +80,24 @@ const RecruitFooter = () => {
         </button>
         <button
           onClick={onBookmarkClick}
-          className="flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008]"
+          disabled={bookmarkLoading}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
-            src={`${isBookmarked ? '/icons/bookmark_selected.svg' : '/icons/bookmark_unselected.svg'}`}
+            src={
+              isLoading || isFetching
+                ? '/icons/bookmark_unselected.svg'
+                : isBookmarked
+                  ? '/icons/bookmark_selected.svg'
+                  : '/icons/bookmark_unselected.svg'
+            }
             alt="bookmark"
             width={28}
             height={28}
+            className={`m-auto ${bookmarkLoading ? 'opacity-50' : ''}`}
           />
         </button>
+
         <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008]">
           <Image src="/icons/share.svg" alt="share" width={28} height={28} />
         </button>
