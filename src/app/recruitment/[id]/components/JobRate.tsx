@@ -13,8 +13,6 @@ const JobRate = () => {
   const { id } = useParams();
   const { data, isLoading, isFetching, isError } = useRecruitmentEvalList({
     id: Number(id),
-    page: 0,
-    size: 10,
   });
 
   const evalList = data?.data;
@@ -140,7 +138,7 @@ const JobRate = () => {
               setIsModalOpen(false);
             }}
           >
-            <JobRateModal />
+            <JobRateModal onClose={() => setIsModalOpen(false)} />
           </div>
         )}
       </div>

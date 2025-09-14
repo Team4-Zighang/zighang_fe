@@ -21,6 +21,22 @@ export interface RecruitmentItem {
   expiredDate: string;
 }
 
+// /posting/eval post 요청
+export interface RecruitmentEvalPost {
+  postingId: number;
+  evalScore: number;
+  evalText: string;
+  recruitmentStep: string;
+}
+
+// /posting/eval post 응답
+export interface RecruitmentEval {
+  evaluationId: number;
+  postingId: number;
+  isSaved: boolean;
+  message: string;
+}
+
 /**
  * 공고 평가 관련
  */

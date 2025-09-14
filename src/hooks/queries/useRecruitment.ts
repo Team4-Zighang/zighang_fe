@@ -22,17 +22,9 @@ export const useRecruitmentDetail = ({ id }: { id: number }) => {
 /**
  * 공고평 목록 불러오기
  */
-export function useRecruitmentEvalList({
-  id,
-  page = 0,
-  size = 10,
-}: {
-  id: number;
-  page?: number;
-  size?: number;
-}) {
+export function useRecruitmentEvalList({ id }: { id: number }) {
   return useQuery({
-    queryKey: ['recruitmentEvalList', id, page, size],
+    queryKey: ['recruitmentEvalList', id],
     queryFn: () => GetRecruitmentEvalList(id),
     enabled: Number.isFinite(id) && id > 0,
     staleTime: 5 * 60 * 1000,
