@@ -5,7 +5,7 @@ import Footer from '../_components/common/Footer';
 
 const page = () => {
   return (
-    <div className="mx-auto flex flex-col items-center justify-center">
+    <div className="mx-auto flex flex-col items-center justify-center px-5 md:px-0">
       <OnboardingLogo />
       <OnBoardingContents />
       <Footer />

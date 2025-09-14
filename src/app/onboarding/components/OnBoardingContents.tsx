@@ -21,7 +21,6 @@ import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
 const OnBoardingContents = () => {
   const [jobList, setJobList] = useState(jobs);
   const [tempList, setTempList] = useState<string[]>([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
@@ -46,9 +45,8 @@ const OnBoardingContents = () => {
   };
 
   const confirmJobs = () => {
-    setJobList(tempList);
-    setIsModalOpen(false);
     setSelectedJobRoles(tempList);
+    setIsModalOpen(false);
   };
 
   const handleSubmit = () => {
@@ -136,7 +134,6 @@ const OnBoardingContents = () => {
               onSelect={(opt: Option) => setSelectedSchool(opt)}
             />
           </div>
-
           <SchoolDropDown
             placeholder="학교를 입력하세요"
             onSelect={(school) => setSelectedUniversity(school)}
@@ -159,9 +156,9 @@ const OnBoardingContents = () => {
 
       <Button onClick={handleSubmit} />
 
-      {/* 모달: 확인 후 수정예정 */}
+      {/* 모달 확인 후 수정 예정*/}
       {isModalOpen && (
-        <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-200 mx-auto flex items-center justify-center bg-black/40 px-5 md:px-0">
           <div className="bg-base-neutral-default w-[688px] rounded-[12px] p-6">
             <div className="flex w-full flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-2">
