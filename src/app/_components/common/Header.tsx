@@ -18,7 +18,7 @@ export default function Header() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn());
+    setIsLoggedIn(isLoggedIn);
     setCurrentPath(pathname);
 
     const storedUser = localStorage.getItem('memberInfo');
@@ -95,7 +95,7 @@ export default function Header() {
               </span>
             </Link>
 
-            {loggedIn ? (
+            {isLoggedIn ? (
               <Image
                 src={profileImage || '/icons/profile.svg'}
                 alt="profile"
