@@ -21,7 +21,10 @@ import { useMajorList } from '@/hooks/queries/useOnboarding';
 import { SCHOOL_MAP } from '@/utils/schoolMap';
 
 const OnBoardingContents = () => {
-  const [jobList, setJobList] = useState(jobs);
+  const initialJobList = jobs;
+  const [formKey, setFormKey] = useState(0);
+
+  const [jobList, setJobList] = useState(initialJobList);
   const [tempList, setTempList] = useState<string[]>([]);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
@@ -62,6 +65,20 @@ const OnBoardingContents = () => {
     setIsRemoveModalOpen(false);
   };
 
+  const resetForm = () => {
+    setJobList(initialJobList);
+    setTempList([]);
+    setIsRemoveModalOpen(false);
+    setSelectedJobCategory(null);
+    setSelectedSchool(null);
+    setSelectedUniversity('');
+    setCareerYear('YEAR_0');
+    setSelectedMajor(null);
+    setSelectedRegion([]);
+    setSelectedJobRoles([]);
+    setFormKey((prev) => prev + 1);
+  };
+
   const handleSubmit = () => {
     const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
 
@@ -77,6 +94,7 @@ const OnBoardingContents = () => {
       {
         onSuccess: () => {
           setLoginModal(true);
+          resetForm();
         },
       }
     );
@@ -91,7 +109,10 @@ const OnBoardingContents = () => {
     !selectedMajor;
 
   return (
-    <div className="mt-12 flex w-full max-w-[640px] flex-col gap-12">
+    <div
+      key={formKey}
+      className="mt-12 flex w-full max-w-[640px] flex-col gap-12"
+    >
       <div className="flex flex-col items-start gap-2">
         <div className="text-contents-neutral-primary body-2xl-semibold">
           희망 직군
@@ -165,6 +186,7 @@ const OnBoardingContents = () => {
           <SchoolDropDown
             placeholder="학교를 입력하세요"
             onSelect={(school) => setSelectedUniversity(school)}
+            isEnabled={selectedSchool?.category === '대학교'}
           />
         </div>
       </div>
@@ -183,6 +205,7 @@ const OnBoardingContents = () => {
       )}
 
       <Button onClick={handleSubmit} disabled={isDisabled} />
+
       {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
 
       {isRemoveModalOpen && (
