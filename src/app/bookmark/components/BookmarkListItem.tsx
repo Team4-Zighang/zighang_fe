@@ -48,11 +48,11 @@ const BookmarkListItem = ({
     mutate([item.scrapId!]);
   };
 
-  const handleBookmarkClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsBookmarked(!isBookmarked);
-    onBookmarkToggle?.(item.jobPostingResponse.postingId, !isBookmarked);
-  };
+  // const handleBookmarkClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   setIsBookmarked(!isBookmarked);
+  //   onBookmarkToggle?.(item.jobPostingResponse.postingId, !isBookmarked);
+  // };
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const portfolioInputRef = useRef<HTMLInputElement>(null);
