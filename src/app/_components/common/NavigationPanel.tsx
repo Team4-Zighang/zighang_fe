@@ -87,6 +87,21 @@ export default function NavigationPanel({ onClose }: MobileMenuProps) {
             >
               오픈 채팅
             </Link>
+            <Link
+              href="/bookmark"
+              onClick={onClose}
+              className="relative inline-block p-[8px]"
+            >
+              <span
+                className={`relative inline-block ${
+                  pathname === '/bookmark'
+                    ? 'text-contents-primary-accent after:bg-contents-primary-accent after:absolute after:-bottom-[2px] after:left-0 after:h-[1px] after:w-full'
+                    : ''
+                }`}
+              >
+                북마크
+              </span>
+            </Link>
           </div>
           <SearchBar onClick={onClose} />
         </div>
