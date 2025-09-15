@@ -10,8 +10,6 @@ const EntireToggle = () => {
     size: 10,
   });
 
-  data?.totalElements;
-
   return (
     <div className="flex flex-col gap-[4px] md:flex-row md:items-center md:gap-0">
       <div className="flex">

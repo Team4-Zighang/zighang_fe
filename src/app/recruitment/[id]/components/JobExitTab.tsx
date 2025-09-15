@@ -5,7 +5,7 @@ import {
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
-import { isLoggedIn } from '@/utils/auth';
+import { isLoggedIn } from '@/utils/getUser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';

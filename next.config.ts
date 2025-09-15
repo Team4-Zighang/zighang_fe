@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       'd2juy7qzamcf56.cloudfront.net',
       'static.wanted.co.kr',
       'k.kakaocdn.net',
+      'img1.kakaocdn.net',
     ],
   },
 };

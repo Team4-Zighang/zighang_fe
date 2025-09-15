@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
 import LoginModal from './LoginModal';
+import { isLoggedIn } from '@/utils/getUser';
 
 export default function Header() {
   const pathname = usePathname();
@@ -14,11 +15,11 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loginModal, setLoginModal] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoggedIn(isLoggedIn);
+    setLoggedIn(isLoggedIn());
     setCurrentPath(pathname);
 
     const storedUser = localStorage.getItem('memberInfo');
@@ -26,7 +27,6 @@ export default function Header() {
       try {
         const parsedUser = JSON.parse(storedUser);
         if (parsedUser?.data?.member?.profileImageUrl) {
-          setIsLoggedIn(true);
           setProfileImage(parsedUser.data.member.profileImageUrl);
         }
       } catch (err) {
@@ -95,7 +95,7 @@ export default function Header() {
               </span>
             </Link>
 
-            {isLoggedIn ? (
+            {loggedIn ? (
               <Image
                 src={profileImage || '/icons/profile.svg'}
                 alt="profile"
