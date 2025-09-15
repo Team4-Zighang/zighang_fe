@@ -171,7 +171,7 @@ const BookmarkList = () => {
             삭제하기
           </button>
         </div>
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto flex items-center gap-[8px]">
           <span className="body-lg-medium text-contents-neutral-secondary">
             북마크 공개
           </span>
