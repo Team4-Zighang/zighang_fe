@@ -20,7 +20,7 @@ import LoginModal from '@/app/_components/common/LoginModal';
 import JobRemoveModal from '@/app/_components/common/JobRemoveModal';
 
 const OnBoardingContents = () => {
-  const [jobList] = useState(jobs);
+  const [jobList, setJobList] = useState(jobs);
   const [tempList, setTempList] = useState<string[]>([]);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
@@ -47,6 +47,7 @@ const OnBoardingContents = () => {
   };
 
   const confirmJobs = () => {
+    setJobList(['전체', ...tempList]);
     setSelectedJobRoles(tempList);
     setIsRemoveModalOpen(false);
   };
