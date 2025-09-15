@@ -102,7 +102,7 @@ const PostingLotto = () => {
     });
 
     syncBackState(backStates);
-  }, [openedCards]);
+  }, [openedCards, openSync, syncBackState]);
 
   //카드 클릭했을때
   const handleFlip = (i: number) => {
