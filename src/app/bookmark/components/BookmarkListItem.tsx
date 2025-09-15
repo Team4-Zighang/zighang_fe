@@ -5,7 +5,7 @@ import {
 } from '@/app/_apis/schemas/bookmarkResponse';
 import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 // DDAY 상시면 상시, 숫자는 d-00 이렇게 보내주는듯?
 
@@ -284,16 +284,28 @@ const BookmarkListItem = ({
               <span className="text-contents-neutral-tertiary min-w-[108px]">
                 자격요건
               </span>
-              <div className="text-contents-neutral-secondary">
-                {item.jobPostingResponse.qualification || '없음'}
+              <div className="text-contents-neutral-secondary w-full">
+                <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
+                  {item.jobPostingResponse.qualification
+                    ? item.jobPostingResponse.qualification
+                        .split('\n')
+                        .map((line, idx) => <div key={idx}>{line}</div>)
+                    : '없음'}
+                </div>
               </div>
             </div>
             <div className="flex gap-[24px]">
               <span className="text-contents-neutral-tertiary min-w-[108px]">
                 우대사항
               </span>
-              <div className="text-contents-neutral-secondary">
-                {item.jobPostingResponse.preferentialTreatment || '없음'}
+              <div className="text-contents-neutral-secondary w-full">
+                <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
+                  {item.jobPostingResponse.preferentialTreatment
+                    ? item.jobPostingResponse.preferentialTreatment
+                        .split('\n')
+                        .map((line, idx) => <div key={idx}>{line}</div>)
+                    : '없음'}
+                </div>
               </div>
             </div>
             <div className="flex gap-[24px]">

@@ -28,7 +28,7 @@ const BookmarkList = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const { data, isLoading, isError, isFetching } = useBookmarkList({
-    page: page - 1,
+    page,
     size,
   });
 
@@ -39,7 +39,7 @@ const BookmarkList = () => {
 
   const handleFileUploaded = async () => {
     // 전체 리스트 재조회
-    queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
+    queryClient.invalidateQueries({ queryKey: ['bookmarkList', page, size] });
   };
 
   const handleToggleExpand = (id: number) => {
@@ -115,12 +115,12 @@ const BookmarkList = () => {
     );
   }
 
-  if (isFetching || isLoading)
-    return (
-      <div className="flex h-[360px] w-full items-center justify-center">
-        <Loader />
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="flex h-[560px] w-full items-center justify-center">
+  //       <Loader />
+  //     </div>
+  //   );
 
   if (isError) return <div>에러가 발생했습니다.</div>;
 
@@ -206,27 +206,40 @@ const BookmarkList = () => {
           <span className="w-[104px] px-[12px]">지원서류</span>
         </div>
         {/* 북마크 요소 리스트 */}
-        {items.map((item) => (
-          <BookmarkListItem
-            key={item.jobPostingResponse.postingId}
-            item={item}
-            selected={
-              item.scrapId !== null && selectedIds.includes(item.scrapId)
-            }
-            expanded={
-              item.scrapId !== null && expandedIds.includes(item.scrapId)
-            }
-            onToggleSelect={() =>
-              item.scrapId !== null && handleToggleSelect(item.scrapId)
-            }
-            onToggleExpand={() =>
-              item.scrapId !== null && handleToggleExpand(item.scrapId)
-            }
-            onBookmarkToggle={handleBookmarkToggle}
-            onFileUploaded={handleFileUploaded}
-          />
-        ))}
-        <Pagination totalPages={totalPages} page={page} onChange={setPage} />
+        {isFetching ? (
+          <div className="flex h-[680px] items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            {items.map((item) => (
+              <BookmarkListItem
+                key={item.jobPostingResponse.postingId}
+                item={item}
+                selected={
+                  item.scrapId !== null && selectedIds.includes(item.scrapId)
+                }
+                expanded={
+                  item.scrapId !== null && expandedIds.includes(item.scrapId)
+                }
+                onToggleSelect={() =>
+                  item.scrapId !== null && handleToggleSelect(item.scrapId)
+                }
+                onToggleExpand={() =>
+                  item.scrapId !== null && handleToggleExpand(item.scrapId)
+                }
+                onBookmarkToggle={handleBookmarkToggle}
+                onFileUploaded={handleFileUploaded}
+              />
+            ))}
+
+            <Pagination
+              totalPages={totalPages}
+              page={page}
+              onChange={(page) => setPage(page)}
+            />
+          </>
+        )}
       </div>
     </div>
   );

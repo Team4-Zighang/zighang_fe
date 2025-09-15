@@ -12,7 +12,7 @@ export function useBookmarkList({
   size: number;
 }) {
   return useQuery({
-    queryKey: ['bookmarkList'],
+    queryKey: ['bookmarkList', page, size],
     queryFn: () => GetBookmarkList(page, size),
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
