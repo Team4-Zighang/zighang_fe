@@ -6,6 +6,7 @@ import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
+import { getMember, getToken } from '@/store/member';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -18,8 +19,26 @@ const ManyBookmark = () => {
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
+  const memberData = getMember();
 
   useEffect(() => {}, [page]);
+
+  //수정예정
+  const token = getToken();
+  if (!token) {
+    <div className="flex w-full flex-col items-center justify-center">
+      <Image
+        src="/icons/lock.svg"
+        alt="nologin"
+        width={36}
+        height={36}
+        className="h-6 w-6 md:h-9 md:w-9"
+      />
+      <div className="text-contents-primary-accent heading-md-semibold">
+        로그인 후 이용 가능{' '}
+      </div>
+    </div>;
+  }
 
   if (isLoading)
     return (
@@ -34,7 +53,7 @@ const ManyBookmark = () => {
   return (
     <div className="flex flex-col items-start px-5 pt-24 pb-12 md:px-[120px] md:pt-0 md:pb-8">
       <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
-        지우님의 동문들이
+        {memberData?.member?.memberName}님의 동문들이
         <span className="block md:inline">
           {' '}
           가장 많이 북마크한 공고를 살펴보세요!
