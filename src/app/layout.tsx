@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className={`${pretendard.variable} antialiased`}>
         <QueryClientProvider client={queryClient}>
           <Header />
-          {children}
+          <main className="pt-[65px] md:pt-[72px]">{children}</main>
         </QueryClientProvider>
       </body>
     </html>
