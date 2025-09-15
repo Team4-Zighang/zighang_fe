@@ -1,10 +1,9 @@
 import { Onboarding } from '@/app/_apis/onboarding';
 import { OnBoardingResquest } from '@/app/_apis/schemas/onboardingResponse';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 export function useOnboardingMutation() {
-  const queryClient = useQueryClient();
   const router = useRouter();
   return useMutation({
     mutationFn: (data: OnBoardingResquest) => Onboarding(data),

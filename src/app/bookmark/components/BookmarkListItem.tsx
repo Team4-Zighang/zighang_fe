@@ -31,7 +31,6 @@ const BookmarkListItem = ({
   selected,
   onToggleSelect,
   onToggleExpand,
-  onBookmarkToggle,
   onFileUploaded,
 }: Props) => {
   const { mutate } = useDeleteBookmark();

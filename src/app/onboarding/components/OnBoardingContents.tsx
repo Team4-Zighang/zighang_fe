@@ -19,7 +19,7 @@ import { YEAR_MAP } from '@/utils/yearMapping';
 import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
 
 const OnBoardingContents = () => {
-  const [jobList, setJobList] = useState(jobs);
+  const [jobList] = useState(jobs);
   const [tempList, setTempList] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
