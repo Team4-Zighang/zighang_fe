@@ -1,5 +1,6 @@
 'use client';
 
+import LoginModal from '@/app/_components/common/LoginModal';
 import {
   useDeleteBookmark,
   useToggleBookmark,
@@ -31,7 +32,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
 
   const onBookmarkClick = () => {
     if (!isLoggedIn()) {
-      // todo: 로그인 모달창 띄우기
+      <LoginModal />;
       return;
     }
 
@@ -79,7 +80,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
         <button
           onClick={onBookmarkClick}
           disabled={bookmarkLoading}
-          className={`${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px]`}
+          className={`${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px]`}
         >
           <Image
             src={
@@ -105,7 +106,6 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           지원하기
         </Link>
       </div>
-      {/* 폰트 디자인 적용 */}
       <div className="bg-base-neutral-alternative flex h-[48px] items-center justify-center rounded-[8px]">
         <div className="text-contents-neutral-secondary web-badge-lg flex flex-1 justify-center">
           <span className="">내 이력서의&nbsp;</span>

@@ -10,6 +10,8 @@ import {
   useDeleteBookmark,
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
+import { isLoggedIn } from '@/utils/getUser';
+import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();
@@ -25,6 +27,11 @@ const RecruitFooter = () => {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const onBookmarkClick = () => {
+    if (!isLoggedIn()) {
+      <LoginModal />;
+      return;
+    }
+
     setBookmarkLoading(true);
     if (isBookmarked) {
       if (job?.scrapId !== null && job?.scrapId !== undefined) {
@@ -81,7 +88,7 @@ const RecruitFooter = () => {
         <button
           onClick={onBookmarkClick}
           disabled={bookmarkLoading}
-          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
             src={
