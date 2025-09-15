@@ -1,14 +1,22 @@
 'use client';
 
+import Loader from '@/app/_components/common/Loader';
 import { useHotposting } from '@/hooks/queries/useAlumni';
 import { getTrendColor, getTrendIcon, TrendType } from '@/utils/jobTrend';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const JobCard = () => {
   const { data: hotposting, isLoading, isError } = useHotposting();
+  const router = useRouter();
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   return (
     <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto md:flex-col md:gap-5 md:overflow-visible">
@@ -22,7 +30,8 @@ const JobCard = () => {
         return (
           <div
             key={hotpost.postingId}
-            className="border-base-neutral-border flex shrink-0 basis-[88%] snap-start items-stretch rounded-[12px] border bg-white md:basis-auto"
+            onClick={() => router.push(`/recruitment/${hotpost.postingId}`)}
+            className="border-base-neutral-border flex shrink-0 basis-[88%] cursor-pointer snap-start items-stretch rounded-[12px] border bg-white md:basis-auto"
           >
             <div className="flex min-w-0 flex-1 flex-row gap-[10px] p-2 md:gap-4 md:p-4">
               <div className="flex items-center self-stretch md:items-start md:self-auto">

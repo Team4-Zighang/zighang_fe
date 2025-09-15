@@ -1,12 +1,19 @@
 'use client';
+import Loader from '@/app/_components/common/Loader';
 import { useHotcompanies } from '@/hooks/queries/useAlumni';
 import Image from 'next/image';
 
 const PopularCompany = () => {
   const { data: hotcompanies, isLoading, isError } = useHotcompanies();
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  if (isLoading)
+    return (
+      <div className="mt-5 flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError)
+    return <div className="mt-5 text-center">에러가 발생했습니다.</div>;
 
   return (
     <div className="mt-5 flex snap-x snap-mandatory gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] md:flex-col md:gap-5 md:overflow-visible [&::-webkit-scrollbar]:hidden">

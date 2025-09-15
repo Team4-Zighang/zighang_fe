@@ -1,11 +1,13 @@
 'use client';
 
 import ArrayButton from '@/app/_components/common/ArrayButton';
+import Loader from '@/app/_components/common/Loader';
 import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const ManyBookmark = () => {
@@ -13,11 +15,17 @@ const ManyBookmark = () => {
   const [showClosed, setShowClosed] = useState(false);
 
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
+  const router = useRouter();
 
   useEffect(() => {}, [page]);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   const items = Array.isArray(scrapdata?.data) ? scrapdata!.data : [];
 
@@ -61,7 +69,8 @@ const ManyBookmark = () => {
         {items.map((scrap) => (
           <div
             key={scrap.postingId}
-            className="border-base-neutral-border flex rounded-[12px] border bg-white md:w-[592px]"
+            onClick={() => router.push(`/recruitment/${scrap.postingId}`)}
+            className="border-base-neutral-border flex cursor-pointer rounded-[12px] border bg-white md:w-[592px]"
           >
             <div className="flex min-w-0 flex-1 items-center gap-[10px] px-2 py-4 md:gap-4 md:p-4">
               <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
