@@ -6,13 +6,11 @@ import { useSchoolList } from '@/hooks/queries/useOnboarding';
 type Props = {
   placeholder?: string;
   onSelect?: (school: string) => void;
-  maxItems?: number;
 };
 
 const SchoolDropdown = ({
   placeholder = '학교를 입력하세요',
   onSelect,
-  maxItems = 5,
 }: Props) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string>('');
@@ -20,7 +18,6 @@ const SchoolDropdown = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { data: schoolResponse } = useSchoolList();
-
   const schoolOptions: string[] = schoolResponse?.data ?? [];
 
   const filteredData =
@@ -76,8 +73,8 @@ const SchoolDropdown = ({
       </div>
 
       {open && filteredData.length > 0 && (
-        <ul className="border-base-neutral-border bg-base-neutral-default shadow-modal absolute z-10 mt-1 w-full overflow-auto rounded-[12px] border p-1">
-          {filteredData.slice(0, maxItems).map((school, idx) => (
+        <ul className="border-base-neutral-border bg-base-neutral-default shadow-modal absolute z-10 mt-1 max-h-[152px] w-full overflow-auto rounded-[12px] border p-1">
+          {filteredData.map((school, idx) => (
             <li
               key={idx}
               onClick={() => {
