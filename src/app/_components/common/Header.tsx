@@ -6,17 +6,33 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
-import { isLoggedIn } from '@/utils/auth';
+import LoginModal from './LoginModal';
 
 export default function Header() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loginModal, setLoginModal] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn());
+    setIsLoggedIn(isLoggedIn);
     setCurrentPath(pathname);
+
+    const storedUser = localStorage.getItem('memberInfo');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser?.data?.member?.profileImageUrl) {
+          setIsLoggedIn(true);
+          setProfileImage(parsedUser.data.member.profileImageUrl);
+        }
+      } catch (err) {
+        console.error('memberInfo 파싱 실패:', err);
+      }
+    }
   }, [pathname]);
 
   const isActive = (path: string) =>
@@ -79,20 +95,26 @@ export default function Header() {
               </span>
             </Link>
 
-            {loggedIn ? (
+            {isLoggedIn ? (
               <Image
-                src="/icons/profile.svg"
+                src={profileImage || '/icons/profile.svg'}
                 alt="profile"
                 width={40}
                 height={40}
-                className="h-[40px] w-[40px] cursor-pointer"
+                className="h-[40px] w-[40px] cursor-pointer rounded-full object-cover"
               />
             ) : (
               <>
-                <div className="mobile-filter text-contents-primary-default px-[8px] md:hidden">
+                <div
+                  className="mobile-filter text-contents-primary-default px-[8px] md:hidden"
+                  onClick={() => setLoginModal(true)}
+                >
                   로그인
                 </div>
-                <div className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block">
+                <div
+                  className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
+                  onClick={() => setLoginModal(true)}
+                >
                   로그인/회원가입
                 </div>
               </>
@@ -111,6 +133,7 @@ export default function Header() {
       </header>
 
       {menuOpen && <NavigationPanel onClose={() => setMenuOpen(false)} />}
+      {loginModal && <LoginModal />}
     </>
   );
 }

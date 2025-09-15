@@ -12,6 +12,10 @@
     box-shadow: 0 4px 30px 0 rgba(0, 0, 0, 0.03);
   }
 
+  .shadow-sm {
+    box-shadow: 0 1px 2px 0 rgba(10, 13, 18, 0.05);
+  }
+
   .custom-scrollbar {
     --sb-track: #7a52ff; /* 회색 트랙 */
     --sb-thumb: #7a52ff; /* 보라색 thumb */
