@@ -1,6 +1,7 @@
 'use client';
 
 import Loader from '@/app/_components/common/Loader';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useHotposting } from '@/hooks/queries/useAlumni';
 import { getTrendColor, getTrendIcon, TrendType } from '@/utils/jobTrend';
 import Image from 'next/image';
@@ -9,6 +10,7 @@ import { useRouter } from 'next/navigation';
 const JobCard = () => {
   const { data: hotposting, isLoading, isError } = useHotposting();
   const router = useRouter();
+  const scrapmutate = useCardScrapMutation();
 
   if (isLoading)
     return (
@@ -87,7 +89,14 @@ const JobCard = () => {
             <div className="border-base-neutral-border hidden w-[84px] flex-col self-stretch border-l md:flex">
               <button
                 aria-label="북마크"
-                className="flex flex-1 items-center justify-center"
+                className="flex flex-1 cursor-pointer items-center justify-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrapmutate.mutate({
+                    scrapId: null,
+                    jobPostingId: hotpost.postingId,
+                  });
+                }}
               >
                 <Image
                   src={
