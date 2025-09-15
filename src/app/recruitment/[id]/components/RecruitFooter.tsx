@@ -3,16 +3,70 @@
 import Image from 'next/image';
 import React, { useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
+import Link from 'next/link';
+import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+import { useParams } from 'next/dist/client/components/navigation';
+import {
+  useDeleteBookmark,
+  useToggleBookmark,
+} from '@/hooks/mutation/useBookmarkMutation';
 
 const RecruitFooter = () => {
+  const { id } = useParams();
+  const { data, isLoading, isFetching } = useRecruitmentDetail({
+    id: Number(id),
+  });
+
+  const job = data?.data;
+  const [isBookmarked, setIsBookmarked] = useState(job?.isSaved ?? false);
+
+  const { mutate: deleteBookmark } = useDeleteBookmark();
+  const { mutate: postBookmark } = useToggleBookmark();
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
+  const onBookmarkClick = () => {
+    setBookmarkLoading(true);
+    if (isBookmarked) {
+      if (job?.scrapId !== null && job?.scrapId !== undefined) {
+        deleteBookmark([job.scrapId], {
+          onSuccess: () => {
+            setIsBookmarked(false);
+            setBookmarkLoading(false);
+            console.log('북마크 해제 성공');
+          },
+          onError: () => setBookmarkLoading(false),
+        });
+      } else {
+        setIsBookmarked(false);
+        setBookmarkLoading(false);
+      }
+    } else {
+      if (job?.postingId !== undefined) {
+        postBookmark(
+          {
+            postingId: job.postingId,
+            next: true,
+            scrapId: job.scrapId ?? null,
+          },
+          {
+            onSuccess: () => {
+              setIsBookmarked(true);
+              setBookmarkLoading(false);
+              console.log('북마크 등록 성공');
+            },
+            onError: () => setBookmarkLoading(false),
+          }
+        );
+      } else {
+        setIsBookmarked(true);
+        setBookmarkLoading(false);
+      }
+    }
+  };
+
   const [isMemoOpen, setIsMemoOpen] = useState(false);
   const onMemoClick = () => {
     setIsMemoOpen(!isMemoOpen);
-  };
-
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const onBookmarkClick = () => {
-    setIsBookmarked(!isBookmarked);
   };
 
   return (
@@ -26,21 +80,33 @@ const RecruitFooter = () => {
         </button>
         <button
           onClick={onBookmarkClick}
-          className="flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008]"
+          disabled={bookmarkLoading}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
-            src={`${isBookmarked ? '/icons/bookmark_selected.svg' : '/icons/bookmark_unselected.svg'}`}
+            src={
+              isLoading || isFetching
+                ? '/icons/bookmark_unselected.svg'
+                : isBookmarked
+                  ? '/icons/bookmark_selected.svg'
+                  : '/icons/bookmark_unselected.svg'
+            }
             alt="bookmark"
             width={28}
             height={28}
+            className={`m-auto ${bookmarkLoading ? 'opacity-50' : ''}`}
           />
         </button>
+
         <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008]">
           <Image src="/icons/share.svg" alt="share" width={28} height={28} />
         </button>
-        <button className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white">
+        <Link
+          href={job?.recruitmentOriginalUrl || '/'}
+          className="bg-base-primary-default mobile-action flex h-[48px] flex-1 items-center justify-center rounded-[8px] text-white"
+        >
           지원하기
-        </button>
+        </Link>
       </div>
       {isMemoOpen && (
         <div

@@ -1,23 +1,28 @@
 import ItemButton from '@/app/_components/common/ItemButton';
+import { usePostRecruitmentEval } from '@/hooks/mutation/useRecruitMutation';
+import { RECRUITMENT_STEPS } from '@/utils/recruitmentSteps';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 
-const STEP_OPTIONS = [
-  '서류 탈락',
-  '서류 합격',
-  '1차 면접',
-  '2차 면접',
-  '최종 면접',
-  '최종 합격',
-];
+const JobRateModal = ({ onClose }: { onClose: () => void }) => {
+  const params = useParams();
 
-const JobRateModal = () => {
   const [comment, setComment] = useState('');
   const [selectedStep, setSelectedStep] = useState<string>('');
   const [star, setStar] = useState(0);
 
+  const { mutate } = usePostRecruitmentEval({ id: Number(params.id) });
+
   const handleComplete = () => {
-    // 내용 제출
+    const requestBody = {
+      postingId: Number(params.id),
+      evalScore: star,
+      evalText: comment,
+      recruitmentStep: RECRUITMENT_STEPS[selectedStep],
+    };
+    mutate(requestBody);
+    onClose();
   };
 
   return (
@@ -67,13 +72,13 @@ const JobRateModal = () => {
             어디까지 진행되셨나요?
           </span>
           <div className="flex flex-wrap gap-[6px]">
-            {STEP_OPTIONS.map((step) => (
+            {Object.entries(RECRUITMENT_STEPS).map(([key]) => (
               <ItemButton
-                key={step}
+                key={key}
                 size="xs"
-                selected={selectedStep === step}
-                onClick={() => setSelectedStep(step)}
-                text={step}
+                selected={selectedStep === key}
+                onClick={() => setSelectedStep(key)}
+                text={key}
               />
             ))}
           </div>
