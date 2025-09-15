@@ -3,20 +3,19 @@
 import SearchBar from '@/app/home/components/SearchBar';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
-import LoginModal from './LoginModal';
 import { isLoggedIn } from '@/utils/getUser';
 
 export default function Header() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [loginModal, setLoginModal] = useState(false);
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
@@ -107,13 +106,13 @@ export default function Header() {
               <>
                 <div
                   className="mobile-filter text-contents-primary-default px-[8px] md:hidden"
-                  onClick={() => setLoginModal(true)}
+                  onClick={() => router.push('/onboarding')}
                 >
                   로그인
                 </div>
                 <div
                   className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
-                  onClick={() => setLoginModal(true)}
+                  onClick={() => router.push('/onboarding')}
                 >
                   로그인/회원가입
                 </div>
@@ -133,7 +132,6 @@ export default function Header() {
       </header>
 
       {menuOpen && <NavigationPanel onClose={() => setMenuOpen(false)} />}
-      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
     </>
   );
 }

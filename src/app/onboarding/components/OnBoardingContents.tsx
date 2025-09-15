@@ -17,6 +17,7 @@ import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
 import { REGION_MAP } from '@/utils/regionMap';
 import { YEAR_MAP } from '@/utils/yearMapping';
 import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
+import LoginModal from '@/app/_components/common/LoginModal';
 
 const OnBoardingContents = () => {
   const [jobList] = useState(jobs);
@@ -32,6 +33,7 @@ const OnBoardingContents = () => {
   const [selectedMajor, setSelectedMajor] = useState<Option | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
+  const [loginModal, setLoginModal] = useState(false);
 
   const onboardingMutation = useOnboardingMutation();
 
@@ -52,14 +54,21 @@ const OnBoardingContents = () => {
   const handleSubmit = () => {
     const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
 
-    onboardingMutation.mutate({
-      jobCategory: selectedJobCategory?.category || '',
-      jobRole: selectedJobRoles,
-      careerYear,
-      region: mappedRegions,
-      school: selectedUniversity || '',
-      major: selectedMajor?.category || '',
-    });
+    onboardingMutation.mutate(
+      {
+        jobCategory: selectedJobCategory?.category || '',
+        jobRole: selectedJobRoles,
+        careerYear,
+        region: mappedRegions,
+        school: selectedUniversity || '',
+        major: selectedMajor?.category || '',
+      },
+      {
+        onSuccess: () => {
+          setLoginModal(true);
+        },
+      }
+    );
   };
 
   return (
@@ -155,6 +164,7 @@ const OnBoardingContents = () => {
       )}
 
       <Button onClick={handleSubmit} />
+      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
 
       {/* 모달 확인 후 수정 예정*/}
       {isModalOpen && (
