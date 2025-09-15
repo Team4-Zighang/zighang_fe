@@ -2,7 +2,7 @@
 import Loader from '@/app/_components/common/Loader';
 import { usePostMemo } from '@/hooks/mutation/useRecruitMutation';
 import { useGetMemo } from '@/hooks/queries/useRecruitment';
-import { isLoggedIn } from '@/utils/auth';
+import { isLoggedIn } from '@/utils/getUser';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';

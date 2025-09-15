@@ -8,7 +8,7 @@ import Link from 'next/link';
 import JobRateModal from './JobRateModal';
 import { useParams } from 'next/navigation';
 import { useRecruitmentEvalList } from '@/hooks/queries/useRecruitment';
-import { isLoggedIn } from '@/utils/auth';
+import { isLoggedIn } from '@/utils/getUser';
 
 const JobRate = () => {
   const { id } = useParams();

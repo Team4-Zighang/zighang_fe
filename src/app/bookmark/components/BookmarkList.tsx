@@ -10,7 +10,7 @@ import {
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
 import Loader from '@/app/_components/common/Loader';
-import { isLoggedIn } from '@/utils/auth';
+import { isLoggedIn } from '@/utils/getUser';
 
 const BookmarkList = () => {
   const [loggedIn, setLoggedIn] = useState(false);
