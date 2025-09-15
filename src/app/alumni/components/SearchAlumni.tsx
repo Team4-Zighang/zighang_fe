@@ -4,14 +4,20 @@ import { useAlumniInfo } from '@/hooks/queries/useAlumni';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import AlumniModal from './AlumniModal';
+import Loader from '@/app/_components/common/Loader';
 
 const SearchAlumni = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: infoData, isLoading, isError } = useAlumniInfo();
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   return (
     <div className="mx-auto mt-20 w-full px-5 md:pl-[120px]">
