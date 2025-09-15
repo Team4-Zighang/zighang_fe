@@ -2,7 +2,7 @@ export interface OnBoardingResquest {
   jobCategory: string;
   jobRole: string[];
   careerYear: string;
-  region: string;
+  region: string[];
   school: string;
   major: string;
 }

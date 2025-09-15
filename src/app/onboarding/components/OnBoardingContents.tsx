@@ -56,7 +56,7 @@ const OnBoardingContents = () => {
       jobCategory: selectedJobCategory?.category || '',
       jobRole: selectedJobRoles,
       careerYear,
-      region: mappedRegions.join(', '),
+      region: mappedRegions,
       school: selectedUniversity || '',
       major: selectedMajor?.category || '',
     });
