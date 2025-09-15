@@ -136,7 +136,7 @@ const BookmarkListItem = ({
         <span className="w-[200px] overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
           {item.jobPostingResponse.title}
         </span>
-        <span className="w-[128px] px-[12px]">
+        <span className="w-[128px] overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
           {item.jobPostingResponse.companyName}
         </span>
         <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
