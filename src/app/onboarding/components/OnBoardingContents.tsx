@@ -82,6 +82,14 @@ const OnBoardingContents = () => {
     );
   };
 
+  const isDisabled =
+    !selectedJobCategory ||
+    selectedJobRoles.length === 0 ||
+    selectedRegion.length === 0 ||
+    !selectedSchool ||
+    !selectedUniversity ||
+    !selectedMajor;
+
   return (
     <div className="mt-12 flex w-full max-w-[640px] flex-col gap-12">
       <div className="flex flex-col items-start gap-2">
@@ -174,7 +182,7 @@ const OnBoardingContents = () => {
         </div>
       )}
 
-      <Button onClick={handleSubmit} />
+      <Button onClick={handleSubmit} disabled={isDisabled} />
       {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
 
       {isRemoveModalOpen && (
