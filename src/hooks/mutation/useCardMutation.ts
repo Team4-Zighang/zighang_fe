@@ -48,6 +48,7 @@ export function useCardScrapMutation() {
       CardScrap(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+      queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
     },
     onError: (error) => {
       console.error('카드 스크랩 실패:', error);

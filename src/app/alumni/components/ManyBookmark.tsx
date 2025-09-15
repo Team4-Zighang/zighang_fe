@@ -4,6 +4,7 @@ import ArrayButton from '@/app/_components/common/ArrayButton';
 import Loader from '@/app/_components/common/Loader';
 import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
 
 import Image from 'next/image';
@@ -16,6 +17,7 @@ const ManyBookmark = () => {
 
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
   const router = useRouter();
+  const scrapmutate = useCardScrapMutation();
 
   useEffect(() => {}, [page]);
 
@@ -121,7 +123,14 @@ const ManyBookmark = () => {
             <div className="border-base-neutral-border flex w-12 flex-col self-stretch border-l md:w-[84px]">
               <button
                 aria-label="북마크"
-                className="flex flex-1 items-center justify-center"
+                className="flex flex-1 cursor-pointer items-center justify-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrapmutate.mutate({
+                    scrapId: null,
+                    jobPostingId: scrap.postingId,
+                  });
+                }}
               >
                 <Image
                   src={
