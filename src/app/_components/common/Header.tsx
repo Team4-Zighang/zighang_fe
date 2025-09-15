@@ -133,7 +133,7 @@ export default function Header() {
       </header>
 
       {menuOpen && <NavigationPanel onClose={() => setMenuOpen(false)} />}
-      {loginModal && <LoginModal />}
+      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
     </>
   );
 }
