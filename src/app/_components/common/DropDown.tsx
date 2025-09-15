@@ -38,11 +38,6 @@ export const finalSchoolOption = [
   { id: 5, category: '석박 통합과정' },
 ];
 
-export const majorOption = [
-  { id: 1, category: '컴퓨터공학과' },
-  { id: 2, category: '소프트웨어학부' },
-];
-
 export type Option = {
   id: number | string;
   category: string;
@@ -53,14 +48,12 @@ type Props = {
   data: Option[];
   placeholder?: string;
   onSelect?: (option: Option) => void;
-  maxItems?: number;
 };
 
 const Dropdown = ({
   data,
   placeholder = '검색어를 입력하세요',
   onSelect,
-  maxItems = 3,
 }: Props) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<Option | null>(null);

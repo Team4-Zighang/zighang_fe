@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Dropdown, {
   finalSchoolOption,
   jobOptions,
-  majorOption,
   Option,
 } from '@/app/_components/common/DropDown';
 import OptionSelect, {
@@ -18,6 +17,8 @@ import { YEAR_MAP } from '@/utils/yearMapping';
 import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
 import LoginModal from '@/app/_components/common/LoginModal';
 import JobRemoveModal from '@/app/_components/common/JobRemoveModal';
+import { useMajorList } from '@/hooks/queries/useOnboarding';
+import { SCHOOL_MAP } from '@/utils/schoolMap';
 
 const OnBoardingContents = () => {
   const [jobList, setJobList] = useState(jobs);
@@ -36,6 +37,15 @@ const OnBoardingContents = () => {
   const [loginModal, setLoginModal] = useState(false);
 
   const onboardingMutation = useOnboardingMutation();
+
+  const mappedSchool = SCHOOL_MAP[selectedUniversity] || '';
+  const { data: majorList } = useMajorList(mappedSchool);
+
+  const majorOption: Option[] =
+    majorList?.data?.map((m: string, idx: number) => ({
+      id: idx,
+      category: m,
+    })) ?? [];
 
   const handleOpenModal = () => {
     setTempList(jobList.filter((j) => j !== '전체'));
@@ -61,7 +71,7 @@ const OnBoardingContents = () => {
         jobRole: selectedJobRoles,
         careerYear,
         region: mappedRegions,
-        school: selectedUniversity || '',
+        school: selectedUniversity,
         major: selectedMajor?.category || '',
       },
       {
