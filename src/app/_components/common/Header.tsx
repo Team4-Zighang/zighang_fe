@@ -6,14 +6,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import NavigationPanel from './NavigationPanel';
+import { isLoggedIn } from '@/utils/auth';
 
 export default function Header() {
   const pathname = usePathname();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const isLoggedIn = false; // 추후 상태 관리로 변경
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
+    setLoggedIn(isLoggedIn());
     setCurrentPath(pathname);
   }, [pathname]);
 
@@ -77,7 +79,7 @@ export default function Header() {
               </span>
             </Link>
 
-            {isLoggedIn ? (
+            {loggedIn ? (
               <Image
                 src="/icons/profile.svg"
                 alt="profile"

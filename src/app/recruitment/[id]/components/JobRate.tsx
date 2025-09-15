@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import StarRates from './StarRates';
 import Image from 'next/image';
 import JobRateItem from './JobRateItem';
@@ -8,6 +8,7 @@ import Link from 'next/link';
 import JobRateModal from './JobRateModal';
 import { useParams } from 'next/navigation';
 import { useRecruitmentEvalList } from '@/hooks/queries/useRecruitment';
+import { isLoggedIn } from '@/utils/auth';
 
 const JobRate = () => {
   const { id } = useParams();
@@ -18,7 +19,11 @@ const JobRate = () => {
   const evalList = data?.data;
   console.log('evalList', evalList);
 
-  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
+  const [loggedIn, setLoggedIn] = useState(false);
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+  }, []);
+
   const [isRateOpen, setIsRateOpen] = useState(false);
 
   const onRateClick = () => {
@@ -55,7 +60,7 @@ const JobRate = () => {
           <div className="flex w-full flex-col justify-between md:flex-row">
             <div>
               <span className="text-contents-primary-default body-lg-semibold">
-                {isloggedin ? `${evalList?.schoolName}` : '??대학교'}&nbsp;
+                {loggedIn ? `${evalList?.schoolName}` : '??대학교'}&nbsp;
               </span>
               <span className="text-contents-neutral-primary body-lg-medium">
                 동문의 공고평
@@ -63,11 +68,11 @@ const JobRate = () => {
             </div>
             <div className="flex items-center gap-[4px]">
               <span className="body-lg-semibold text-contents-neutral-primary">
-                {isloggedin ? `${evalList?.avgScore.toFixed(1)}` : '??'}
+                {loggedIn ? `${evalList?.avgScore.toFixed(1)}` : '??'}
               </span>
-              <StarRates rate={isloggedin ? evalList?.avgScore : 0} />
+              <StarRates rate={loggedIn ? evalList?.avgScore : 0} />
               <span className="caption-md-medium text-contents-neutral-tertiary">
-                ({isloggedin ? `${evalList?.totalCount}개` : '??개'})
+                ({loggedIn ? `${evalList?.totalCount}개` : '??개'})
               </span>
             </div>
           </div>
@@ -83,7 +88,7 @@ const JobRate = () => {
             onClick={(e) => e.stopPropagation()}
             className="flex min-h-0 flex-1 flex-col gap-[8px] overflow-y-auto"
           >
-            {isloggedin ? (
+            {loggedIn ? (
               (evalList?.totalCount ?? 0) > 0 ? (
                 evalList?.evalList.content.map((item, idx) => (
                   <JobRateItem key={item.createdAt ?? idx} item={item} />
@@ -122,7 +127,7 @@ const JobRate = () => {
             )}
           </div>
         )}
-        {isRateOpen && isloggedin && (
+        {isRateOpen && loggedIn && (
           <div
             onClick={(e) => {
               e.stopPropagation();

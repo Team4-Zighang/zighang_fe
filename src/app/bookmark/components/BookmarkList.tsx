@@ -1,7 +1,7 @@
 import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
 import BookmarkListItem from './BookmarkListItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Pagination from '@/app/_components/common/Pagination';
 import { useBookmarkList } from '@/hooks/queries/useBookmark';
 import { useQueryClient } from '@tanstack/react-query';
@@ -10,9 +10,14 @@ import {
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
 import Loader from '@/app/_components/common/Loader';
+import { isLoggedIn } from '@/utils/auth';
 
 const BookmarkList = () => {
-  const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
+  const [loggedIn, setLoggedIn] = useState(false);
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+  }, []);
+
   const queryClient = useQueryClient();
   const [isPublic, setIsPublic] = useState(true);
 
@@ -86,7 +91,7 @@ const BookmarkList = () => {
     mutate({ postingId, next, scrapId: item.scrapId ?? null });
   };
 
-  if (!isLoggedIn) {
+  if (!loggedIn) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
         <Image

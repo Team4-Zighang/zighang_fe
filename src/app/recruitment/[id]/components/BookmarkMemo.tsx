@@ -2,6 +2,7 @@
 import Loader from '@/app/_components/common/Loader';
 import { usePostMemo } from '@/hooks/mutation/useRecruitMutation';
 import { useGetMemo } from '@/hooks/queries/useRecruitment';
+import { isLoggedIn } from '@/utils/auth';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -11,24 +12,26 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
   const { data, isLoading, isFetching } = useGetMemo({ id: Number(params.id) });
   const [memo, setMemo] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const [isloggedin] = useState(true); // 나중에 로그인 여부로 바꾸기
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (isloggedin) {
+    setLoggedIn(isLoggedIn());
+
+    if (loggedIn) {
       if (data?.data) setMemo(data.data);
       else setMemo('');
     } else {
       const saved = localStorage.getItem(`bookmarkMemo_${params.id}`);
       setMemo(saved ?? '');
     }
-  }, [isloggedin, data, params.id]);
+  }, [loggedIn, data, params.id]);
 
   const { mutate } = usePostMemo();
 
   const onSaveClick = () => {
     if (!memo) return;
 
-    if (!isloggedin) {
+    if (!loggedIn) {
       localStorage.setItem(`bookmarkMemo_${params.id}`, memo);
       setIsSaved(true);
       onSaved?.();
@@ -74,7 +77,7 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
           </>
         )}
       </div>
-      {isSaved && !isloggedin && (
+      {isSaved && !loggedIn && (
         <div className="absolute top-[98%] right-[15%] z-10 flex w-[320px] translate-x-1/2 flex-col items-center">
           <Image
             src="/icons/polygon.svg"

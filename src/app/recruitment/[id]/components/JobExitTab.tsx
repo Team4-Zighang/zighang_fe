@@ -5,6 +5,7 @@ import {
   useToggleBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+import { isLoggedIn } from '@/utils/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -29,6 +30,11 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const onBookmarkClick = () => {
+    if (!isLoggedIn()) {
+      // todo: 로그인 모달창 띄우기
+      return;
+    }
+
     setBookmarkLoading(true);
     if (isBookmarked) {
       if (job?.scrapId !== null && job?.scrapId !== undefined) {
