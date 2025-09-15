@@ -11,18 +11,18 @@ import OptionSelect, {
   regions,
 } from '@/app/_components/common/OptionSelect';
 import YearSlider from '@/app/_components/common/YearSlider';
-import Image from 'next/image';
 import Button from '@/app/_components/common/Button';
 import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
 import { REGION_MAP } from '@/utils/regionMap';
 import { YEAR_MAP } from '@/utils/yearMapping';
 import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
 import LoginModal from '@/app/_components/common/LoginModal';
+import JobRemoveModal from '@/app/_components/common/JobRemoveModal';
 
 const OnBoardingContents = () => {
   const [jobList] = useState(jobs);
   const [tempList, setTempList] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
   const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
     null
@@ -39,7 +39,7 @@ const OnBoardingContents = () => {
 
   const handleOpenModal = () => {
     setTempList(jobList.filter((j) => j !== '전체'));
-    setIsModalOpen(true);
+    setIsRemoveModalOpen(true);
   };
 
   const removeJob = (job: string) => {
@@ -48,7 +48,7 @@ const OnBoardingContents = () => {
 
   const confirmJobs = () => {
     setSelectedJobRoles(tempList);
-    setIsModalOpen(false);
+    setIsRemoveModalOpen(false);
   };
 
   const handleSubmit = () => {
@@ -166,46 +166,13 @@ const OnBoardingContents = () => {
       <Button onClick={handleSubmit} />
       {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
 
-      {/* 모달 확인 후 수정 예정*/}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-200 mx-auto flex items-center justify-center bg-black/40 px-5 md:px-0">
-          <div className="bg-base-neutral-default w-[688px] rounded-[12px] p-6">
-            <div className="flex w-full flex-row items-center justify-between">
-              <div className="flex flex-row items-center gap-2">
-                <div className="text-contents-neutral-primary body-2xl-semibold">
-                  희망하지 않는 직무를 지워보세요!
-                </div>
-                <div className="text-contents-neutral-tertiary caption-md-medium">
-                  중복 선택 가능
-                </div>
-              </div>
-              <div
-                onClick={confirmJobs}
-                className="text-contents-primary-default body-sm-medium cursor-pointer underline"
-              >
-                원하지 않는 직무를 다 지웠어요
-              </div>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-[6px]">
-              {tempList.map((job) => (
-                <div
-                  key={job}
-                  className="border-base-neutral-border text-contents-neutral-tertiary body-sm-medium flex cursor-pointer items-center rounded-[8px] border py-[10px] pr-3 pl-4"
-                >
-                  {job}
-                  <Image
-                    src="/icons/x_button_gray.svg"
-                    alt="삭제아이콘"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => removeJob(job)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {isRemoveModalOpen && (
+        <JobRemoveModal
+          jobs={tempList}
+          onRemove={removeJob}
+          onConfirm={confirmJobs}
+          onClose={() => setIsRemoveModalOpen(false)}
+        />
       )}
     </div>
   );
