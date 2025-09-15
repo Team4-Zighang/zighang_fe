@@ -1,122 +1,118 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import AnalyzeBar from './AnalyzeBar';
+import { usePersonalityAnalysis } from '@/hooks/queries/useBookmark';
+import Loader from '@/app/_components/common/Loader';
+import { CHARACTER_MAP } from '@/utils/character';
 
 const AnalyzeCard = () => {
+  const {
+    data: personality,
+    isLoading: isLoadingPersonality,
+    isFetching,
+    isError,
+  } = usePersonalityAnalysis();
+
+  const characterInfo =
+    personality?.data.characterName &&
+    CHARACTER_MAP[personality.data.characterName]
+      ? CHARACTER_MAP[personality.data.characterName]
+      : CHARACTER_MAP['듬직행'];
+
+  if (isLoadingPersonality || isFetching)
+    return (
+      <div className="flex h-[360px] w-full items-center justify-center">
+        <Loader size={20} />
+      </div>
+    );
+
   return (
-    <div className="md:px-auto flex flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
+    <div className="md:px-auto flex w-full flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
       <span className="heading-sm-semibold md:heading-1xl-semibold">
-        00님이 북마크한 공고들을 분석했어요!
+        지우님이 북마크한 공고들을 분석했어요!
       </span>
-      <div className="bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px]">
-        <Image
-          className="w-full object-contain md:mr-[32px] md:w-[360px]"
-          src="/images/characters/zighang_character_1.png"
-          alt="zighang character"
-          width={360}
-          height={360}
-        />
-        <div className="flex flex-1 flex-col gap-[8px] p-[8px] md:gap-[80px] md:p-0 md:py-[52px]">
-          <div className="flex flex-col">
-            <span className="text-contents-primary-accent body-lg-semibold md:body-xl-semibold">
-              당신의 취업 유형은 바로...
-            </span>
-            <span className="text-contents-neutral-primary heading-2xl-semibold md:title-lg-semibold">
-              듬직행
-            </span>
-          </div>
-          <span className="body-md-medium md:body-xl-regular text-contents-neutral-tertiary">
-            주로 대기업에서 주5일 오피스 출근을 선호하시네요. 개인 성장도
-            중요하지만, 연봉과 복지를 추구하는 점이 듬직해요!
-          </span>
-        </div>
-        <div className="flex w-full flex-col justify-between gap-[12px] rounded-[12px] bg-white px-[20px] py-[20px] md:m-[32px] md:w-[400px] md:px-[24px]">
-          {/* AnalyzeBar로 컴포넌트 분리 */}
-          {/* 기업 규모 */}
-          <div>
-            <div className="mb-[8px] flex items-center">
-              <span className="body-lg-semibold text-contents-neutral-tertiary">
-                기업 규모
-              </span>
-              <div className="bg-base-neutral-border mx-[8px] h-[8px] w-px" />
-              <div className="flex gap-[4px]">
-                <span className="body-lg-semibold text-contents-primary-accent">
-                  82%
+      <div
+        className={`bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px] ${isError ? 'md:justify-between' : ''}`}
+      >
+        {isError ? (
+          <>
+            <div className="flex flex-col justify-between gap-[8px] p-[8px] md:gap-[80px] md:p-[40px]">
+              <div className="flex flex-col">
+                <span className="text-contents-primary-accent body-lg-semibold md:body-xl-semibold">
+                  북마크 수가 부족해요
                 </span>
-                <span className="body-lg-bold text-contents-neutral-secondary">
-                  대기업
+                <span className="text-contents-neutral-primary heading-2xl-semibold md:title-sm-semibold">
+                  공고 3개 북마크하면
+                  <br />
+                  나의 취업유형을 찾아줘요
                 </span>
               </div>
-            </div>
-            <div className="bg-base-neutral-alternative flex h-[22px] w-full justify-end rounded-[50px] shadow-inner">
-              <div className="h-full w-[82%] rounded-[50px] bg-gradient-to-l from-[#9E80FF60] to-[#7A52FF]" />
-            </div>
-            <div className="mt-[4px] flex justify-between">
-              <span className="caption-sm-medium text-contents-state-unselected">
-                스타트업
-              </span>
-              <span className="caption-sm-medium text-contents-state-unselected">
-                대기업
+              <span className="body-md-medium md:body-lg-regular text-contents-neutral-tertiary">
+                공고를 3개 이상 북마크하면 취업 유형을 찾아드릴게요.
+                <br />
+                취업유형을 바탕으로 나와 맞는 공고를 추천받을 수 있어요
               </span>
             </div>
-          </div>
-          {/* 근무 형태 */}
-          <div>
-            <div className="mb-[8px] flex items-center">
-              <span className="body-lg-semibold text-contents-neutral-tertiary">
-                근무 형태
-              </span>
-              <div className="bg-base-neutral-border mx-[8px] h-[8px] w-px" />
-              <div className="flex gap-[4px]">
-                <span className="body-lg-semibold text-contents-primary-accent">
-                  62%
+            <Image
+              className="w-full object-contain md:mr-[32px] md:w-[360px]"
+              src="/images/characters/zighang_character_1.png"
+              alt="zighang character"
+              width={360}
+              height={360}
+            />
+          </>
+        ) : (
+          <>
+            <Image
+              className="w-full object-contain md:mr-[32px] md:w-[360px]"
+              src={characterInfo.img}
+              alt="zighang character"
+              width={360}
+              height={360}
+            />
+            <div className="flex flex-1 flex-col gap-[8px] p-[8px] md:gap-[80px] md:p-0 md:py-[52px]">
+              <div className="flex flex-col">
+                <span className="text-contents-primary-accent body-lg-semibold md:body-xl-semibold">
+                  당신의 취업 유형은 바로...
                 </span>
-                <span className="body-lg-bold text-contents-neutral-secondary">
-                  오피스
-                </span>
-              </div>
-            </div>
-            <div className="bg-base-neutral-alternative flex h-[22px] w-full rounded-[50px] shadow-inner">
-              <div className="h-full w-[62%] rounded-[50px] bg-gradient-to-r from-[#9E80FF60] to-[#7A52FF]" />
-            </div>
-            <div className="mt-[4px] flex justify-between">
-              <span className="caption-sm-medium text-contents-state-unselected">
-                오피스
-              </span>
-              <span className="caption-sm-medium text-contents-state-unselected">
-                원격/탄력
-              </span>
-            </div>
-          </div>
-          {/* 가치 추구 */}
-          <div>
-            <div className="mb-[8px] flex items-center">
-              <span className="body-lg-semibold text-contents-neutral-tertiary">
-                가치 추구
-              </span>
-              <div className="bg-base-neutral-border mx-[8px] h-[8px] w-px" />
-              <div className="flex gap-[4px]">
-                <span className="body-lg-semibold text-contents-primary-accent">
-                  54%
-                </span>
-                <span className="body-lg-bold text-contents-neutral-secondary">
-                  연봉/복지
+                <span className="text-contents-neutral-primary heading-2xl-semibold md:title-lg-semibold">
+                  {personality?.data.characterName ?? '...'}
                 </span>
               </div>
-            </div>
-            <div className="bg-base-neutral-alternative flex h-[22px] w-full justify-end rounded-[50px] shadow-inner">
-              <div className="h-full w-[54%] rounded-[50px] bg-gradient-to-l from-[#9E80FF60] to-[#7A52FF]" />
-            </div>
-            <div className="mt-[4px] flex justify-between">
-              <span className="caption-sm-medium text-contents-state-unselected">
-                개인 성장
-              </span>
-              <span className="caption-sm-medium text-contents-state-unselected">
-                연봉/복지
+              <span className="body-md-medium md:body-xl-regular text-contents-neutral-tertiary">
+                {characterInfo.desc}
               </span>
             </div>
-          </div>
-        </div>
+            <div className="flex w-full flex-col justify-between gap-[12px] rounded-[12px] bg-white px-[20px] py-[20px] md:m-[32px] md:w-[400px] md:px-[24px]">
+              <AnalyzeBar
+                label="기업 규모"
+                leftLabel="스타트업"
+                rightLabel="대기업"
+                leftValue={personality?.data.companyValue.startUpValue ?? 0}
+                rightValue={personality?.data.companyValue.majorValue ?? 0}
+              />
+              <AnalyzeBar
+                label="근무 형태"
+                leftLabel="오피스"
+                rightLabel="원격/탄력"
+                leftValue={personality?.data.workTypeValue.officeValue ?? 0}
+                rightValue={personality?.data.workTypeValue.remoteValue ?? 0}
+              />
+              <AnalyzeBar
+                label="가치 추구"
+                leftLabel="개인 성장"
+                rightLabel="연봉/복지"
+                leftValue={
+                  personality?.data.pursuitOfValue.personalGrowthValue ?? 0
+                }
+                rightValue={
+                  personality?.data.pursuitOfValue.welfareFeeValue ?? 0
+                }
+              />
+            </div>
+          </>
+        )}
       </div>
       <Link
         href="/"

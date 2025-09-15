@@ -1,107 +1,97 @@
 import { Toggle } from '@/app/_components/common/Toggle';
 import Image from 'next/image';
-import BookmarkListItem, { BookmarkListItemProps } from './BookmarkListItem';
-import { useMemo, useState } from 'react';
-
-// 더미데이터, 추후 API 연동 필요
-const data: BookmarkListItemProps[] = [
-  /**/
-  {
-    id: 1,
-    dday: '마감',
-    title: 'Product Management',
-    company: '(주)삼성전자',
-    requirement: '• B2B 서비스 기획/PM/PMO 관련 업무 경험이 있는 분',
-    preference:
-      '• 개발, 해킹 및 보안에 대한 지식이 있으신 분• 신규 제품 기획부터 오픈• 지 프로세스를 경험해보신 분• 영어 커뮤니케이션 원활하신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: true,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
-  },
-  {
-    id: 2,
-    dday: '상시',
-    title: 'Product Designer',
-    company: '당근마켓',
-    requirement: '• 5년 이상의 모바일, 웹 서비스 디자인 경험이 있으신 분',
-    preference: '• 금융 및 핀테크 서비스에 대한 이해도가 높고 경험이 있는 분',
-    memo: '',
-    docs: true,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
-  },
-  {
-    id: 3,
-    dday: 3,
-    title: 'NCP 프로덕트 디자인',
-    company: '네이버클라우드',
-    requirement: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    preference: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: false,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
-  },
-  {
-    id: 4,
-    dday: 10,
-    title: 'NCP 프로덕트 디자인',
-    company: '네이버클라우드',
-    requirement: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    preference: '• 클라우드 또는 대규모 포털 서비스 디자인 경험이 있으신 분',
-    memo: '3급 채용이라 좀 빡셀 거 같은... 그래도 우선 지원은 했다. 저번 상반기에는 그래도 서류까지는 붙었으니까 이번에도 가능성 좀 있지',
-    docs: false,
-    selected: false,
-    expanded: false,
-    bookmarked: true,
-  },
-];
+import BookmarkListItem from './BookmarkListItem';
+import { useEffect, useState } from 'react';
+import Pagination from '@/app/_components/common/Pagination';
+import { useBookmarkList } from '@/hooks/queries/useBookmark';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  useDeleteBookmark,
+  useToggleBookmark,
+} from '@/hooks/mutation/useBookmarkMutation';
+import Loader from '@/app/_components/common/Loader';
+import { isLoggedIn } from '@/utils/auth';
 
 const BookmarkList = () => {
-  const isLoggedIn = true; // 추후 실제 로그인 상태에 맞게 변경
+  const [loggedIn, setLoggedIn] = useState(false);
+  useEffect(() => {
+    setLoggedIn(isLoggedIn());
+  }, []);
 
-  const [items, setItems] = useState<BookmarkListItemProps[]>(data);
+  const queryClient = useQueryClient();
   const [isPublic, setIsPublic] = useState(true);
 
-  const selectedCount = useMemo(
-    () => items.filter((item) => item.selected).length,
-    [items]
-  );
+  const [page, setPage] = useState(1);
+  const size = 10;
 
-  const allSelected = useMemo(
-    () => items.length > 0 && selectedCount === items.length,
-    [items, selectedCount]
-  );
+  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const { data, isLoading, isError, isFetching } = useBookmarkList({
+    page: page - 1,
+    size,
+  });
+
+  const { mutate: deleteBookmark } = useDeleteBookmark();
+
+  const items = data?.data || [];
+  const totalPages = data?.totalPages || 1;
+
+  const handleFileUploaded = async () => {
+    // 전체 리스트 재조회
+    queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
+  };
+
+  const handleToggleExpand = (id: number) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((e) => e !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleSelect = (id: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
+    );
+  };
+
+  const selectedCount = selectedIds.length;
+  const allSelected = items.length > 0 && selectedIds.length === items.length;
 
   const toggleSelectAll = () => {
-    setItems((prev) => prev.map((i) => ({ ...i, selected: !allSelected })));
-  };
-
-  const toggleSelectOne = (id: number) => {
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, selected: !i.selected } : i))
+    setSelectedIds(
+      allSelected
+        ? []
+        : items.map((i) => i.scrapId).filter((id): id is number => id !== null)
     );
   };
 
-  const toggleExpand = (id: number) => {
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, expanded: !i.expanded } : i))
-    );
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) return;
+
+    if (!window.confirm(`${selectedIds.length}개의 북마크를 삭제하시겠습니까?`))
+      return;
+
+    deleteBookmark(selectedIds, {
+      onSuccess: () => {
+        setSelectedIds([]);
+        setExpandedIds([]);
+      },
+      onError: (error) => {
+        console.error('삭제 실패:', error);
+      },
+    });
   };
 
-  const toggleBookmark = (id: number) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, bookmarked: !item.bookmarked } : item
-      )
+  const { mutate } = useToggleBookmark(page - 1, size);
+  const handleBookmarkToggle = (postingId: number, next: boolean) => {
+    const item = items.find(
+      (i) => i.jobPostingResponse.postingId === postingId
     );
+    if (!item) return;
+    mutate({ postingId, next, scrapId: item.scrapId ?? null });
   };
 
-  if (!isLoggedIn) {
+  if (!loggedIn) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
         <Image
@@ -125,7 +115,16 @@ const BookmarkList = () => {
     );
   }
 
-  if (items.length === 0) {
+  if (isFetching || isLoading)
+    return (
+      <div className="flex h-[360px] w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+
+  if (isError) return <div>에러가 발생했습니다.</div>;
+
+  if (data?.totalElements === 0) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
         <Image
@@ -167,16 +166,12 @@ const BookmarkList = () => {
           <div className="border-base-neutral-border h-[16px] border-l" />
           <button
             className={`body-md-semibold ${selectedCount > 0 ? 'cursor-pointer text-red-500' : 'text-contents-state-disabled'}`}
-            onClick={() => {
-              if (selectedCount > 0) {
-                alert(`${selectedCount}개 삭제하기`);
-              }
-            }}
+            onClick={handleDelete}
           >
             삭제하기
           </button>
         </div>
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto flex items-center gap-[8px]">
           <span className="body-lg-medium text-contents-neutral-secondary">
             북마크 공개
           </span>
@@ -213,13 +208,25 @@ const BookmarkList = () => {
         {/* 북마크 요소 리스트 */}
         {items.map((item) => (
           <BookmarkListItem
-            key={item.id}
+            key={item.jobPostingResponse.postingId}
             item={item}
-            onToggleSelect={() => toggleSelectOne(item.id)}
-            onToggleExpand={() => toggleExpand(item.id)}
-            onBookmarkSelect={() => toggleBookmark(item.id)}
+            selected={
+              item.scrapId !== null && selectedIds.includes(item.scrapId)
+            }
+            expanded={
+              item.scrapId !== null && expandedIds.includes(item.scrapId)
+            }
+            onToggleSelect={() =>
+              item.scrapId !== null && handleToggleSelect(item.scrapId)
+            }
+            onToggleExpand={() =>
+              item.scrapId !== null && handleToggleExpand(item.scrapId)
+            }
+            onBookmarkToggle={handleBookmarkToggle}
+            onFileUploaded={handleFileUploaded}
           />
         ))}
+        <Pagination totalPages={totalPages} page={page} onChange={setPage} />
       </div>
     </div>
   );
