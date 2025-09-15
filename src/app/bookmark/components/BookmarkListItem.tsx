@@ -7,6 +7,8 @@ import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 
+// DDAY 상시면 상시, 숫자는 d-00 이렇게 보내주는듯?
+
 type Props = {
   item: BookmarkItem;
   expanded?: boolean;
@@ -131,7 +133,7 @@ const BookmarkListItem = ({
             </div>
           )}
         </span>
-        <span className="w-[200px] px-[12px]">
+        <span className="w-[200px] overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
           {item.jobPostingResponse.title}
         </span>
         <span className="w-[128px] px-[12px]">
