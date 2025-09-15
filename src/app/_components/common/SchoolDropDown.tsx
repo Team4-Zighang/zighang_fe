@@ -6,18 +6,20 @@ import { useSchoolList } from '@/hooks/queries/useOnboarding';
 type Props = {
   placeholder?: string;
   onSelect?: (school: string) => void;
+  isEnabled: boolean;
 };
 
 const SchoolDropdown = ({
   placeholder = '학교를 입력하세요',
   onSelect,
+  isEnabled,
 }: Props) => {
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string>('');
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const { data: schoolResponse } = useSchoolList();
+  const { data: schoolResponse } = useSchoolList(isEnabled);
   const schoolOptions: string[] = schoolResponse?.data ?? [];
 
   const filteredData =
@@ -46,22 +48,24 @@ const SchoolDropdown = ({
 
   return (
     <div ref={wrapperRef} className="relative w-full">
-      <div className="relative" onClick={() => setOpen(true)}>
+      <div className="relative" onClick={() => isEnabled && setOpen(true)}>
         <input
           type="text"
           value={selected || query}
           onChange={(e) => {
             setQuery(e.target.value);
             setSelected('');
-            setOpen(true);
+            if (isEnabled) setOpen(true);
           }}
           placeholder={placeholder}
-          className="border-base-neutral-border text-contents-neutral-primary body-lg-medium focus:ring-base-neutral-border w-full rounded-[12px] border p-4 focus:ring-1 focus:outline-none"
+          disabled={!isEnabled}
+          className="border-base-neutral-border text-contents-neutral-primary body-lg-medium focus:ring-base-neutral-border disabled:bg-base-neutral-alternative w-full rounded-[12px] border p-4 focus:ring-1 focus:outline-none disabled:cursor-not-allowed"
         />
         <button
           type="button"
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => isEnabled && setOpen((prev) => !prev)}
           className="absolute inset-y-0 right-4 flex cursor-pointer items-center"
+          disabled={!isEnabled}
         >
           <Image
             src="/icons/arrow_under.svg"
