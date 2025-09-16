@@ -190,18 +190,6 @@ const PostingLotto = () => {
     });
   };
 
-  // ScrapBubble 닫기
-  useEffect(() => {
-    if (!scrapBubble) return;
-    const onDown = (e: MouseEvent) => {
-      if (!iconWrapRef.current) return;
-      if (!iconWrapRef.current.contains(e.target as Node))
-        setScrapBubble(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [scrapBubble]);
-
   return (
     <div className="mt-12 flex w-full flex-col items-start">
       <div className="flex w-full flex-row items-start justify-between gap-3 px-4 sm:flex-row">
@@ -234,14 +222,18 @@ const PostingLotto = () => {
               {cardMutation.isPending ? '뽑는 중' : '새로 뽑기'}
             </span>
           </button>
-          <div ref={iconWrapRef} className="relative">
+          <div
+            ref={iconWrapRef}
+            className="relative"
+            onMouseEnter={() => setScrapBubble(true)}
+            onMouseLeave={() => setScrapBubble(false)}
+          >
             <Image
               src="/icons/question_mark.svg"
               alt="questionIcon"
               width={20}
               height={20}
               className="cursor-pointer"
-              onClick={() => setScrapBubble((v) => !v)}
             />
             {scrapBubble && (
               <ScrapBubble onClose={() => setScrapBubble(false)} />
