@@ -1,5 +1,6 @@
 'use client';
 import { CardShowOpenResponse } from '@/app/_apis/schemas/cardResponse';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -17,7 +18,7 @@ type CardBackProps = {
   academicConditions: string;
   address: string;
   isScrap: boolean;
-  scrapId: null;
+  scrapId: number;
 };
 
 const CardBack = ({
@@ -40,6 +41,7 @@ const CardBack = ({
   const cardData = openedCards.find(
     (c) => c.cardJobPosting.jobPostingId === jobPostingId
   );
+  const deleteScrap = useDeleteBookmark();
 
   const ImageUrl =
     !companyImageUrl ||
@@ -65,9 +67,12 @@ const CardBack = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            mutate.mutate({ scrapId, jobPostingId });
+            if (cardData?.cardJobPosting?.isScrap) {
+              deleteScrap.mutate([scrapId]);
+            } else {
+              mutate.mutate({ scrapId: null, jobPostingId });
+            }
           }}
-          className="cursor-pointer"
         >
           <Image
             src={

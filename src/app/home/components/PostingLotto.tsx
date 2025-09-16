@@ -105,7 +105,7 @@ const PostingLotto = () => {
               academicConditions={oc.cardJobPosting.academicConditions}
               address={oc.cardJobPosting.address}
               isScrap={oc.cardJobPosting.isScrap}
-              scrapId={null}
+              scrapId={oc.cardJobPosting.scrapId}
             />
           ),
         };
@@ -146,7 +146,7 @@ const PostingLotto = () => {
                     back: (
                       <CardBack
                         jobPostingId={job.jobPostingId}
-                        scrapId={null}
+                        scrapId={job.scrapId}
                         index={idx}
                         companyImageUrl={
                           job.companyImageUrl ?? '/images/sampleimage.png'
