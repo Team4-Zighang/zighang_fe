@@ -14,7 +14,7 @@ const EntireToggle = () => {
     <div className="flex flex-col gap-[4px] md:flex-row md:items-center md:gap-0">
       <div className="flex">
         <span className="body-2xl-semibold text-contents-neutral-primary">
-          총 {data?.totalElements || '??'}건
+          총 {data?.totalElements ?? '??'}건
         </span>
         <div className="bg-base-neutral-border mx-[12px] h-[16px] w-px self-center" />
       </div>
