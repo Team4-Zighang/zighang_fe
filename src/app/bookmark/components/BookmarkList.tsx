@@ -5,10 +5,7 @@ import { useEffect, useState } from 'react';
 import Pagination from '@/app/_components/common/Pagination';
 import { useBookmarkList } from '@/hooks/queries/useBookmark';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  useDeleteBookmark,
-  useToggleBookmark,
-} from '@/hooks/mutation/useBookmarkMutation';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import Loader from '@/app/_components/common/Loader';
 import { isLoggedIn } from '@/utils/getUser';
 
@@ -80,15 +77,6 @@ const BookmarkList = () => {
         console.error('삭제 실패:', error);
       },
     });
-  };
-
-  const { mutate } = useToggleBookmark(page - 1, size);
-  const handleBookmarkToggle = (postingId: number, next: boolean) => {
-    const item = items.find(
-      (i) => i.jobPostingResponse.postingId === postingId
-    );
-    if (!item) return;
-    mutate({ postingId, next, scrapId: item.scrapId ?? null });
   };
 
   if (!loggedIn) {
@@ -228,7 +216,6 @@ const BookmarkList = () => {
                 onToggleExpand={() =>
                   item.scrapId !== null && handleToggleExpand(item.scrapId)
                 }
-                onBookmarkToggle={handleBookmarkToggle}
                 onFileUploaded={handleFileUploaded}
               />
             ))}

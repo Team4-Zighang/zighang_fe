@@ -16,7 +16,6 @@ type Props = {
   selected?: boolean;
   onToggleSelect?: () => void;
   onToggleExpand?: () => void;
-  onBookmarkToggle?: (postingId: number, nextState: boolean) => void;
   onFileUploaded?: (scrapId: number) => void;
 };
 
