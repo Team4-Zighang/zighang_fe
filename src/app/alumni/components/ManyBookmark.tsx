@@ -6,7 +6,7 @@ import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
-import { getMember, getToken } from '@/store/member';
+import { getToken } from '@/store/member';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,6 @@ const ManyBookmark = () => {
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
-  const memberData = getMember();
 
   useEffect(() => {}, [page]);
 
