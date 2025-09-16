@@ -2,11 +2,7 @@
  * 북마크 등록 및 삭제
  */
 
-import {
-  DeleteBookmark,
-  GetBookmarkList,
-  PostBookmark,
-} from '@/app/_apis/bookmark';
+import { DeleteBookmark, PostBookmark } from '@/app/_apis/bookmark';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useDeleteBookmark() {
