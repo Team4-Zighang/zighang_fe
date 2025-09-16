@@ -4,6 +4,7 @@ import ArrayButton from '@/app/_components/common/ArrayButton';
 import Loader from '@/app/_components/common/Loader';
 import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
 import { getToken } from '@/store/member';
@@ -19,6 +20,7 @@ const ManyBookmark = () => {
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
+  const deleteBookmark = useDeleteBookmark();
 
   useEffect(() => {}, [page]);
 
@@ -138,10 +140,14 @@ const ManyBookmark = () => {
                 className="flex flex-1 cursor-pointer items-center justify-center"
                 onClick={(e) => {
                   e.stopPropagation();
-                  scrapmutate.mutate({
-                    scrapId: null,
-                    jobPostingId: scrap.postingId,
-                  });
+                  if (scrap.isSaved) {
+                    deleteBookmark.mutate([scrap.scrapId]);
+                  } else {
+                    scrapmutate.mutate({
+                      scrapId: null,
+                      jobPostingId: scrap.postingId,
+                    });
+                  }
                 }}
               >
                 <Image

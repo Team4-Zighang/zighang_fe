@@ -1,6 +1,7 @@
 'use client';
 
 import Loader from '@/app/_components/common/Loader';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useHotposting } from '@/hooks/queries/useAlumni';
 import { getToken } from '@/store/member';
@@ -12,6 +13,7 @@ const JobCard = () => {
   const { data: hotposting, isLoading, isError } = useHotposting();
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
+  const deleteBookmark = useDeleteBookmark();
 
   const token = getToken();
   if (!token) {
@@ -47,6 +49,19 @@ const JobCard = () => {
           hotpost.recruitmentType,
           hotpost.career,
         ];
+
+        const handleBookmark = (e: React.MouseEvent) => {
+          e.stopPropagation();
+
+          if (hotpost.isSaved) {
+            deleteBookmark.mutate([hotpost.scrapId]);
+          } else {
+            scrapmutate.mutate({
+              scrapId: null,
+              jobPostingId: hotpost.postingId,
+            });
+          }
+        };
 
         return (
           <div
@@ -109,13 +124,7 @@ const JobCard = () => {
               <button
                 aria-label="북마크"
                 className="flex flex-1 cursor-pointer items-center justify-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrapmutate.mutate({
-                    scrapId: null,
-                    jobPostingId: hotpost.postingId,
-                  });
-                }}
+                onClick={handleBookmark}
               >
                 <Image
                   src={
@@ -141,6 +150,7 @@ const JobCard = () => {
             <button
               aria-label="북마크"
               className="border-base-neutral-border flex w-12 items-center justify-center self-stretch border-l px-2 md:hidden"
+              onClick={handleBookmark}
             >
               <Image
                 src={

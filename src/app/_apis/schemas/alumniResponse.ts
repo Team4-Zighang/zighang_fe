@@ -31,6 +31,7 @@ export interface AlumniScrapItem {
   totalViews: number;
   dday: string;
   isSaved: boolean;
+  scrapId: number;
 }
 
 export interface AlumniScrapResponse {

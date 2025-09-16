@@ -43,6 +43,14 @@ const SearchAlumni = () => {
     return <div className="mt-8 text-center">에러가 발생했습니다.</div>;
   }
 
+  if (!infoData || infoData.length === 0) {
+    return (
+      <div className="body-xl-regular mt-8 text-center text-[#474748]">
+        같은 직무를 희망하는 동문이 없어요
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="mt-8">
