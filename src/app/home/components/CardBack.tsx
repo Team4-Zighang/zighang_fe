@@ -1,4 +1,5 @@
 'use client';
+import { CardShowOpenResponse } from '@/app/_apis/schemas/cardResponse';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -34,7 +35,8 @@ const CardBack = ({
   const mutate = useCardScrapMutation();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const openedCards: any[] = queryClient.getQueryData(['OpenedCard']) || [];
+  const openedCards: CardShowOpenResponse[] =
+    queryClient.getQueryData(['OpenedCard']) || [];
   const cardData = openedCards.find(
     (c) => c.cardJobPosting.jobPostingId === jobPostingId
   );
