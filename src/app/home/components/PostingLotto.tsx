@@ -10,7 +10,9 @@ import {
 import CardBack from './CardBack';
 import TimeCard, { CardProps } from './TimeCard';
 import ScrapBubble from './ScrapBubble';
-import { useCardOpen } from '@/hooks/queries/useCard';
+import { useCardOpen, useScrap } from '@/hooks/queries/useCard';
+import { getToken } from '@/store/member';
+import { useRouter } from 'next/navigation';
 
 const frontImgs = [
   '/images/zighang_card_1.png',
@@ -24,15 +26,20 @@ const PostingLotto = () => {
   const cardMutation = useCardMutation();
   const cardReplaceMutation = useCardReplaceMutation();
   const { data: openedCards } = useCardOpen();
+  const { data: scrapcard } = useScrap();
+  const router = useRouter();
+  const token = getToken();
 
   const [scrapBubble, setScrapBubble] = useState(false);
   const iconWrapRef = useRef<HTMLDivElement>(null);
+
+  const scrapCount = scrapcard?.scrapCount ?? 0;
+  const isScrapInsufficient = scrapCount < 3;
 
   const [cards, setCards] = useState<CardProps[]>(
     frontImgs.map((img, idx) => ({
       id: String(idx + 1),
       frontImg: img,
-      // back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
     }))
   );
 
@@ -50,6 +57,11 @@ const PostingLotto = () => {
   });
 
   const lastSigRef = useRef<string>('');
+
+  useEffect(() => {
+    cardMutation.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!openedCards || openedCards.length === 0) return;
@@ -106,6 +118,11 @@ const PostingLotto = () => {
 
   //카드 클릭했을때
   const handleFlip = (i: number) => {
+    if (!token) {
+      router.push('/onboarding');
+      return;
+    }
+
     const alreadyOpened = openedCards?.some(
       (oc) => oc?.position === positions[i]
     );
@@ -158,7 +175,6 @@ const PostingLotto = () => {
           frontImgs.map((img, idx) => ({
             id: String(idx + 1),
             frontImg: img,
-            // back: <div className="p-6 text-gray-400">아직 오픈 전</div>,
           }))
         );
         syncBackState([false, false, false]);
@@ -166,7 +182,6 @@ const PostingLotto = () => {
     });
   };
 
-  // 스크랩 닫기 처리
   useEffect(() => {
     if (!scrapBubble) return;
     const onDown = (e: MouseEvent) => {
@@ -186,10 +201,10 @@ const PostingLotto = () => {
         </div>
         <div className="flex flex-row items-center">
           <button
-            className="flex cursor-pointer items-center gap-1 py-2 pr-4 pl-3"
+            className="flex items-center gap-1 py-2 pr-4 pl-3 disabled:cursor-not-allowed"
             type="button"
             onClick={handleRefresh}
-            disabled={cardMutation.isPending}
+            disabled={cardMutation.isPending || isScrapInsufficient}
           >
             <Image
               src="/icons/refresh.svg"
@@ -197,7 +212,16 @@ const PostingLotto = () => {
               width={20}
               height={20}
             />
-            <span className="text-contents-primary-default body-lg-medium">
+
+            <span
+              className={`body-lg-medium ${
+                cardMutation.isPending
+                  ? 'text-contents-primary-default'
+                  : isScrapInsufficient
+                    ? 'text-contents-neutral-tertiary'
+                    : 'text-contents-primary-default'
+              }`}
+            >
               {cardMutation.isPending ? '뽑는 중' : '새로 뽑기'}
             </span>
           </button>
