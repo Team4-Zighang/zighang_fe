@@ -30,9 +30,10 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
 
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
+  const [modal, setModal] = useState(false);
   const onBookmarkClick = () => {
     if (!isLoggedIn()) {
-      <LoginModal />;
+      setModal(true);
       return;
     }
 
@@ -80,7 +81,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
         <button
           onClick={onBookmarkClick}
           disabled={bookmarkLoading}
-          className={`${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px]`}
+          className={`${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] cursor-pointer items-center justify-center rounded-[8px] border-[1px]`}
         >
           <Image
             src={
@@ -121,6 +122,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
           className=""
         />
       </div>
+      {modal && <LoginModal onClose={() => setModal(false)} />}
     </>
   );
 };
