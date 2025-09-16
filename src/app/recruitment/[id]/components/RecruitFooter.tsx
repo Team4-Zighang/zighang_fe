@@ -26,9 +26,10 @@ const RecruitFooter = () => {
   const { mutate: postBookmark } = useToggleBookmark();
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
+  const [modal, setModal] = useState(false);
   const onBookmarkClick = () => {
     if (!isLoggedIn()) {
-      <LoginModal />;
+      setModal(true);
       return;
     }
 
