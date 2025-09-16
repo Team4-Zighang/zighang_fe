@@ -6,6 +6,7 @@ import { usePersonalityAnalysis } from '@/hooks/queries/useBookmark';
 import Loader from '@/app/_components/common/Loader';
 import { CHARACTER_MAP } from '@/utils/character';
 import { isLoggedIn } from '@/utils/getUser';
+import { getMember } from '@/store/member';
 
 const AnalyzeCard = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -13,18 +14,7 @@ const AnalyzeCard = () => {
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
-
-    const storedUser = localStorage.getItem('memberInfo');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser?.data?.member?.memberName) {
-          setName(parsedUser.data.member.memberName);
-        }
-      } catch (err) {
-        console.error('memberInfo 파싱 실패:', err);
-      }
-    }
+    setName(getMember()?.member?.memberName);
   }, []);
 
   const {
