@@ -80,6 +80,7 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
       <div className="flex gap-[8px]">
         <button
           onClick={onBookmarkClick}
+          onDoubleClick={(e) => e.preventDefault()}
           disabled={bookmarkLoading}
           className={`${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] cursor-pointer items-center justify-center rounded-[8px] border-[1px]`}
         >

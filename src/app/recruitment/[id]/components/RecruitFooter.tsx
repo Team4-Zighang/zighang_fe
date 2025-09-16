@@ -87,6 +87,7 @@ const RecruitFooter = () => {
         </button>
         <button
           onClick={onBookmarkClick}
+          onDoubleClick={(e) => e.preventDefault()}
           disabled={bookmarkLoading}
           className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
