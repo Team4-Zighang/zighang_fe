@@ -40,7 +40,7 @@ const AnalyzeCard = () => {
   return (
     <div className="md:px-auto flex w-full flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
       <span className="heading-sm-semibold md:heading-1xl-semibold">
-        {name}님이 북마크한 공고들을 분석했어요!
+        {name ?? '??'}님이 북마크한 공고들을 분석했어요!
       </span>
       <div
         className={`bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px] ${isError ? 'md:justify-between' : ''}`}
