@@ -26,18 +26,20 @@ const ManyBookmark = () => {
   //수정예정
   const token = getToken();
   if (!token) {
-    <div className="flex w-full flex-col items-center justify-center">
-      <Image
-        src="/icons/lock.svg"
-        alt="nologin"
-        width={36}
-        height={36}
-        className="h-6 w-6 md:h-9 md:w-9"
-      />
-      <div className="text-contents-primary-accent heading-md-semibold">
-        로그인 후 이용 가능{' '}
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
       </div>
-    </div>;
+    );
   }
 
   if (isLoading)
@@ -51,15 +53,7 @@ const ManyBookmark = () => {
   const items = Array.isArray(scrapdata?.data) ? scrapdata!.data : [];
 
   return (
-    <div className="flex flex-col items-start px-5 pt-24 pb-12 md:px-[120px] md:pt-0 md:pb-8">
-      <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
-        {memberData?.member?.memberName}님의 동문들이
-        <span className="block md:inline">
-          {' '}
-          가장 많이 북마크한 공고를 살펴보세요!
-        </span>
-      </div>
-
+    <>
       <div className="mt-4 w-full text-sm md:mt-8 md:text-base">
         <div className="flex w-full flex-row items-center justify-between">
           <div className="flex items-center">
@@ -179,7 +173,7 @@ const ManyBookmark = () => {
         onChange={setPage}
         className="mt-8"
       />
-    </div>
+    </>
   );
 };
 

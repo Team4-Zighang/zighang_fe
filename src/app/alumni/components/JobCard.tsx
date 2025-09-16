@@ -3,6 +3,7 @@
 import Loader from '@/app/_components/common/Loader';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useHotposting } from '@/hooks/queries/useAlumni';
+import { getToken } from '@/store/member';
 import { getTrendColor, getTrendIcon, TrendType } from '@/utils/jobTrend';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -11,6 +12,24 @@ const JobCard = () => {
   const { data: hotposting, isLoading, isError } = useHotposting();
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
+
+  const token = getToken();
+  if (!token) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading)
     return (
