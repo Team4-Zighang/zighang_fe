@@ -19,6 +19,8 @@ import LoginModal from '@/app/_components/common/LoginModal';
 import JobRemoveModal from '@/app/_components/common/JobRemoveModal';
 import { useMajorList } from '@/hooks/queries/useOnboarding';
 import { SCHOOL_MAP } from '@/utils/schoolMap';
+import { getToken } from '@/store/member';
+import { useRouter } from 'next/navigation';
 
 const OnBoardingContents = () => {
   const initialJobList = jobs;
@@ -40,6 +42,7 @@ const OnBoardingContents = () => {
   const [loginModal, setLoginModal] = useState(false);
 
   const onboardingMutation = useOnboardingMutation();
+  const router = useRouter();
 
   const mappedSchool = SCHOOL_MAP[selectedUniversity] || '';
   const { data: majorList } = useMajorList(mappedSchool);
@@ -81,6 +84,12 @@ const OnBoardingContents = () => {
 
   const handleSubmit = () => {
     const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
+    const token = getToken();
+
+    if (!token) {
+      setLoginModal(true);
+      return;
+    }
 
     onboardingMutation.mutate(
       {
@@ -93,7 +102,7 @@ const OnBoardingContents = () => {
       },
       {
         onSuccess: () => {
-          setLoginModal(true);
+          router.push('/home');
           resetForm();
         },
       }
@@ -206,7 +215,14 @@ const OnBoardingContents = () => {
 
       <Button onClick={handleSubmit} disabled={isDisabled} />
 
-      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
+      {loginModal && (
+        <LoginModal
+          onClose={() => {
+            setLoginModal(false);
+            resetForm();
+          }}
+        />
+      )}
 
       {isRemoveModalOpen && (
         <JobRemoveModal
