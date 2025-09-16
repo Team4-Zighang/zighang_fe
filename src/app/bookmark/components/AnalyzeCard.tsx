@@ -18,8 +18,8 @@ const AnalyzeCard = () => {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        if (parsedUser?.data?.member?.name) {
-          setName(parsedUser.data.member.name);
+        if (parsedUser?.data?.member?.memberName) {
+          setName(parsedUser.data.member.memberName);
         }
       } catch (err) {
         console.error('memberInfo 파싱 실패:', err);
