@@ -11,6 +11,10 @@ export function useDeleteBookmark() {
     mutationFn: (idList: number[]) => DeleteBookmark(idList),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
+      queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
+      queryClient.invalidateQueries({ queryKey: ['DetailInfo'] });
+      queryClient.invalidateQueries({ queryKey: ['Hotposting'] });
+      queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
     },
     onError: (error) => {
       console.error('삭제 실패:', error);

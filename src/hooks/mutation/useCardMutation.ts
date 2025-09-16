@@ -55,6 +55,8 @@ export function useCardScrapMutation() {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
       queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
       queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
+      queryClient.invalidateQueries({ queryKey: ['DetailInfo'] });
+      queryClient.invalidateQueries({ queryKey: ['Hotposting'] });
 
       queryClient.setQueryData<CardShowOpenResponse[]>(
         ['OpenedCard'],
@@ -76,7 +78,7 @@ export function useCardScrapMutation() {
       );
     },
     onError: (error) => {
-      console.error('카드 스크랩 실패:', error);
+      console.error('스크랩 실패:', error);
     },
   });
 }
