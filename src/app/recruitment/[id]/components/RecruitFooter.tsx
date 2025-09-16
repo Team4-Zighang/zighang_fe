@@ -1,89 +1,50 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import { useParams } from 'next/dist/client/components/navigation';
-import {
-  useDeleteBookmark,
-  usePostBookmark,
-} from '@/hooks/mutation/useBookmarkMutation';
+import { useJobDetailScrapMutation } from '@/hooks/mutation/useBookmarkMutation';
 import { isLoggedIn } from '@/utils/getUser';
 import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();
   const { data, isLoading, isFetching } = useRecruitmentDetail({
-    id: Number(id),
+    postingId: Number(id),
   });
 
   const job = data?.data;
   const [isBookmarked, setIsBookmarked] = useState(job?.isSaved ?? false);
 
-  const { mutate: deleteBookmark, isPending: isDeletePending } =
-    useDeleteBookmark();
-  const { mutate: postBookmark, isPending: isPostPending } = usePostBookmark();
-  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  useEffect(() => {
+    setIsBookmarked(job?.isSaved ?? false);
+  }, [job?.isSaved]);
 
   const [modal, setModal] = useState(false);
 
-  const clickingRef = useRef(false);
-  const onBookmarkClick = async () => {
+  const toggle = useJobDetailScrapMutation(Number(id));
+  const isPending = toggle.isPending;
+  const onBookmarkClick = () => {
+    if (!job) return;
+
     if (!isLoggedIn()) {
       setModal(true);
       return;
     }
 
-    if (
-      clickingRef.current ||
-      bookmarkLoading ||
-      isPostPending ||
-      isDeletePending
-    )
-      return;
-    clickingRef.current = true;
-
-    try {
-      setBookmarkLoading(true);
-
-      if (isBookmarked) {
-        if (job?.scrapId !== null && job?.scrapId !== undefined) {
-          await deleteBookmark([job.scrapId], {
-            onSuccess: () => {
-              setIsBookmarked(false);
-              setBookmarkLoading(false);
-            },
-          });
-        } else {
-          setIsBookmarked(false);
-          setBookmarkLoading(false);
-        }
-      } else {
-        if (job?.postingId !== undefined) {
-          await postBookmark(
-            {
-              jobPostingId: job.postingId,
-            },
-            {
-              onSuccess: () => {
-                setIsBookmarked(true);
-                setBookmarkLoading(false);
-              },
-            }
-          );
-        } else {
-          setIsBookmarked(true);
-          setBookmarkLoading(false);
-        }
+    toggle.mutate(
+      {
+        postingId: job.postingId,
+        scrapId: job.scrapId ?? null,
+        next: !isBookmarked,
+      },
+      {
+        onSuccess: (_data) => {},
       }
-    } catch (error) {
-      console.error('북마크 처리 중 오류 발생:', error);
-    } finally {
-      setBookmarkLoading(false);
-      clickingRef.current = false; // ✅ 락 해제
-    }
+    );
   };
 
   const [isMemoOpen, setIsMemoOpen] = useState(false);
@@ -103,8 +64,8 @@ const RecruitFooter = () => {
         <button
           onClick={onBookmarkClick}
           onDoubleClick={(e) => e.preventDefault()}
-          disabled={bookmarkLoading}
-          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
+          disabled={isPending}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isPending ? 'pointer-events-none cursor-not-allowed opacity-70' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
             src={
@@ -117,7 +78,7 @@ const RecruitFooter = () => {
             alt="bookmark"
             width={28}
             height={28}
-            className={`m-auto ${bookmarkLoading ? 'opacity-50' : ''}`}
+            className={`m-auto ${isPending ? 'opacity-50' : ''}`}
           />
         </button>
 
@@ -141,6 +102,7 @@ const RecruitFooter = () => {
           </div>
         </div>
       )}
+      {modal && <LoginModal onClose={() => setModal(false)} />}
     </>
   );
 };
