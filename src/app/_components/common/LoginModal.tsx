@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import React from 'react';
 
-const LoginModal = () => {
+interface LoginProps {
+  onClose: () => void;
+}
+
+const LoginModal = ({ onClose }: LoginProps) => {
   const handleKakaoLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/oauth2/authorization/kakao`;
   };
@@ -15,6 +19,7 @@ const LoginModal = () => {
           width={24}
           height={24}
           className="absolute top-4 right-4 h-6 w-6 cursor-pointer"
+          onClick={onClose}
         />
 
         <div className="text-center">
@@ -51,10 +56,9 @@ const LoginModal = () => {
           </button>
 
           <button className="web-title4 flex w-full cursor-pointer items-center justify-center gap-3 rounded-[8px] border border-gray-300 bg-white px-4 py-3 text-gray-700 shadow-sm">
-            {/* 이미지 구글로 변경 */}
             <Image
-              src="/images/login/kakao.png"
-              alt="카카오"
+              src="/icons/google_icon.svg"
+              alt="구글"
               width={24}
               height={24}
               className="h-6 w-6"

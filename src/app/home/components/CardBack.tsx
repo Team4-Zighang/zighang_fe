@@ -1,6 +1,7 @@
 'use client';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 type CardBackProps = {
@@ -31,6 +32,7 @@ const CardBack = ({
   scrapId,
 }: CardBackProps) => {
   const mutate = useCardScrapMutation();
+  const router = useRouter();
 
   const ImageUrl =
     !companyImageUrl ||
@@ -40,7 +42,10 @@ const CardBack = ({
       : companyImageUrl;
 
   return (
-    <div className="flex flex-col items-start">
+    <div
+      className="flex cursor-pointer flex-col items-start"
+      onClick={() => router.push(`/recruitment/${jobPostingId}`)}
+    >
       <div className="flex w-full flex-row items-start justify-between">
         <Image
           src={ImageUrl}

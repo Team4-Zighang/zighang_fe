@@ -59,7 +59,7 @@ function Pagination({
 
   return (
     <nav
-      className={`flex w-full items-center justify-center gap-2 p-1 ${className}`}
+      className={`flex w-full cursor-pointer items-center justify-center gap-2 p-1 ${className}`}
       aria-label="페이지네이션"
     >
       <button
@@ -69,10 +69,15 @@ function Pagination({
         aria-label="처음"
       >
         <Image
-          src="/icons/double_arrow_left.svg"
+          src={
+            page === 1
+              ? '/icons/double_arrow_left.svg'
+              : '/icons/double_arrow_right.svg'
+          }
           alt="first page"
           width={24}
           height={24}
+          className={page > 1 ? 'rotate-180' : ''}
         />
       </button>
 
@@ -83,10 +88,15 @@ function Pagination({
         aria-label="이전"
       >
         <Image
-          src="/icons/pagination_left.svg"
+          src={
+            page === 1
+              ? '/icons/pagination_left.svg'
+              : '/icons/pagination_right.svg'
+          }
           alt="prev page"
           width={24}
           height={24}
+          className={page > 1 ? 'rotate-180' : ''}
         />
       </button>
 

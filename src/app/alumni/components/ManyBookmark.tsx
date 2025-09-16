@@ -1,11 +1,15 @@
 'use client';
 
 import ArrayButton from '@/app/_components/common/ArrayButton';
+import Loader from '@/app/_components/common/Loader';
 import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
+import { getMember, getToken } from '@/store/member';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const ManyBookmark = () => {
@@ -13,24 +17,43 @@ const ManyBookmark = () => {
   const [showClosed, setShowClosed] = useState(false);
 
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
+  const router = useRouter();
+  const scrapmutate = useCardScrapMutation();
+  const memberData = getMember();
 
   useEffect(() => {}, [page]);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  //수정예정
+  const token = getToken();
+  if (!token) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   const items = Array.isArray(scrapdata?.data) ? scrapdata!.data : [];
 
   return (
-    <div className="flex flex-col items-start px-5 pt-24 pb-12 md:px-[120px] md:pt-0 md:pb-8">
-      <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
-        지우님의 동문들이
-        <span className="block md:inline">
-          {' '}
-          가장 많이 북마크한 공고를 살펴보세요!
-        </span>
-      </div>
-
+    <>
       <div className="mt-4 w-full text-sm md:mt-8 md:text-base">
         <div className="flex w-full flex-row items-center justify-between">
           <div className="flex items-center">
@@ -61,7 +84,8 @@ const ManyBookmark = () => {
         {items.map((scrap) => (
           <div
             key={scrap.postingId}
-            className="border-base-neutral-border flex rounded-[12px] border bg-white md:w-[592px]"
+            onClick={() => router.push(`/recruitment/${scrap.postingId}`)}
+            className="border-base-neutral-border flex cursor-pointer rounded-[12px] border bg-white md:w-[592px]"
           >
             <div className="flex min-w-0 flex-1 items-center gap-[10px] px-2 py-4 md:gap-4 md:p-4">
               <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
@@ -112,7 +136,14 @@ const ManyBookmark = () => {
             <div className="border-base-neutral-border flex w-12 flex-col self-stretch border-l md:w-[84px]">
               <button
                 aria-label="북마크"
-                className="flex flex-1 items-center justify-center"
+                className="flex flex-1 cursor-pointer items-center justify-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrapmutate.mutate({
+                    scrapId: null,
+                    jobPostingId: scrap.postingId,
+                  });
+                }}
               >
                 <Image
                   src={
@@ -142,7 +173,7 @@ const ManyBookmark = () => {
         onChange={setPage}
         className="mt-8"
       />
-    </div>
+    </>
   );
 };
 
