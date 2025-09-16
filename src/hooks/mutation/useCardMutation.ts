@@ -44,13 +44,33 @@ export function useCardReplaceMutation() {
 
 export function useCardScrapMutation() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (body: { scrapId: null; jobPostingId: number }) =>
       CardScrap(body),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      const { jobPostingId } = variables;
+
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
       queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
       queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
+
+      queryClient.setQueryData(['OpenedCard'], (old: any) => {
+        if (!old) return old;
+
+        return old.map((card: any) => {
+          if (card.cardJobPosting.jobPostingId === jobPostingId) {
+            return {
+              ...card,
+              cardJobPosting: {
+                ...card.cardJobPosting,
+                isScrap: !card.cardJobPosting.isScrap,
+              },
+            };
+          }
+          return card;
+        });
+      });
     },
     onError: (error) => {
       console.error('카드 스크랩 실패:', error);

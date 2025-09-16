@@ -1,5 +1,6 @@
 'use client';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -27,12 +28,16 @@ const CardBack = ({
   recruitmentType,
   academicConditions,
   address,
-  isScrap,
   jobPostingId,
   scrapId,
 }: CardBackProps) => {
   const mutate = useCardScrapMutation();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const openedCards: any[] = queryClient.getQueryData(['OpenedCard']) || [];
+  const cardData = openedCards.find(
+    (c) => c.cardJobPosting.jobPostingId === jobPostingId
+  );
 
   const ImageUrl =
     !companyImageUrl ||
@@ -64,7 +69,7 @@ const CardBack = ({
         >
           <Image
             src={
-              isScrap
+              cardData?.cardJobPosting?.isScrap
                 ? '/icons/bookmark_selected.svg'
                 : '/icons/bookmark_unselected.svg'
             }
