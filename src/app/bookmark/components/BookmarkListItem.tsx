@@ -4,6 +4,7 @@ import {
   BookmarkItem,
 } from '@/app/_apis/schemas/bookmarkResponse';
 import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
+import { extractTextFromHtml } from '@/utils/cleantext';
 import Image from 'next/image';
 import React, { useRef, useState } from 'react';
 
@@ -72,6 +73,10 @@ const BookmarkListItem = ({
       console.error('파일 업로드 실패:', error);
     }
   };
+
+  const isHtml = /<\/?[a-z][\s\S]*>/i.test(
+    item.jobPostingResponse.qualification ?? '<p></p>'
+  );
 
   return (
     <>
@@ -143,7 +148,11 @@ const BookmarkListItem = ({
           {item.jobPostingResponse.qualification || '없음'}
         </span>
         <span className="flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap">
-          {item.jobPostingResponse.preferentialTreatment || '없음'}
+          {isHtml
+            ? extractTextFromHtml(
+                item.jobPostingResponse.preferentialTreatment || '없음'
+              )
+            : item.jobPostingResponse.preferentialTreatment || '없음'}
         </span>
         <span
           className={`flex-1 overflow-hidden px-[12px] text-ellipsis whitespace-nowrap`}
@@ -285,13 +294,24 @@ const BookmarkListItem = ({
                 자격요건
               </span>
               <div className="text-contents-neutral-secondary w-full">
-                <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
-                  {item.jobPostingResponse.qualification
-                    ? item.jobPostingResponse.qualification
-                        .split('\n')
-                        .map((line, idx) => <div key={idx}>{line}</div>)
-                    : '없음'}
-                </div>
+                {isHtml ? (
+                  <div
+                    className="text-contents-neutral-secondary"
+                    dangerouslySetInnerHTML={{
+                      __html: (
+                        item.jobPostingResponse.qualification || '없음'
+                      ).replace(/\n/g, ''),
+                    }}
+                  />
+                ) : (
+                  <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
+                    {item.jobPostingResponse.qualification
+                      ? item.jobPostingResponse.qualification
+                          .split('\n')
+                          .map((line, idx) => <div key={idx}>{line}</div>)
+                      : '없음'}
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex gap-[24px]">
@@ -299,13 +319,24 @@ const BookmarkListItem = ({
                 우대사항
               </span>
               <div className="text-contents-neutral-secondary w-full">
-                <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
-                  {item.jobPostingResponse.preferentialTreatment
-                    ? item.jobPostingResponse.preferentialTreatment
-                        .split('\n')
-                        .map((line, idx) => <div key={idx}>{line}</div>)
-                    : '없음'}
-                </div>
+                {isHtml ? (
+                  <div
+                    className="text-contents-neutral-secondary"
+                    dangerouslySetInnerHTML={{
+                      __html: (
+                        item.jobPostingResponse.preferentialTreatment || '없음'
+                      ).replace(/\n/g, ''),
+                    }}
+                  />
+                ) : (
+                  <div className="text-contents-neutral-secondary grid grid-cols-2 gap-y-2">
+                    {item.jobPostingResponse.preferentialTreatment
+                      ? item.jobPostingResponse.preferentialTreatment
+                          .split('\n')
+                          .map((line, idx) => <div key={idx}>{line}</div>)
+                      : '없음'}
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex gap-[24px]">
