@@ -59,9 +59,12 @@ const PostingLotto = () => {
   const lastSigRef = useRef<string>('');
 
   useEffect(() => {
-    cardMutation.mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const alreadyVisited = sessionStorage.getItem('cardVisited');
+    if (!alreadyVisited) {
+      cardMutation.mutate();
+      sessionStorage.setItem('cardVisited', 'true');
+    }
+  }, [cardMutation]);
 
   useEffect(() => {
     if (!openedCards || openedCards.length === 0) return;
