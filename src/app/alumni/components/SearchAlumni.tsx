@@ -4,22 +4,47 @@ import { useAlumniInfo } from '@/hooks/queries/useAlumni';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import AlumniModal from './AlumniModal';
+import Loader from '@/app/_components/common/Loader';
+import { getToken } from '@/store/member';
 
 const SearchAlumni = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: infoData, isLoading, isError } = useAlumniInfo();
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  const token = getToken();
+
+  if (!token) {
+    return (
+      <div className="mt-8 flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mt-8 flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div className="mt-8 text-center">에러가 발생했습니다.</div>;
+  }
 
   return (
-    <div className="mx-auto mt-20 w-full px-5 md:pl-[120px]">
-      <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
-        같은 직무를 희망하는
-        <span className="block md:inline"> 동문을 찾았어요</span>
-      </div>
-
+    <>
       <div className="mt-8">
         <HorizontalScroll cardWidthMobile={306} cardWidthWeb={356} gap={24}>
           {infoData?.map((info) => {
@@ -77,7 +102,7 @@ const SearchAlumni = () => {
                     height={24}
                     className="mt-4 cursor-pointer"
                     onClick={() => {
-                      setSelectedMemberId(info.memberId); // 선택된 memberId 저장
+                      setSelectedMemberId(info.memberId);
                       setIsOpen(true);
                     }}
                   />
@@ -98,13 +123,14 @@ const SearchAlumni = () => {
           })}
         </HorizontalScroll>
       </div>
+
       {isOpen && selectedMemberId && (
         <AlumniModal
           memberId={selectedMemberId}
           onClose={() => setIsOpen(false)}
         />
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,12 +1,38 @@
 'use client';
+import Loader from '@/app/_components/common/Loader';
 import { useHotcompanies } from '@/hooks/queries/useAlumni';
+import { getToken } from '@/store/member';
 import Image from 'next/image';
 
 const PopularCompany = () => {
   const { data: hotcompanies, isLoading, isError } = useHotcompanies();
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  const token = getToken();
+  if (!token) {
+    return (
+      <div className="mt-5 flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading)
+    return (
+      <div className="mt-5 flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError)
+    return <div className="mt-5 text-center">에러가 발생했습니다.</div>;
 
   return (
     <div className="mt-5 flex snap-x snap-mandatory gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] md:flex-col md:gap-5 md:overflow-visible [&::-webkit-scrollbar]:hidden">
@@ -30,21 +56,6 @@ const PopularCompany = () => {
               <div className="text-contents-neutral-primary mobile-title2 md:web-title2 mt-[6px]">
                 {hotcompany.companyName}
               </div>
-
-              {/* <div className="mt-[6px] flex items-center gap-1 md:mt-5 md:gap-2">
-                <Image
-                     src={getTrendIcon(hotcompany.changeRankStatus as TrendType)}
-                  alt="trend"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-                <span
-                  className={`mobile-badge-sm md:caption-md-medium ${getTrendColor(job.trendType)}`}
-                >
-                  {hotcompany.trend}
-                </span>
-              </div> */}
             </div>
           </div>
 

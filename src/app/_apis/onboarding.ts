@@ -1,5 +1,6 @@
 import api from './api';
 import {
+  MajorListResponse,
   OnBoardingResponse,
   OnBoardingResquest,
   SchoolListResponse,
@@ -15,6 +16,12 @@ export async function Onboarding(
 
 export async function GetSchoolList(): Promise<SchoolListResponse> {
   const res = await api.get<SchoolListResponse>('/onboarding/school');
+
+  return res.data;
+}
+
+export async function GetMajorList(school: string): Promise<MajorListResponse> {
+  const res = await api.get<MajorListResponse>(`/onboarding/major/${school}`);
 
   return res.data;
 }

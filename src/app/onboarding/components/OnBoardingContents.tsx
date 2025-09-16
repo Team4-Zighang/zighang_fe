@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Dropdown, {
   finalSchoolOption,
   jobOptions,
-  majorOption,
   Option,
 } from '@/app/_components/common/DropDown';
 import OptionSelect, {
@@ -11,17 +10,23 @@ import OptionSelect, {
   regions,
 } from '@/app/_components/common/OptionSelect';
 import YearSlider from '@/app/_components/common/YearSlider';
-import Image from 'next/image';
 import Button from '@/app/_components/common/Button';
 import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
 import { REGION_MAP } from '@/utils/regionMap';
 import { YEAR_MAP } from '@/utils/yearMapping';
 import SchoolDropDown from '@/app/_components/common/SchoolDropDown';
+import LoginModal from '@/app/_components/common/LoginModal';
+import JobRemoveModal from '@/app/_components/common/JobRemoveModal';
+import { useMajorList } from '@/hooks/queries/useOnboarding';
+import { SCHOOL_MAP } from '@/utils/schoolMap';
 
 const OnBoardingContents = () => {
-  const [jobList] = useState(jobs);
+  const initialJobList = jobs;
+  const [formKey, setFormKey] = useState(0);
+
+  const [jobList, setJobList] = useState(initialJobList);
   const [tempList, setTempList] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
   const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
     null
@@ -32,12 +37,22 @@ const OnBoardingContents = () => {
   const [selectedMajor, setSelectedMajor] = useState<Option | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string[]>([]);
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
+  const [loginModal, setLoginModal] = useState(false);
 
   const onboardingMutation = useOnboardingMutation();
 
+  const mappedSchool = SCHOOL_MAP[selectedUniversity] || '';
+  const { data: majorList } = useMajorList(mappedSchool);
+
+  const majorOption: Option[] =
+    majorList?.data?.map((m: string, idx: number) => ({
+      id: idx,
+      category: m,
+    })) ?? [];
+
   const handleOpenModal = () => {
     setTempList(jobList.filter((j) => j !== '전체'));
-    setIsModalOpen(true);
+    setIsRemoveModalOpen(true);
   };
 
   const removeJob = (job: string) => {
@@ -45,25 +60,59 @@ const OnBoardingContents = () => {
   };
 
   const confirmJobs = () => {
+    setJobList(['전체', ...tempList]);
     setSelectedJobRoles(tempList);
-    setIsModalOpen(false);
+    setIsRemoveModalOpen(false);
+  };
+
+  const resetForm = () => {
+    setJobList(initialJobList);
+    setTempList([]);
+    setIsRemoveModalOpen(false);
+    setSelectedJobCategory(null);
+    setSelectedSchool(null);
+    setSelectedUniversity('');
+    setCareerYear('YEAR_0');
+    setSelectedMajor(null);
+    setSelectedRegion([]);
+    setSelectedJobRoles([]);
+    setFormKey((prev) => prev + 1);
   };
 
   const handleSubmit = () => {
     const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
 
-    onboardingMutation.mutate({
-      jobCategory: selectedJobCategory?.category || '',
-      jobRole: selectedJobRoles,
-      careerYear,
-      region: mappedRegions,
-      school: selectedUniversity || '',
-      major: selectedMajor?.category || '',
-    });
+    onboardingMutation.mutate(
+      {
+        jobCategory: selectedJobCategory?.category || '',
+        jobRole: selectedJobRoles,
+        careerYear,
+        region: mappedRegions,
+        school: selectedUniversity,
+        major: selectedMajor?.category || '',
+      },
+      {
+        onSuccess: () => {
+          setLoginModal(true);
+          resetForm();
+        },
+      }
+    );
   };
 
+  const isDisabled =
+    !selectedJobCategory ||
+    selectedJobRoles.length === 0 ||
+    selectedRegion.length === 0 ||
+    !selectedSchool ||
+    !selectedUniversity ||
+    !selectedMajor;
+
   return (
-    <div className="mt-12 flex w-full max-w-[640px] flex-col gap-12">
+    <div
+      key={formKey}
+      className="mt-12 flex w-full max-w-[640px] flex-col gap-12"
+    >
       <div className="flex flex-col items-start gap-2">
         <div className="text-contents-neutral-primary body-2xl-semibold">
           희망 직군
@@ -137,6 +186,7 @@ const OnBoardingContents = () => {
           <SchoolDropDown
             placeholder="학교를 입력하세요"
             onSelect={(school) => setSelectedUniversity(school)}
+            isEnabled={selectedSchool?.category === '대학교'}
           />
         </div>
       </div>
@@ -154,48 +204,17 @@ const OnBoardingContents = () => {
         </div>
       )}
 
-      <Button onClick={handleSubmit} />
+      <Button onClick={handleSubmit} disabled={isDisabled} />
 
-      {/* 모달 확인 후 수정 예정*/}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-200 mx-auto flex items-center justify-center bg-black/40 px-5 md:px-0">
-          <div className="bg-base-neutral-default w-[688px] rounded-[12px] p-6">
-            <div className="flex w-full flex-row items-center justify-between">
-              <div className="flex flex-row items-center gap-2">
-                <div className="text-contents-neutral-primary body-2xl-semibold">
-                  희망하지 않는 직무를 지워보세요!
-                </div>
-                <div className="text-contents-neutral-tertiary caption-md-medium">
-                  중복 선택 가능
-                </div>
-              </div>
-              <div
-                onClick={confirmJobs}
-                className="text-contents-primary-default body-sm-medium cursor-pointer underline"
-              >
-                원하지 않는 직무를 다 지웠어요
-              </div>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-[6px]">
-              {tempList.map((job) => (
-                <div
-                  key={job}
-                  className="border-base-neutral-border text-contents-neutral-tertiary body-sm-medium flex cursor-pointer items-center rounded-[8px] border py-[10px] pr-3 pl-4"
-                >
-                  {job}
-                  <Image
-                    src="/icons/x_button_gray.svg"
-                    alt="삭제아이콘"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 cursor-pointer"
-                    onClick={() => removeJob(job)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
+
+      {isRemoveModalOpen && (
+        <JobRemoveModal
+          jobs={tempList}
+          onRemove={removeJob}
+          onConfirm={confirmJobs}
+          onClose={() => setIsRemoveModalOpen(false)}
+        />
       )}
     </div>
   );

@@ -18,3 +18,9 @@ export interface SchoolListResponse {
   timestamp: string;
   data: string[];
 }
+
+export interface MajorListResponse {
+  success: boolean;
+  timestamp: string;
+  data: string[];
+}

@@ -1,14 +1,43 @@
 'use client';
 
+import Loader from '@/app/_components/common/Loader';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useHotposting } from '@/hooks/queries/useAlumni';
+import { getToken } from '@/store/member';
 import { getTrendColor, getTrendIcon, TrendType } from '@/utils/jobTrend';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const JobCard = () => {
   const { data: hotposting, isLoading, isError } = useHotposting();
+  const router = useRouter();
+  const scrapmutate = useCardScrapMutation();
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError) return <div>에러가 발생했습니다.</div>;
+  const token = getToken();
+  if (!token) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center">
+        <Image
+          src="/icons/lock.svg"
+          alt="nologin"
+          width={36}
+          height={36}
+          className="h-6 w-6 md:h-9 md:w-9"
+        />
+        <div className="text-contents-primary-accent heading-md-semibold">
+          로그인 후 이용 가능
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   return (
     <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto md:flex-col md:gap-5 md:overflow-visible">
@@ -22,7 +51,8 @@ const JobCard = () => {
         return (
           <div
             key={hotpost.postingId}
-            className="border-base-neutral-border flex shrink-0 basis-[88%] snap-start items-stretch rounded-[12px] border bg-white md:basis-auto"
+            onClick={() => router.push(`/recruitment/${hotpost.postingId}`)}
+            className="border-base-neutral-border flex shrink-0 basis-[88%] cursor-pointer snap-start items-stretch rounded-[12px] border bg-white md:basis-auto"
           >
             <div className="flex min-w-0 flex-1 flex-row gap-[10px] p-2 md:gap-4 md:p-4">
               <div className="flex items-center self-stretch md:items-start md:self-auto">
@@ -78,7 +108,14 @@ const JobCard = () => {
             <div className="border-base-neutral-border hidden w-[84px] flex-col self-stretch border-l md:flex">
               <button
                 aria-label="북마크"
-                className="flex flex-1 items-center justify-center"
+                className="flex flex-1 cursor-pointer items-center justify-center"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrapmutate.mutate({
+                    scrapId: null,
+                    jobPostingId: hotpost.postingId,
+                  });
+                }}
               >
                 <Image
                   src={

@@ -20,6 +20,7 @@ export function useCardMutation() {
     mutationFn: () => Card(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+      queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
     },
     onError: (error) => {
       console.error('카드 불러오기 실패:', error);
@@ -48,6 +49,8 @@ export function useCardScrapMutation() {
       CardScrap(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+      queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
+      queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
     },
     onError: (error) => {
       console.error('카드 스크랩 실패:', error);

@@ -1,8 +1,37 @@
+'use client';
+
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HomeSameWorkPage from './HomeSameWorkPage';
+import { useRouter } from 'next/navigation';
+import { getMember, getToken } from '@/store/member';
 
 const HopeSameWork = () => {
+  const router = useRouter();
+  const [schoolName, setSchoolName] = useState<string>('');
+  const [jobRoles, setJobRoles] = useState<string[]>([]);
+
+  useEffect(() => {
+    const memberData = getMember();
+    const token = getToken();
+
+    if (memberData) {
+      setSchoolName(memberData.onboarding?.school || '');
+      setJobRoles(memberData.jobRole?.jobRole || []);
+    }
+
+    if (!token) {
+      setSchoolName('');
+    }
+  }, []);
+
+  const handleClick = () => {
+    const token = getToken();
+    if (!schoolName || !token) {
+      router.push('/onboarding');
+    }
+  };
+
   return (
     <div className="flex w-full flex-col items-start md:px-[120px] md:py-20">
       <div className="flex w-full flex-col items-start px-5 pt-12 md:px-0 md:py-0">
@@ -17,7 +46,10 @@ const HopeSameWork = () => {
           </button>
         </div>
 
-        <div className="flex w-full flex-col gap-6 md:mt-8 md:flex-row md:items-center md:justify-between">
+        <div
+          className="flex w-full flex-col gap-6 md:mt-8 md:flex-row md:items-center md:justify-between"
+          onClick={handleClick}
+        >
           <div className="flex flex-col gap-4 md:flex-row md:gap-[57px]">
             <div className="flex flex-row items-center gap-[13.5px]">
               <div className="flex shrink-0 flex-row items-center gap-2">
@@ -26,16 +58,16 @@ const HopeSameWork = () => {
                   alt="school"
                   width={24}
                   height={24}
-                  className="h-[24px] w-[24px]"
                 />
-
                 <div className="text-contents-neutral-tertiary body-md-medium">
                   학교명
                 </div>
               </div>
 
               <div className="bg-base-neutral-alternative text-contents-neutral-secondary body-md-medium flex h-[34px] min-w-0 flex-1 items-center rounded-[12px] px-[20px] md:w-[248px] md:flex-none">
-                <span className="truncate">한국대학교</span>
+                <span className="truncate">
+                  {schoolName || '학교 선택 필요'}
+                </span>
               </div>
             </div>
 
@@ -46,19 +78,23 @@ const HopeSameWork = () => {
                   alt="job"
                   width={24}
                   height={24}
-                  className="h-[24px] w-[24px]"
                 />
                 <div className="text-contents-neutral-tertiary body-md-medium">
                   직무명
                 </div>
               </div>
-              <div className="bg-base-neutral-alternative text-contents-neutral-secondary body-md-medium flex h-[34px] min-w-0 flex-1 items-center rounded-[12px] px-[20px] md:w-[248px] md:flex-none">
-                <span className="truncate">UIUX·프로덕트, 서비스 기획자</span>
+              <div className="bg-base-neutral-alternative text-contents-neutral-secondary body-md-medium flex h-[34px] min-w-0 flex-1 items-center rounded-[12px] px-[20px] text-ellipsis md:w-[248px] md:flex-none">
+                <span className="truncate">
+                  {jobRoles.length > 0 ? jobRoles.join(', ') : '직무 선택 필요'}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-base-primary-alternative hidden cursor-pointer flex-row items-center gap-1 rounded-[6px] px-3 py-2 md:flex">
+          <div
+            className="bg-base-primary-alternative hidden cursor-pointer flex-row items-center gap-1 rounded-[6px] px-3 py-2 md:flex"
+            onClick={() => router.push('/onboarding')}
+          >
             <Image src="/icons/help.svg" alt="help" width={24} height={24} />
             <div className="body-lg-medium text-purple-900">
               희망 직무가 변경되셨나요?

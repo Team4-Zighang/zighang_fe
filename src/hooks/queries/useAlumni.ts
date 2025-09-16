@@ -7,6 +7,7 @@ import {
 } from '@/app/_apis/alumni';
 import { AlumniScrapResponse } from '@/app/_apis/schemas/alumniResponse';
 import { useIsMobile } from '@/app/_components/common/Pagination';
+import { getToken } from '@/store/member';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 /**
@@ -31,6 +32,7 @@ export function useHotcompanies() {
 
 export function useGetAlumniScrap(page: number) {
   const isMobile = useIsMobile();
+  const token = getToken();
 
   return useQuery<AlumniScrapResponse>({
     queryKey: ['AlumniScrap', page, isMobile],
@@ -38,6 +40,7 @@ export function useGetAlumniScrap(page: number) {
     staleTime: 1000 * 30,
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,
+    enabled: !!token,
   });
 }
 
