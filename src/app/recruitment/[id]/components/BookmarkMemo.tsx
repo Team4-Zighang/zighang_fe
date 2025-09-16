@@ -1,5 +1,6 @@
 'use client';
 import Loader from '@/app/_components/common/Loader';
+import LoginModal from '@/app/_components/common/LoginModal';
 import { usePostMemo } from '@/hooks/mutation/useRecruitMutation';
 import { useGetMemo } from '@/hooks/queries/useRecruitment';
 import { isLoggedIn } from '@/utils/getUser';
@@ -13,13 +14,18 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
   const [memo, setMemo] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     setLoggedIn(isLoggedIn());
 
     if (loggedIn) {
-      if (data?.data) setMemo(data.data);
-      else setMemo('');
+      if (data?.data) {
+        setMemo(data.data);
+      } else {
+        const saved = localStorage.getItem(`bookmarkMemo_${params.id}`);
+        setMemo(saved ?? '');
+      }
     } else {
       const saved = localStorage.getItem(`bookmarkMemo_${params.id}`);
       setMemo(saved ?? '');
@@ -34,7 +40,6 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
     if (!loggedIn) {
       localStorage.setItem(`bookmarkMemo_${params.id}`, memo);
       setIsSaved(true);
-      onSaved?.();
       return;
     }
 
@@ -43,6 +48,7 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
       content: memo,
     });
 
+    localStorage.removeItem(`bookmarkMemo_${params.id}`);
     setIsSaved(true);
     onSaved?.();
   };
@@ -95,12 +101,18 @@ const BookmarkMemo = ({ onSaved }: { onSaved?: () => void }) => {
                 북마크와 메모 기능으로 <br /> 언제든 다시 확인할 수 있어요
               </span>
             </div>
-            <button className="body-sm-semibold bg-contents-primary-accent rounded-[8px] py-[12px] text-white">
+            <button
+              onClick={() => {
+                setModal(true);
+              }}
+              className="body-sm-semibold bg-contents-primary-accent cursor-pointer rounded-[8px] py-[12px] text-white"
+            >
               로그인하고 저장하기
             </button>
           </div>
         </div>
       )}
+      {modal && <LoginModal onClose={() => setModal(false)} />}
     </div>
   );
 };

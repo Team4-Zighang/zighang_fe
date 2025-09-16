@@ -2,6 +2,35 @@ import ItemButton from '@/app/_components/common/ItemButton';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import CareerSlider from './CareerSlider';
+import Dropdown from '@/app/_components/common/DropDown';
+
+export const jobOptions = [
+  { id: 1, category: 'IT·개발' },
+  { id: 2, category: '미디어·엔터' },
+  { id: 3, category: 'AI·데이터' },
+  { id: 4, category: '게임' },
+  { id: 5, category: '디자인' },
+  { id: 6, category: '기획·전략' },
+  { id: 7, category: '마케팅·광고' },
+  { id: 8, category: '상품기획·MD' },
+  { id: 9, category: '영업' },
+  { id: 10, category: '무역·물류' },
+  { id: 11, category: '운송·배송' },
+  { id: 12, category: '법률·법무' },
+  { id: 13, category: 'HR·총무' },
+  { id: 14, category: '회계·재무·세무' },
+  { id: 15, category: '증권·운용' },
+  { id: 16, category: '은행·카드·보험' },
+  { id: 17, category: '엔지니어링·R&D' },
+  { id: 18, category: '건설·건축' },
+  { id: 19, category: '생산·기능직' },
+  { id: 20, category: '의료·보건' },
+  { id: 21, category: '공공·복지' },
+  { id: 22, category: '교육' },
+  { id: 23, category: '고객상담·TM' },
+  { id: 24, category: '서비스' },
+  { id: 25, category: '식음료' },
+];
 
 export const FILTER_OPTIONS = {
   task: ['직무1', '직무2', '직무3', '직무4'],
@@ -39,6 +68,12 @@ export const FILTER_OPTIONS = {
   deadlineType: ['전체', '마감기한 있음', '상시채용', '채용시 마감'],
 } as const;
 
+export type Option = {
+  id: number | string;
+  category: string;
+  name?: string;
+};
+
 export type FilterKey = keyof typeof FILTER_OPTIONS;
 
 type DesktopFilterModalProps = {
@@ -65,6 +100,10 @@ export default function BookmarkFilterModal({
 }: DesktopFilterModalProps) {
   const [localSelected, setLocalSelected] = useState<Record<string, string[]>>(
     {}
+  );
+
+  const [selectedJobCategory, setSelectedJobCategory] = useState<Option | null>(
+    null
   );
 
   // 현재 상태 동기화
@@ -165,23 +204,18 @@ export default function BookmarkFilterModal({
         </div>
         <div className="body-2xl-semibold text-contents-neutral-primary flex min-h-0 flex-1 flex-col gap-[40px] overflow-y-auto p-[20px] md:max-h-[320px]">
           {/* 직군 - 드롭다운 적용 */}
-          <Section title="직군">
-            <button
-              className="bg-base-neutral-input border-base-neutral-border flex w-full items-center justify-between gap-[10px] rounded-[8px] border px-[16px] py-[12px]"
-              disabled
-              title="준비중"
-            >
-              <span className="body-lg-medium text-contents-neutral-primary">
-                전체
+          <div className="flex flex-col gap-[8px]">
+            <div className="flex items-center gap-[8px]">
+              <span className="body-2xl-semibold text-contents-neutral-primary">
+                직군
               </span>
-              <Image
-                src="/icons/arrow_under.svg"
-                width={24}
-                height={24}
-                alt="dropdown"
-              />
-            </button>
-          </Section>
+            </div>
+            <Dropdown
+              data={jobOptions}
+              placeholder="검색어를 입력하세요"
+              onSelect={(opt: Option) => setSelectedJobCategory(opt)}
+            />
+          </div>
 
           {/* 직무 */}
           <Section title="직무" note="중복 선택 가능">

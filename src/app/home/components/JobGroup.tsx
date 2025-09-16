@@ -148,12 +148,7 @@ export default function JobGroup() {
     <div className="relative flex w-full flex-col items-center">
       <div className="mx-auto grid w-full max-w-[900px] grid-cols-3 gap-[2px] overflow-hidden rounded-[20px] md:grid-cols-4 lg:grid-cols-5">
         {JOBS.map((job) => (
-          <JobElement
-            key={job.href}
-            href={job.href}
-            label={job.label}
-            iconSrc={job.iconSrc}
-          />
+          <JobElement key={job.label} label={job.label} iconSrc={job.iconSrc} />
         ))}
         <Placeholder className="block md:hidden lg:hidden" />
         <Placeholder className="block md:hidden lg:hidden" />

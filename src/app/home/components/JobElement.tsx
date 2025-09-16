@@ -2,17 +2,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 type JobElementProps = {
-  href: string;
   label: string;
   iconSrc: string;
 };
 
-export default function JobElement({ href, label, iconSrc }: JobElementProps) {
+export default function JobElement({ label, iconSrc }: JobElementProps) {
   return (
-    <Link
-      href={href}
-      className="bg-base-neutral-alternative relative flex h-[44px] w-full items-center gap-[4px] px-[8px] py-[24px] md:h-[68px] md:gap-[8px] md:px-[16px]"
-    >
+    <div className="bg-base-neutral-alternative relative flex h-[44px] w-full cursor-pointer items-center gap-[4px] px-[8px] py-[24px] md:h-[68px] md:gap-[8px] md:px-[16px]">
       <Image
         alt={label}
         loading="lazy"
@@ -25,6 +21,6 @@ export default function JobElement({ href, label, iconSrc }: JobElementProps) {
       <p className="mobile-badge-lg md:body-lg-medium text-contents-neutral-primary w-fit whitespace-nowrap">
         <span className="tracking-[0.05px]">{label}</span>
       </p>
-    </Link>
+    </div>
   );
 }

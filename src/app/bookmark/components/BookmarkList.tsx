@@ -5,10 +5,7 @@ import { useEffect, useState } from 'react';
 import Pagination from '@/app/_components/common/Pagination';
 import { useBookmarkList } from '@/hooks/queries/useBookmark';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  useDeleteBookmark,
-  useToggleBookmark,
-} from '@/hooks/mutation/useBookmarkMutation';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import Loader from '@/app/_components/common/Loader';
 import { isLoggedIn } from '@/utils/getUser';
 
@@ -28,7 +25,7 @@ const BookmarkList = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const { data, isLoading, isError, isFetching } = useBookmarkList({
-    page: page - 1,
+    page,
     size,
   });
 
@@ -39,7 +36,7 @@ const BookmarkList = () => {
 
   const handleFileUploaded = async () => {
     // 전체 리스트 재조회
-    queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
+    queryClient.invalidateQueries({ queryKey: ['bookmarkList', page, size] });
   };
 
   const handleToggleExpand = (id: number) => {
@@ -82,15 +79,6 @@ const BookmarkList = () => {
     });
   };
 
-  const { mutate } = useToggleBookmark(page - 1, size);
-  const handleBookmarkToggle = (postingId: number, next: boolean) => {
-    const item = items.find(
-      (i) => i.jobPostingResponse.postingId === postingId
-    );
-    if (!item) return;
-    mutate({ postingId, next, scrapId: item.scrapId ?? null });
-  };
-
   if (!loggedIn) {
     return (
       <div className="flex flex-col items-center gap-[12px] py-[64px]">
@@ -115,12 +103,12 @@ const BookmarkList = () => {
     );
   }
 
-  if (isFetching || isLoading)
-    return (
-      <div className="flex h-[360px] w-full items-center justify-center">
-        <Loader />
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="flex h-[560px] w-full items-center justify-center">
+  //       <Loader />
+  //     </div>
+  //   );
 
   if (isError) return <div>에러가 발생했습니다.</div>;
 
@@ -206,27 +194,39 @@ const BookmarkList = () => {
           <span className="w-[104px] px-[12px]">지원서류</span>
         </div>
         {/* 북마크 요소 리스트 */}
-        {items.map((item) => (
-          <BookmarkListItem
-            key={item.jobPostingResponse.postingId}
-            item={item}
-            selected={
-              item.scrapId !== null && selectedIds.includes(item.scrapId)
-            }
-            expanded={
-              item.scrapId !== null && expandedIds.includes(item.scrapId)
-            }
-            onToggleSelect={() =>
-              item.scrapId !== null && handleToggleSelect(item.scrapId)
-            }
-            onToggleExpand={() =>
-              item.scrapId !== null && handleToggleExpand(item.scrapId)
-            }
-            onBookmarkToggle={handleBookmarkToggle}
-            onFileUploaded={handleFileUploaded}
-          />
-        ))}
-        <Pagination totalPages={totalPages} page={page} onChange={setPage} />
+        {isFetching ? (
+          <div className="flex h-[680px] items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            {items.map((item) => (
+              <BookmarkListItem
+                key={item.jobPostingResponse.postingId}
+                item={item}
+                selected={
+                  item.scrapId !== null && selectedIds.includes(item.scrapId)
+                }
+                expanded={
+                  item.scrapId !== null && expandedIds.includes(item.scrapId)
+                }
+                onToggleSelect={() =>
+                  item.scrapId !== null && handleToggleSelect(item.scrapId)
+                }
+                onToggleExpand={() =>
+                  item.scrapId !== null && handleToggleExpand(item.scrapId)
+                }
+                onFileUploaded={handleFileUploaded}
+              />
+            ))}
+
+            <Pagination
+              totalPages={totalPages}
+              page={page}
+              onChange={(page) => setPage(page)}
+            />
+          </>
+        )}
       </div>
     </div>
   );

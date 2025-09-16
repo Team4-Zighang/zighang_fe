@@ -39,10 +39,19 @@ export default function Header() {
       ? 'after:bg-contents-primary-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full'
       : '';
 
+  const handleLogout = () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('memberInfo');
+      router.push('/home');
+    }
+  };
+
   return (
     <>
       <header className="relative w-full">
-        <div className="border-base-neutral-border relative z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] bg-white px-[16px] py-[12px] md:z-100 md:px-[40px]">
+        <div className="border-base-neutral-border fixed top-0 z-10 box-border flex w-full flex-row items-center justify-between border-b-[1px] bg-white px-[16px] py-[12px] md:z-100 md:px-[40px]">
           <div className="flex flex-shrink-0 gap-[20px]">
             <Link className="cursor-pointer" href="/home">
               <Image
@@ -95,13 +104,21 @@ export default function Header() {
             </Link>
 
             {loggedIn ? (
-              <Image
-                src={profileImage || '/icons/profile.svg'}
-                alt="profile"
-                width={40}
-                height={40}
-                className="h-[40px] w-[40px] cursor-pointer rounded-full object-cover"
-              />
+              <>
+                <Image
+                  src={profileImage || '/icons/profile.svg'}
+                  alt="profile"
+                  width={40}
+                  height={40}
+                  className="h-[40px] w-[40px] cursor-pointer rounded-full object-cover"
+                />
+                <div
+                  className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
+                  onClick={handleLogout}
+                >
+                  로그아웃
+                </div>
+              </>
             ) : (
               <>
                 <div

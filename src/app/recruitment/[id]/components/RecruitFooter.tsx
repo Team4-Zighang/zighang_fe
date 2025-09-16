@@ -1,15 +1,17 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import BookmarkMemo from './BookmarkMemo';
 import Link from 'next/link';
 import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import { useParams } from 'next/dist/client/components/navigation';
 import {
   useDeleteBookmark,
-  useToggleBookmark,
+  usePostBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
+import { isLoggedIn } from '@/utils/getUser';
+import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();
@@ -20,47 +22,67 @@ const RecruitFooter = () => {
   const job = data?.data;
   const [isBookmarked, setIsBookmarked] = useState(job?.isSaved ?? false);
 
-  const { mutate: deleteBookmark } = useDeleteBookmark();
-  const { mutate: postBookmark } = useToggleBookmark();
+  const { mutate: deleteBookmark, isPending: isDeletePending } =
+    useDeleteBookmark();
+  const { mutate: postBookmark, isPending: isPostPending } = usePostBookmark();
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
-  const onBookmarkClick = () => {
-    setBookmarkLoading(true);
-    if (isBookmarked) {
-      if (job?.scrapId !== null && job?.scrapId !== undefined) {
-        deleteBookmark([job.scrapId], {
-          onSuccess: () => {
-            setIsBookmarked(false);
-            setBookmarkLoading(false);
-            console.log('북마크 해제 성공');
-          },
-          onError: () => setBookmarkLoading(false),
-        });
-      } else {
-        setIsBookmarked(false);
-        setBookmarkLoading(false);
-      }
-    } else {
-      if (job?.postingId !== undefined) {
-        postBookmark(
-          {
-            postingId: job.postingId,
-            next: true,
-            scrapId: job.scrapId ?? null,
-          },
-          {
+  const [modal, setModal] = useState(false);
+
+  const clickingRef = useRef(false);
+  const onBookmarkClick = async () => {
+    if (!isLoggedIn()) {
+      setModal(true);
+      return;
+    }
+
+    if (
+      clickingRef.current ||
+      bookmarkLoading ||
+      isPostPending ||
+      isDeletePending
+    )
+      return;
+    clickingRef.current = true;
+
+    try {
+      setBookmarkLoading(true);
+
+      if (isBookmarked) {
+        if (job?.scrapId !== null && job?.scrapId !== undefined) {
+          await deleteBookmark([job.scrapId], {
             onSuccess: () => {
-              setIsBookmarked(true);
+              setIsBookmarked(false);
               setBookmarkLoading(false);
-              console.log('북마크 등록 성공');
             },
-            onError: () => setBookmarkLoading(false),
-          }
-        );
+          });
+        } else {
+          setIsBookmarked(false);
+          setBookmarkLoading(false);
+        }
       } else {
-        setIsBookmarked(true);
-        setBookmarkLoading(false);
+        if (job?.postingId !== undefined) {
+          await postBookmark(
+            {
+              jobPostingId: job.postingId,
+            },
+            {
+              onSuccess: () => {
+                setIsBookmarked(true);
+                setBookmarkLoading(false);
+              },
+            }
+          );
+        } else {
+          setIsBookmarked(true);
+          setBookmarkLoading(false);
+        }
       }
+    } catch (error) {
+      console.error('북마크 처리 중 오류 발생:', error);
+    } finally {
+      setBookmarkLoading(false);
+      clickingRef.current = false; // ✅ 락 해제
     }
   };
 
@@ -80,8 +102,9 @@ const RecruitFooter = () => {
         </button>
         <button
           onClick={onBookmarkClick}
+          onDoubleClick={(e) => e.preventDefault()}
           disabled={bookmarkLoading}
-          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${bookmarkLoading ? 'cursor-not-allowed' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
             src={
