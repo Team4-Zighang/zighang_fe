@@ -2,38 +2,23 @@ import ItemButton from '@/app/_components/common/ItemButton';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import CareerSlider from './CareerSlider';
-import Dropdown from '@/app/_components/common/DropDown';
-
-export const jobOptions = [
-  { id: 1, category: 'IT·개발' },
-  { id: 2, category: '미디어·엔터' },
-  { id: 3, category: 'AI·데이터' },
-  { id: 4, category: '게임' },
-  { id: 5, category: '디자인' },
-  { id: 6, category: '기획·전략' },
-  { id: 7, category: '마케팅·광고' },
-  { id: 8, category: '상품기획·MD' },
-  { id: 9, category: '영업' },
-  { id: 10, category: '무역·물류' },
-  { id: 11, category: '운송·배송' },
-  { id: 12, category: '법률·법무' },
-  { id: 13, category: 'HR·총무' },
-  { id: 14, category: '회계·재무·세무' },
-  { id: 15, category: '증권·운용' },
-  { id: 16, category: '은행·카드·보험' },
-  { id: 17, category: '엔지니어링·R&D' },
-  { id: 18, category: '건설·건축' },
-  { id: 19, category: '생산·기능직' },
-  { id: 20, category: '의료·보건' },
-  { id: 21, category: '공공·복지' },
-  { id: 22, category: '교육' },
-  { id: 23, category: '고객상담·TM' },
-  { id: 24, category: '서비스' },
-  { id: 25, category: '식음료' },
-];
+import Dropdown, { jobOptions } from '@/app/_components/common/DropDown';
+import OptionSelect, { jobs } from '@/app/_components/common/OptionSelect';
 
 export const FILTER_OPTIONS = {
-  task: ['직무1', '직무2', '직무3', '직무4'],
+  task: [
+    '마케팅 기획·전략',
+    '퍼포먼스 마케팅',
+    '콘텐츠마케팅',
+    'SNS마케팅',
+    '브랜드 마케팅',
+    'CRM마케팅',
+    '글로벌 마케팅',
+    '광고기획(AE)',
+    '홍보·PR',
+    '전시·행사 마케팅',
+    '기타 마케팅',
+  ],
   hireType: [
     '전체',
     '공개채용',
@@ -149,7 +134,10 @@ export default function BookmarkFilterModal({
   };
 
   const handleApply = () => {
-    onApply(localSelected);
+    onApply({
+      ...localSelected,
+      jobCategory: selectedJobCategory ? [selectedJobCategory.category] : [],
+    });
     onClose();
   };
 
@@ -176,6 +164,13 @@ export default function BookmarkFilterModal({
       {children}
     </div>
   );
+
+  const handleSelectJobCategory = (opt: Option) => {
+    setLocalSelected((prev) => ({
+      ...prev,
+      jobCategory: [String(opt.category ?? opt.id ?? '')].filter(Boolean),
+    }));
+  };
 
   return (
     <div
@@ -213,7 +208,7 @@ export default function BookmarkFilterModal({
             <Dropdown
               data={jobOptions}
               placeholder="검색어를 입력하세요"
-              onSelect={(opt: Option) => setSelectedJobCategory(opt)}
+              onSelect={handleSelectJobCategory} // ✅ 바로 localSelected에 반영
             />
           </div>
 
