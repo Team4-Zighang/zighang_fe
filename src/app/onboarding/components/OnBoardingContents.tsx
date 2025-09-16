@@ -5,10 +5,7 @@ import Dropdown, {
   jobOptions,
   Option,
 } from '@/app/_components/common/DropDown';
-import OptionSelect, {
-  jobs,
-  regions,
-} from '@/app/_components/common/OptionSelect';
+import OptionSelect, { regions } from '@/app/_components/common/OptionSelect';
 import YearSlider from '@/app/_components/common/YearSlider';
 import Button from '@/app/_components/common/Button';
 import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
@@ -21,12 +18,12 @@ import { useMajorList } from '@/hooks/queries/useOnboarding';
 import { SCHOOL_MAP } from '@/utils/schoolMap';
 import { getToken } from '@/store/member';
 import { useRouter } from 'next/navigation';
+import { jobRoleMap } from '@/utils/jobRoleMap';
 
 const OnBoardingContents = () => {
-  const initialJobList = jobs;
   const [formKey, setFormKey] = useState(0);
 
-  const [jobList, setJobList] = useState(initialJobList);
+  const [jobList, setJobList] = useState<string[]>([]);
   const [tempList, setTempList] = useState<string[]>([]);
   const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
 
@@ -53,6 +50,12 @@ const OnBoardingContents = () => {
       category: m,
     })) ?? [];
 
+  const handleSelectJobCategory = (opt: Option) => {
+    setSelectedJobCategory(opt);
+    setJobList(jobRoleMap[opt.category] || []);
+    setSelectedJobRoles([]);
+  };
+
   const handleOpenModal = () => {
     setTempList(jobList.filter((j) => j !== '전체'));
     setIsRemoveModalOpen(true);
@@ -69,7 +72,7 @@ const OnBoardingContents = () => {
   };
 
   const resetForm = () => {
-    setJobList(initialJobList);
+    setJobList([]);
     setTempList([]);
     setIsRemoveModalOpen(false);
     setSelectedJobCategory(null);
@@ -129,11 +132,11 @@ const OnBoardingContents = () => {
         <Dropdown
           data={jobOptions}
           placeholder="검색어를 입력하세요"
-          onSelect={(opt: Option) => setSelectedJobCategory(opt)}
+          onSelect={handleSelectJobCategory}
         />
       </div>
 
-      {selectedJobCategory && (
+      {selectedJobCategory && jobList.length > 0 && (
         <div className="flex flex-col items-start gap-2">
           <div className="flex w-full flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-2">
