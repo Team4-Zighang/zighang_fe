@@ -11,7 +11,6 @@ import {
   usePostBookmark,
 } from '@/hooks/mutation/useBookmarkMutation';
 import { isLoggedIn } from '@/utils/getUser';
-import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();

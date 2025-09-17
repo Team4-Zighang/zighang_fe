@@ -19,6 +19,7 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
   } = useAlumniDetailInfo(memberId);
   const scrapmutate = useCardScrapMutation();
   const deleteBookmark = useDeleteBookmark();
+  const router = useRouter();
 
   if (isLoading) return null;
   if (isError || !detailInfo)
@@ -27,8 +28,6 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
         에러가 발생했습니다.
       </div>
     );
-
-  const router = useRouter();
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/40">
