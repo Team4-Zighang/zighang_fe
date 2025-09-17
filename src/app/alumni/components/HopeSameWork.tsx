@@ -40,7 +40,10 @@ const HopeSameWork = () => {
           <span className="block md:inline"> 동문의 공고를 볼 수 있어요</span>
         </div>
 
-        <div className="mt-8 mb-4 flex w-full cursor-pointer justify-end md:hidden">
+        <div
+          className="mt-8 mb-4 flex w-full cursor-pointer justify-end md:hidden"
+          onClick={() => router.push('/onboarding')}
+        >
           <button type="button" aria-label="희망 직무 도움말">
             <Image src="/icons/help.svg" alt="help" width={20} height={20} />
           </button>
