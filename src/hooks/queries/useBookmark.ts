@@ -14,10 +14,12 @@ export function useBookmarkList({
   return useQuery({
     queryKey: ['bookmarkList', page, size],
     queryFn: () => GetBookmarkList(page, size),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
     gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    placeholderData: (prev) => prev,
   });
 }
 

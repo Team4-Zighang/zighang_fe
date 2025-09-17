@@ -9,14 +9,16 @@ import { useQuery } from '@tanstack/react-query';
  * 공고 상세 불러오기
  */
 
-export const useRecruitmentDetail = ({ id }: { id: number }) => {
+export const useRecruitmentDetail = ({ postingId }: { postingId: number }) => {
   return useQuery({
-    queryKey: ['recruitmentDetail', id],
-    queryFn: () => GetRecruitmentDetail(id),
-    staleTime: 5 * 60 * 1000,
+    queryKey: ['recruitmentDetail', postingId],
+    queryFn: () => GetRecruitmentDetail(postingId),
     gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    placeholderData: (prev) => prev,
   });
 };
 

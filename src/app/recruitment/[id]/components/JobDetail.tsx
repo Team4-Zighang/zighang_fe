@@ -11,8 +11,8 @@ import Loader from '@/app/_components/common/Loader';
 
 const JobDetail = () => {
   const { id } = useParams();
-  const { data, isLoading, isFetching, isError } = useRecruitmentDetail({
-    id: Number(id),
+  const { data, isLoading, isError } = useRecruitmentDetail({
+    postingId: Number(id),
   });
 
   const job = data?.data;
@@ -26,7 +26,7 @@ const JobDetail = () => {
     }
   }, [recruitmentOriginalUrl]);
 
-  if (isFetching || isLoading)
+  if (!data && isLoading)
     return (
       <div className="flex h-[100vh] w-full items-center justify-center md:w-[640px]">
         <Loader />

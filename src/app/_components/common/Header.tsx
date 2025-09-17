@@ -44,7 +44,7 @@ export default function Header() {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('memberInfo');
-      router.push('/home');
+      router.push('/');
     }
   };
 

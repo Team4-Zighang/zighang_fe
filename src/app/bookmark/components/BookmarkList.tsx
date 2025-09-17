@@ -24,7 +24,7 @@ const BookmarkList = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const { data, isError, isFetching } = useBookmarkList({
+  const { data, isError, isLoading } = useBookmarkList({
     page,
     size,
   });
@@ -72,6 +72,14 @@ const BookmarkList = () => {
       onSuccess: () => {
         setSelectedIds([]);
         setExpandedIds([]);
+        setTimeout(() => {
+          if (
+            data &&
+            data.totalElements - selectedIds.length <= (page - 1) * size
+          ) {
+            setPage(page - 1);
+          }
+        }, 0);
       },
       onError: (error) => {
         console.error('삭제 실패:', error);
@@ -102,13 +110,6 @@ const BookmarkList = () => {
       </div>
     );
   }
-
-  // if (isLoading)
-  //   return (
-  //     <div className="flex h-[560px] w-full items-center justify-center">
-  //       <Loader />
-  //     </div>
-  //   );
 
   if (isError) return <div>에러가 발생했습니다.</div>;
 
@@ -194,8 +195,8 @@ const BookmarkList = () => {
           <span className="w-[104px] px-[12px]">지원서류</span>
         </div>
         {/* 북마크 요소 리스트 */}
-        {isFetching ? (
-          <div className="flex h-[680px] items-center justify-center">
+        {!data && isLoading ? (
+          <div className="flex items-center justify-center md:h-[680px]">
             <Loader />
           </div>
         ) : (
