@@ -4,6 +4,7 @@ import ArrayButton from '@/app/_components/common/ArrayButton';
 import Loader from '@/app/_components/common/Loader';
 import Pagination from '@/app/_components/common/Pagination';
 import { Toggle } from '@/app/_components/common/Toggle';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
 import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useGetAlumniScrap } from '@/hooks/queries/useAlumni';
 import { getToken } from '@/store/member';
@@ -19,23 +20,37 @@ const ManyBookmark = () => {
   const { data: scrapdata, isLoading, isError } = useGetAlumniScrap(page);
   const router = useRouter();
   const scrapmutate = useCardScrapMutation();
+  const deleteBookmark = useDeleteBookmark();
 
   useEffect(() => {}, [page]);
 
   //수정예정
   const token = getToken();
+
   if (!token) {
     return (
-      <div className="flex w-full flex-col items-center justify-center">
+      <div className="mt-5 flex w-full flex-col items-start gap-6">
         <Image
-          src="/icons/lock.svg"
+          src="/images/nologin2.png"
           alt="nologin"
-          width={36}
-          height={36}
-          className="h-6 w-6 md:h-9 md:w-9"
+          width={308}
+          height={402}
+          priority
+          className="h-[402px] w-full rounded-[12px] md:hidden"
         />
-        <div className="text-contents-primary-accent heading-md-semibold">
-          로그인 후 이용 가능
+
+        <div className="hidden w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <Image
+              key={idx}
+              src="/images/nologin.png"
+              alt={`nologin-${idx}`}
+              width={592}
+              height={164}
+              priority
+              className="h-[164px] w-full max-w-[592px] rounded-[12px] object-cover"
+            />
+          ))}
         </div>
       </div>
     );
@@ -138,10 +153,14 @@ const ManyBookmark = () => {
                 className="flex flex-1 cursor-pointer items-center justify-center"
                 onClick={(e) => {
                   e.stopPropagation();
-                  scrapmutate.mutate({
-                    scrapId: null,
-                    jobPostingId: scrap.postingId,
-                  });
+                  if (scrap.isSaved) {
+                    deleteBookmark.mutate([scrap.scrapId]);
+                  } else {
+                    scrapmutate.mutate({
+                      scrapId: null,
+                      jobPostingId: scrap.postingId,
+                    });
+                  }
                 }}
               >
                 <Image

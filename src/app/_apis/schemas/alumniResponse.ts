@@ -10,6 +10,7 @@ export interface jobPostingTop3Response {
   isSaved: boolean;
   changeRankValue: number;
   changeRankStatus: string;
+  scrapId: number;
 }
 
 export interface companiesTop3Response {
@@ -30,6 +31,7 @@ export interface AlumniScrapItem {
   totalViews: number;
   dday: string;
   isSaved: boolean;
+  scrapId: number;
 }
 
 export interface AlumniScrapResponse {
@@ -74,5 +76,6 @@ export interface AlumniDetailInfoResponse {
     totalViews: number;
     dday: number;
     isSaved: boolean;
+    scrapId: number;
   }[];
 }

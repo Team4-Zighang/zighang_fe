@@ -12,7 +12,7 @@ import TimeCard, { CardProps } from './TimeCard';
 import ScrapBubble from './ScrapBubble';
 import { useCardOpen, useScrap } from '@/hooks/queries/useCard';
 import { getToken } from '@/store/member';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const frontImgs = [
   '/images/zighang_card_1.png',
@@ -28,6 +28,7 @@ const PostingLotto = () => {
   const { data: openedCards } = useCardOpen();
   const { data: scrapcard } = useScrap();
   const router = useRouter();
+  const pathname = usePathname();
   const token = getToken();
 
   const [scrapBubble, setScrapBubble] = useState(false);
@@ -57,14 +58,17 @@ const PostingLotto = () => {
   });
 
   const lastSigRef = useRef<string>('');
+  const hasFetchedCard = useRef(false);
 
   useEffect(() => {
-    const alreadyVisited = sessionStorage.getItem('cardVisited');
-    if (!alreadyVisited) {
+    if (pathname !== '/home') return;
+    if (hasFetchedCard.current) return;
+
+    if (openedCards && openedCards.length === 0) {
       cardMutation.mutate();
-      sessionStorage.setItem('cardVisited', 'true');
+      hasFetchedCard.current = true;
     }
-  }, [cardMutation]);
+  }, [pathname, openedCards, cardMutation]);
 
   useEffect(() => {
     if (!openedCards || openedCards.length === 0) return;
@@ -105,7 +109,7 @@ const PostingLotto = () => {
               academicConditions={oc.cardJobPosting.academicConditions}
               address={oc.cardJobPosting.address}
               isScrap={oc.cardJobPosting.isScrap}
-              scrapId={null}
+              scrapId={oc.cardJobPosting.scrapId}
             />
           ),
         };
@@ -119,7 +123,7 @@ const PostingLotto = () => {
     syncBackState(backStates);
   }, [openedCards, openSync, syncBackState]);
 
-  //카드 클릭했을때
+  // 카드 클릭했을때
   const handleFlip = (i: number) => {
     if (!token) {
       router.push('/onboarding');
@@ -146,7 +150,7 @@ const PostingLotto = () => {
                     back: (
                       <CardBack
                         jobPostingId={job.jobPostingId}
-                        scrapId={null}
+                        scrapId={job.scrapId}
                         index={idx}
                         companyImageUrl={
                           job.companyImageUrl ?? '/images/sampleimage.png'
@@ -181,20 +185,10 @@ const PostingLotto = () => {
           }))
         );
         syncBackState([false, false, false]);
+        hasFetchedCard.current = true;
       },
     });
   };
-
-  useEffect(() => {
-    if (!scrapBubble) return;
-    const onDown = (e: MouseEvent) => {
-      if (!iconWrapRef.current) return;
-      if (!iconWrapRef.current.contains(e.target as Node))
-        setScrapBubble(false);
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [scrapBubble]);
 
   return (
     <div className="mt-12 flex w-full flex-col items-start">
@@ -228,14 +222,18 @@ const PostingLotto = () => {
               {cardMutation.isPending ? '뽑는 중' : '새로 뽑기'}
             </span>
           </button>
-          <div ref={iconWrapRef} className="relative">
+          <div
+            ref={iconWrapRef}
+            className="relative"
+            onMouseEnter={() => setScrapBubble(true)}
+            onMouseLeave={() => setScrapBubble(false)}
+          >
             <Image
               src="/icons/question_mark.svg"
               alt="questionIcon"
               width={20}
               height={20}
               className="cursor-pointer"
-              onClick={() => setScrapBubble((v) => !v)}
             />
             {scrapBubble && (
               <ScrapBubble onClose={() => setScrapBubble(false)} />

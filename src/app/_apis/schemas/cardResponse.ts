@@ -18,6 +18,7 @@ export interface CardShowResponse {
       academicConditions: string;
       address: string;
       isScrap: boolean;
+      scrapId: number;
     };
   };
   cardOpenTime: string;
@@ -36,6 +37,7 @@ export interface CardShowOpenResponse {
     academicConditions: string;
     address: string;
     isScrap: boolean;
+    scrapId: number;
   };
   cardOpenTime: string;
 }

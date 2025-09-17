@@ -1,6 +1,9 @@
 'use client';
+import { useDeleteBookmark } from '@/hooks/mutation/useBookmarkMutation';
+import { useCardScrapMutation } from '@/hooks/mutation/useCardMutation';
 import { useAlumniDetailInfo } from '@/hooks/queries/useAlumni';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 interface AlumniModalProps {
@@ -14,9 +17,17 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
     isLoading,
     isError,
   } = useAlumniDetailInfo(memberId);
+  const scrapmutate = useCardScrapMutation();
+  const deleteBookmark = useDeleteBookmark();
+  const router = useRouter();
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (isError || !detailInfo) return <div>에러가 발생했습니다.</div>;
+  if (isLoading) return null;
+  if (isError || !detailInfo)
+    return (
+      <div className="flex items-center justify-center">
+        에러가 발생했습니다.
+      </div>
+    );
 
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/40">
@@ -43,7 +54,7 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
             <span className="bg-base-primary-default text-base-white web-badge-sm rounded-[4px] px-1 py-[2px]">
               희망 직무
             </span>
-            <span className="text-contents-neutral-secondary web-badge-lg">
+            <span className="text-contents-neutral-secondary web-badge-lg line-clamp-1 max-w-[167px] text-ellipsis">
               {detailInfo.jobRole}
             </span>
           </div>
@@ -54,7 +65,11 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
           {detailInfo.scrapList.map((scrap) => (
             <div
               key={scrap.postingId}
-              className="border-base-neutral-border bg-base-neutral-default shadow-modal flex w-full rounded-2xl border md:w-[550px] md:rounded-3xl"
+              className="border-base-neutral-border bg-base-neutral-default shadow-modal flex w-full cursor-pointer rounded-2xl border md:w-[550px] md:rounded-3xl"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(`/recruitment/${scrap.postingId}`);
+              }}
             >
               <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-4 md:gap-4 md:px-4 md:py-6">
                 <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
@@ -104,7 +119,18 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
               <div className="border-base-neutral-border flex w-10 flex-col self-stretch border-l md:w-[84px]">
                 <button
                   aria-label="북마크"
-                  className="flex flex-1 items-center justify-center"
+                  className="flex flex-1 cursor-pointer items-center justify-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (scrap.isSaved) {
+                      deleteBookmark.mutate([scrap.scrapId]);
+                    } else {
+                      scrapmutate.mutate({
+                        scrapId: null,
+                        jobPostingId: scrap.postingId,
+                      });
+                    }
+                  }}
                 >
                   <Image
                     src={
@@ -118,6 +144,7 @@ const AlumniModal = ({ onClose, memberId }: AlumniModalProps) => {
                     className="h-5 w-5 md:h-7 md:w-7"
                   />
                 </button>
+
                 <div className="border-base-neutral-border flex flex-1 items-center justify-center border-t">
                   <span className="text-contents-neutral-tertiary mobile-subtitle2 md:web-subtitle1">
                     {scrap.dday}
