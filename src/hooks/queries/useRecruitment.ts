@@ -13,10 +13,12 @@ export const useRecruitmentDetail = ({ postingId }: { postingId: number }) => {
   return useQuery({
     queryKey: ['recruitmentDetail', postingId],
     queryFn: () => GetRecruitmentDetail(postingId),
-    staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+    placeholderData: (prev) => prev,
   });
 };
 
