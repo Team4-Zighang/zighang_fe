@@ -16,16 +16,37 @@ const SearchAlumni = () => {
 
   if (!token) {
     return (
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
-        <Image
-          src="/icons/lock.svg"
-          alt="nologin"
-          width={36}
-          height={36}
-          className="h-6 w-6 md:h-9 md:w-9"
-        />
-        <div className="text-contents-primary-accent heading-md-semibold">
-          로그인 후 이용 가능
+      <div className="mt-5 flex w-full flex-col items-center justify-center gap-6">
+        <div className="w-full md:hidden">
+          <HorizontalScroll cardWidthMobile={308} gap={20}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Image
+                key={idx}
+                src="/images/nologin3.png"
+                alt={`nologin-mobile-${idx}`}
+                width={308}
+                height={402}
+                priority
+                className="h-[402px] w-[308px] rounded-[12px]"
+              />
+            ))}
+          </HorizontalScroll>
+        </div>
+
+        <div className="hidden w-full md:block">
+          <HorizontalScroll cardWidthWeb={356} gap={20}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Image
+                key={idx}
+                src="/images/nologin3.png"
+                alt={`nologin-${idx}`}
+                width={356}
+                height={402}
+                priority
+                className="h-[402px] w-[356px] rounded-[12px]"
+              />
+            ))}
+          </HorizontalScroll>
         </div>
       </div>
     );
@@ -41,6 +62,14 @@ const SearchAlumni = () => {
 
   if (isError) {
     return <div className="mt-8 text-center">에러가 발생했습니다.</div>;
+  }
+
+  if (!infoData || infoData.length === 0) {
+    return (
+      <div className="body-xl-regular mt-8 text-center text-[#474748]">
+        같은 직무를 희망하는 동문이 없어요
+      </div>
+    );
   }
 
   return (

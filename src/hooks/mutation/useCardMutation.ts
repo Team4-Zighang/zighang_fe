@@ -8,6 +8,11 @@ export function useCardShowMutation() {
     mutationFn: (body: { position: string }) => CardShow(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
+      queryClient.invalidateQueries({ queryKey: ['bookmarkList'] });
+      queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
+      queryClient.invalidateQueries({ queryKey: ['DetailInfo'] });
+      queryClient.invalidateQueries({ queryKey: ['Hotposting'] });
+      queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
     },
     onError: (error) => {
       console.error('카드 오픈 실패:', error);
@@ -21,7 +26,6 @@ export function useCardMutation() {
     mutationFn: () => Card(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
-      queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
     },
     onError: (error) => {
       console.error('카드 불러오기 실패:', error);
@@ -55,6 +59,8 @@ export function useCardScrapMutation() {
       queryClient.invalidateQueries({ queryKey: ['OpenedCard'] });
       queryClient.invalidateQueries({ queryKey: ['CardScrap'] });
       queryClient.invalidateQueries({ queryKey: ['AlumniScrap'] });
+      queryClient.invalidateQueries({ queryKey: ['DetailInfo'] });
+      queryClient.invalidateQueries({ queryKey: ['Hotposting'] });
 
       queryClient.setQueryData<CardShowOpenResponse[]>(
         ['OpenedCard'],
@@ -76,7 +82,7 @@ export function useCardScrapMutation() {
       );
     },
     onError: (error) => {
-      console.error('카드 스크랩 실패:', error);
+      console.error('스크랩 실패:', error);
     },
   });
 }

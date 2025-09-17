@@ -5,10 +5,12 @@ import Footer from '../_components/common/Footer';
 import SearchBar from './components/SearchBar';
 import NavigateGroup from './components/NavigateGroup';
 import JobGroup from './components/JobGroup';
+import OnboardingInitializer from './components/OnboardingInitializer';
 
 const page = () => {
   return (
     <>
+      <OnboardingInitializer />
       <div className="flex flex-col items-center overflow-visible px-[16px]">
         <div className="flex w-full flex-col gap-[24px]">
           <div className="flex flex-col items-stretch gap-[20px] pt-[36px] md:items-center md:px-0 md:pt-[80px]">

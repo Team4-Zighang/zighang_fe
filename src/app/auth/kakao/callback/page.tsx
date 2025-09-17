@@ -2,15 +2,27 @@
 
 import { Suspense } from 'react';
 import { useKakaoOauth } from '@/app/_apis/auth';
+import Loader from '@/app/_components/common/Loader';
 
 function KakaoCallbackInner() {
   useKakaoOauth();
-  return <div>로그인 처리 중...</div>;
+  return (
+    <div className="flex items-center justify-center">
+      <Loader />
+    </div>
+  );
 }
 
 export default function KakaoCallbackPage() {
   return (
-    <Suspense fallback={<div>로딩 중...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center">
+          {' '}
+          <Loader />
+        </div>
+      }
+    >
       <KakaoCallbackInner />
     </Suspense>
   );

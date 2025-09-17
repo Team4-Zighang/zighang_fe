@@ -8,7 +8,6 @@ import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import { useParams } from 'next/dist/client/components/navigation';
 import { useJobDetailScrapMutation } from '@/hooks/mutation/useBookmarkMutation';
 import { isLoggedIn } from '@/utils/getUser';
-import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();

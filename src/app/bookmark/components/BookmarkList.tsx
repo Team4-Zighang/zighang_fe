@@ -24,7 +24,7 @@ const BookmarkList = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const { data, isLoading, isError } = useBookmarkList({
+  const { data, isError, isLoading } = useBookmarkList({
     page,
     size,
   });
