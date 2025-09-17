@@ -68,7 +68,7 @@ const JobCard = () => {
   if (isError) return <div className="text-center">에러가 발생했습니다.</div>;
 
   return (
-    <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto md:flex-col md:gap-5 md:overflow-visible">
+    <div className="no-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto md:flex-col md:gap-5 md:overflow-visible">
       {hotposting?.map((hotpost) => {
         const tags = [
           hotpost.depthTwo,
