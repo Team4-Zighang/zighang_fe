@@ -5,10 +5,18 @@ const AlumniBanner = () => {
   return (
     <div className="relative h-[320px] w-full">
       <Image
-        src="/images/zighang-alumni-d.png"
-        alt="alumnibanner"
+        src="/images/zighang-alumni-KV-m.webp"
+        alt="alumnibanner-mobile"
         fill
-        className="object-cover"
+        className="object-cover md:hidden"
+        priority
+      />
+
+      <Image
+        src="/images/zighang-alumni-KV-d.webp"
+        alt="alumnibanner-desktop"
+        fill
+        className="hidden object-cover md:block"
         priority
       />
 
