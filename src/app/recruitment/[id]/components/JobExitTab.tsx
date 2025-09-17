@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 
 const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
   const { id } = useParams();
-  const { data, isLoading, isFetching } = useRecruitmentDetail({
+  const { data } = useRecruitmentDetail({
     postingId: Number(id),
   });
 
@@ -56,20 +56,17 @@ const JobExitTab = ({ onBookmarked }: { onBookmarked: () => void }) => {
         <button
           onClick={onBookmarkClick}
           disabled={isPending}
-          className={` ${isPending ? 'pointer-events-none cursor-not-allowed opacity-70' : 'cursor-pointer'} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px] disabled:cursor-not-allowed`}
+          className={` ${isPending ? 'pointer-events-none cursor-not-allowed' : 'cursor-pointer'} ${isBookmarked ? 'bg-base-primary-alternative border-none' : 'bg-base-neutral-alternative border-base-neutral-border'} flex h-[48px] w-[48px] items-center justify-center rounded-[8px] border-[1px] disabled:cursor-not-allowed`}
         >
           <Image
             src={
-              isLoading || isFetching
-                ? '/icons/bookmark_unselected.svg'
-                : isBookmarked
-                  ? '/icons/bookmark_selected.svg'
-                  : '/icons/bookmark_unselected.svg'
+              isBookmarked
+                ? '/icons/bookmark_selected.svg'
+                : '/icons/bookmark_unselected.svg'
             }
             alt="bookmark"
             width={28}
             height={28}
-            className={`m-auto ${isPending ? 'opacity-50' : ''}`}
           />
         </button>
         <button className="web-action bg-base-primary-alternative text-contents-primary-accent flex flex-1 items-center justify-center rounded-[8px]">
