@@ -15,9 +15,9 @@ import { getToken } from '@/store/member';
 import { usePathname, useRouter } from 'next/navigation';
 
 const frontImgs = [
-  '/images/zighang_card_1.png',
-  '/images/zighang_card_2.png',
-  '/images/zighang_card_3.png',
+  '/images/zighang_card_1.webp',
+  '/images/zighang_card_2.webp',
+  '/images/zighang_card_3.webp',
 ];
 const positions = ['LEFT', 'CENTER', 'RIGHT'] as const;
 
