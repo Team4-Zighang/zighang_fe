@@ -195,8 +195,8 @@ const BookmarkList = () => {
           <span className="w-[104px] px-[12px]">지원서류</span>
         </div>
         {/* 북마크 요소 리스트 */}
-        {!data || isLoading ? (
-          <div className="flex h-[680px] items-center justify-center">
+        {!data && isLoading ? (
+          <div className="flex items-center justify-center md:h-[680px]">
             <Loader />
           </div>
         ) : (

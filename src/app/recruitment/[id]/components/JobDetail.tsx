@@ -26,7 +26,7 @@ const JobDetail = () => {
     }
   }, [recruitmentOriginalUrl]);
 
-  if (isLoading)
+  if (!data && isLoading)
     return (
       <div className="flex h-[100vh] w-full items-center justify-center md:w-[640px]">
         <Loader />
