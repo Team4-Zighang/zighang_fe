@@ -1,8 +1,22 @@
 import Image from 'next/image';
 import React from 'react';
 import SimilarJobItem from './SimilarJobItem';
+import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
+
+function getRandomPostingIds(count = 6, min = 30000, max = 35000) {
+  const ids = new Set<number>();
+  while (ids.size < count) {
+    ids.add(Math.floor(Math.random() * (max - min + 1)) + min);
+  }
+  return Array.from(ids);
+}
 
 const SimilarJob = () => {
+  const randomIds = React.useMemo(() => getRandomPostingIds(), []);
+  const jobDetails = randomIds.map((id) =>
+    useRecruitmentDetail({ postingId: id })
+  );
+
   return (
     <div className="flex flex-col gap-[8px] py-[36px] md:gap-[20px]">
       <div className="flex flex-col gap-[8px]">
@@ -23,7 +37,7 @@ const SimilarJob = () => {
           </div>
           <div className="flex items-center gap-[4px]">
             <span className="mobile-badge-lg md:body-lg-semibold text-contents-primary-default">
-              00곳
+              22곳
             </span>
             <span className="mobile-badge-lg md:body-lg-medium text-contents-neutral-tertiary">
               에서 채용중
@@ -39,12 +53,11 @@ const SimilarJob = () => {
         </div>
       </div>
       <div className="flex flex-col gap-[8px]">
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
+        {jobDetails.map(({ data }, idx) =>
+          data?.data ? (
+            <SimilarJobItem key={randomIds[idx]} item={data.data} />
+          ) : null
+        )}
       </div>
     </div>
   );

@@ -1,17 +1,19 @@
+import { RecruitmentItem } from '@/app/_apis/schemas/recruitmentResponse';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 
-const SimilarJobItem = () => {
+const SimilarJobItem = ({ item }: { item: RecruitmentItem }) => {
   return (
     <Link
-      href="/recruitment/1" // 추후 id로 변경
+      href={`/recruitment/${item.postingId}`}
       className="border-base-neutral-border flex cursor-pointer justify-between rounded-[12px] border-[1px] p-[16px]"
+      onClick={() => window.scrollTo(0, 0)}
     >
       <div className="flex items-center gap-[16px]">
         <section className="border-base-neutral-border h-[64px] w-[64px] overflow-hidden rounded-[16px] border-[1px] bg-white object-cover">
           <Image
-            src="/images/example_company.png"
+            src={item.company.companyImageUrl || '/images/sampleimage.png'}
             width={64}
             height={64}
             alt="company_logo"
@@ -19,20 +21,20 @@ const SimilarJobItem = () => {
         </section>
         <div className="flex flex-col gap-[8px]">
           <span className="body-lg-semibold text-contents-neutral-primary">
-            사업 전략 및 신규 사업 개발
+            {item.title}
           </span>
           <span className="body-sm-medium text-contents-neutral-tertiary">
-            (주)삼성전자
+            {item.company.companyName}
           </span>
           <div className="flex gap-[6px]">
             <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
-              서비스 기획자
+              {item.depthTwo}
             </span>
             <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
-              정규직
+              {item.workType}
             </span>
             <span className="md:web-badge-sm mobile-badge-sm bg-base-neutral-alternative text-contents-neutral-tertiary flex items-center rounded-[8px] px-[8px] py-[4px]">
-              3년차 이상
+              {item.career}
             </span>
           </div>
         </div>
