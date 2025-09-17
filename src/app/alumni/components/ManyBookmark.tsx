@@ -24,7 +24,6 @@ const ManyBookmark = () => {
 
   useEffect(() => {}, [page]);
 
-  //수정예정
   const token = getToken();
 
   if (!token) {
@@ -85,7 +84,6 @@ const ManyBookmark = () => {
           <ArrayButton />
         </div>
 
-        {/* 모바일 */}
         <Toggle
           checked={showClosed}
           onChange={setShowClosed}
@@ -94,12 +92,12 @@ const ManyBookmark = () => {
         />
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 md:mt-8 md:grid-cols-2 md:gap-x-4 md:gap-y-6">
+      <div className="mx-auto mt-4 grid w-full grid-cols-1 items-start gap-4 md:mt-8 md:grid-cols-2 md:gap-6">
         {items.map((scrap) => (
           <div
             key={scrap.postingId}
             onClick={() => router.push(`/recruitment/${scrap.postingId}`)}
-            className="border-base-neutral-border flex cursor-pointer rounded-[12px] border bg-white md:w-[592px]"
+            className="border-base-neutral-border flex w-full cursor-pointer rounded-[12px] border bg-white md:h-[164px]"
           >
             <div className="flex min-w-0 flex-1 items-center gap-[10px] px-2 py-4 md:gap-4 md:p-4">
               <div className="border-base-neutral-border relative h-[44px] w-[44px] overflow-hidden rounded-[12px] border bg-gray-50 md:h-[80px] md:w-[80px]">
@@ -107,16 +105,15 @@ const ManyBookmark = () => {
                   src={scrap.companyImageUrl || '/images/sampleimage.png'}
                   alt={`${scrap.companyName} logo`}
                   fill
-                  sizes="(min-width: 768px) 80px, 44px"
                   className="object-contain"
                 />
               </div>
 
-              <div className="flex min-w-0 flex-1 flex-col">
-                <div className="text-contents-neutral-tertiary md:web-summary mobile-summary">
+              <div className="flex min-w-0 flex-1 flex-col bg-white px-5 text-left">
+                <div className="text-contents-neutral-tertiary md:web-summary mobile-summary truncate">
                   {scrap.companyName}
                 </div>
-                <div className="text-contents-neutral-primary mobile-title2 md:web-title2 mt-[6px] md:mt-3">
+                <div className="text-contents-neutral-primary mobile-title2 md:web-title2 mt-[6px] line-clamp-2 w-full text-ellipsis md:mt-3">
                   {scrap.postingTitle}
                 </div>
                 <div className="mt-[6px] flex flex-row items-center md:mt-3">
@@ -147,7 +144,7 @@ const ManyBookmark = () => {
               </div>
             </div>
 
-            <div className="border-base-neutral-border flex w-12 flex-col self-stretch border-l md:w-[84px]">
+            <div className="border-base-neutral-border flex w-12 flex-col self-stretch rounded-r-[12px] border-l bg-white md:w-[84px]">
               <button
                 aria-label="북마크"
                 className="flex flex-1 cursor-pointer items-center justify-center"
