@@ -1,12 +1,11 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
-import { GetUser } from './user';
+import { useRouter } from 'next/navigation';
 import { useOnboardingMutation } from '@/hooks/mutation/useOnboardingMutation';
+import { GetUser } from '@/app/_apis/user';
 
-export function useKakaoOauth() {
-  const searchParams = useSearchParams();
+const OnboardingInitializer = () => {
   const router = useRouter();
   const onboardingMutation = useOnboardingMutation();
   const didRun = useRef(false);
@@ -15,13 +14,7 @@ export function useKakaoOauth() {
     if (didRun.current) return;
     didRun.current = true;
 
-    const token = searchParams.get('accessToken');
-    if (!token) return;
-
-    localStorage.setItem('accessToken', token);
-
     const pending = sessionStorage.getItem('pendingOnboarding');
-
     if (pending) {
       const payload = JSON.parse(pending);
 
@@ -31,26 +24,28 @@ export function useKakaoOauth() {
             sessionStorage.removeItem('pendingOnboarding');
             const data = await GetUser();
             localStorage.setItem('memberInfo', JSON.stringify(data));
-            router.push('/home');
           } catch (err) {
-            console.error('멤버 정보 호출 실패:', err);
+            console.error('GetUser 실패:', err);
           }
         },
         onError: (err) => {
           console.error('온보딩 제출 실패:', err);
           sessionStorage.removeItem('pendingOnboarding');
-          router.push('/home');
         },
       });
     } else {
       GetUser()
         .then((data) => {
           localStorage.setItem('memberInfo', JSON.stringify(data));
-          router.push('/home');
         })
         .catch((err) => {
           console.error('멤버 정보 호출 실패:', err);
+          router.push('/home');
         });
     }
-  }, [searchParams, router, onboardingMutation]);
-}
+  }, []);
+
+  return null;
+};
+
+export default OnboardingInitializer;

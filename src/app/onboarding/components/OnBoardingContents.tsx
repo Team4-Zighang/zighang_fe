@@ -19,6 +19,7 @@ import { SCHOOL_MAP } from '@/utils/schoolMap';
 import { getToken } from '@/store/member';
 import { useRouter } from 'next/navigation';
 import { jobRoleMap } from '@/utils/jobRoleMap';
+import { GetUser } from '@/app/_apis/user';
 
 const OnBoardingContents = () => {
   const [formKey, setFormKey] = useState(0);
@@ -85,31 +86,52 @@ const OnBoardingContents = () => {
     setFormKey((prev) => prev + 1);
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = () => {
+    if (isSubmitting) return;
+
     const mappedRegions = selectedRegion.map((r) => REGION_MAP[r] || r);
     const token = getToken();
 
+    const onboardingPayload = {
+      jobCategory: selectedJobCategory?.category || '',
+      jobRole: selectedJobRoles,
+      careerYear,
+      region: mappedRegions,
+      school: selectedUniversity,
+      major: selectedMajor?.category || '',
+    };
+
     if (!token) {
+      sessionStorage.setItem(
+        'pendingOnboarding',
+        JSON.stringify(onboardingPayload)
+      );
       setLoginModal(true);
       return;
     }
 
-    onboardingMutation.mutate(
-      {
-        jobCategory: selectedJobCategory?.category || '',
-        jobRole: selectedJobRoles,
-        careerYear,
-        region: mappedRegions,
-        school: selectedUniversity,
-        major: selectedMajor?.category || '',
-      },
-      {
-        onSuccess: () => {
+    setIsSubmitting(true);
+
+    onboardingMutation.mutate(onboardingPayload, {
+      onSuccess: async () => {
+        try {
+          const data = await GetUser();
+          localStorage.setItem('memberInfo', JSON.stringify(data));
           router.push('/home');
           resetForm();
-        },
-      }
-    );
+        } catch (err) {
+          console.error('GetUser 실패:', err);
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+      onError: (err) => {
+        console.error('온보딩 제출 실패:', err);
+        setIsSubmitting(false);
+      },
+    });
   };
 
   const isDisabled =
@@ -218,14 +240,7 @@ const OnBoardingContents = () => {
 
       <Button onClick={handleSubmit} disabled={isDisabled} />
 
-      {loginModal && (
-        <LoginModal
-          onClose={() => {
-            setLoginModal(false);
-            resetForm();
-          }}
-        />
-      )}
+      {loginModal && <LoginModal onClose={() => setLoginModal(false)} />}
 
       {isRemoveModalOpen && (
         <JobRemoveModal
