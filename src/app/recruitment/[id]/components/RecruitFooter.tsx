@@ -8,6 +8,7 @@ import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
 import { useParams } from 'next/dist/client/components/navigation';
 import { useJobDetailScrapMutation } from '@/hooks/mutation/useBookmarkMutation';
 import { isLoggedIn } from '@/utils/getUser';
+import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();
@@ -34,16 +35,11 @@ const RecruitFooter = () => {
       return;
     }
 
-    toggle.mutate(
-      {
-        postingId: job.postingId,
-        scrapId: job.scrapId ?? null,
-        next: !isBookmarked,
-      },
-      {
-        onSuccess: (_data) => {},
-      }
-    );
+    toggle.mutate({
+      postingId: job.postingId,
+      scrapId: job.scrapId ?? null,
+      next: !isBookmarked,
+    });
   };
 
   const [isMemoOpen, setIsMemoOpen] = useState(false);
@@ -64,20 +60,17 @@ const RecruitFooter = () => {
           onClick={onBookmarkClick}
           onDoubleClick={(e) => e.preventDefault()}
           disabled={isPending}
-          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isPending ? 'pointer-events-none cursor-not-allowed opacity-70' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
+          className={`flex h-[40px] w-[40px] items-center justify-center rounded-full active:bg-[#00000008] ${isPending ? 'pointer-events-none cursor-not-allowed' : ''} ${isBookmarked ? 'border-none' : 'border-base-neutral-border'}`}
         >
           <Image
             src={
-              isLoading || isFetching
-                ? '/icons/bookmark_unselected.svg'
-                : isBookmarked
-                  ? '/icons/bookmark_selected.svg'
-                  : '/icons/bookmark_unselected.svg'
+              isBookmarked
+                ? '/icons/bookmark_selected.svg'
+                : '/icons/bookmark_unselected.svg'
             }
             alt="bookmark"
             width={28}
             height={28}
-            className={`m-auto ${isPending ? 'opacity-50' : ''}`}
           />
         </button>
 
