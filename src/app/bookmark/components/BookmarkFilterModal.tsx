@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import CareerSlider from './CareerSlider';
 import Dropdown, { jobOptions } from '@/app/_components/common/DropDown';
-import OptionSelect, { jobs } from '@/app/_components/common/OptionSelect';
 
 export const FILTER_OPTIONS = {
   task: [
@@ -170,6 +169,7 @@ export default function BookmarkFilterModal({
       ...prev,
       jobCategory: [String(opt.category ?? opt.id ?? '')].filter(Boolean),
     }));
+    setSelectedJobCategory(opt);
   };
 
   return (
