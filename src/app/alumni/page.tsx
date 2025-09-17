@@ -18,7 +18,7 @@ const page = () => {
         <ManyBookmark />
       </div>
 
-      <div className="mx-auto mt-20 w-full px-5 md:pl-[120px]">
+      <div className="mx-auto mt-20 w-full px-5 md:px-0 md:pl-[120px]">
         <div className="text-contents-neutral-primary web-title2 md:heading-1xl-semibold">
           같은 직무를 희망하는
           <span className="block md:inline"> 동문을 찾았어요</span>

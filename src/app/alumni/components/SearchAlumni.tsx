@@ -16,16 +16,37 @@ const SearchAlumni = () => {
 
   if (!token) {
     return (
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
-        <Image
-          src="/icons/lock.svg"
-          alt="nologin"
-          width={36}
-          height={36}
-          className="h-6 w-6 md:h-9 md:w-9"
-        />
-        <div className="text-contents-primary-accent heading-md-semibold">
-          로그인 후 이용 가능
+      <div className="mt-5 flex w-full flex-col items-center justify-center gap-6">
+        <div className="w-full md:hidden">
+          <HorizontalScroll cardWidthMobile={308} gap={20}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Image
+                key={idx}
+                src="/images/nologin3.png"
+                alt={`nologin-mobile-${idx}`}
+                width={308}
+                height={402}
+                priority
+                className="h-[402px] w-[308px] rounded-[12px]"
+              />
+            ))}
+          </HorizontalScroll>
+        </div>
+
+        <div className="hidden w-full md:block">
+          <HorizontalScroll cardWidthWeb={356} gap={20}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Image
+                key={idx}
+                src="/images/nologin3.png"
+                alt={`nologin-${idx}`}
+                width={356}
+                height={402}
+                priority
+                className="h-[402px] w-[356px] rounded-[12px]"
+              />
+            ))}
+          </HorizontalScroll>
         </div>
       </div>
     );

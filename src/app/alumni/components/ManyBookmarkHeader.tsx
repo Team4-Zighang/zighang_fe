@@ -17,7 +17,10 @@ const ManyBookmarkHeader = () => {
           </span>
         </>
       ) : (
-        <>동문들이 가장 많이 북마크한 공고를 살펴보세요!</>
+        <div className="web-title2 md:heading-1xl-semibold text-black md:whitespace-nowrap">
+          동문들이 가장 많이
+          <span className="block md:inline"> 북마크한 공고를 살펴보세요!</span>
+        </div>
       )}
     </div>
   );

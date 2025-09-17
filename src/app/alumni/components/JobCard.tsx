@@ -18,16 +18,42 @@ const JobCard = () => {
   const token = getToken();
   if (!token) {
     return (
-      <div className="flex w-full flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center gap-6">
+        {/* 모바일*/}
         <Image
-          src="/icons/lock.svg"
+          src="/images/nologin.png"
           alt="nologin"
-          width={36}
-          height={36}
-          className="h-6 w-6 md:h-9 md:w-9"
+          width={287}
+          height={129}
+          priority
+          className="h-[129px] w-full rounded-[12px] md:hidden"
         />
-        <div className="text-contents-primary-accent heading-md-semibold">
-          로그인 후 이용 가능
+
+        <div className="hidden flex-col items-center gap-5 md:flex">
+          <Image
+            src="/images/nologin.png"
+            alt="nologin"
+            width={538}
+            height={164}
+            priority
+            className="h-[164px] w-[538px]"
+          />
+          <Image
+            src="/images/nologin.png"
+            alt="nologin"
+            width={538}
+            height={164}
+            priority
+            className="h-[164px] w-[538px]"
+          />
+          <Image
+            src="/images/nologin.png"
+            alt="nologin"
+            width={538}
+            height={164}
+            priority
+            className="h-[164px] w-[538px]"
+          />
         </div>
       </div>
     );

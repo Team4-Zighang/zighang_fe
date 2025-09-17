@@ -26,18 +26,31 @@ const ManyBookmark = () => {
 
   //수정예정
   const token = getToken();
+
   if (!token) {
     return (
-      <div className="flex w-full flex-col items-center justify-center">
+      <div className="mt-5 flex w-full flex-col items-start gap-6">
         <Image
-          src="/icons/lock.svg"
+          src="/images/nologin2.png"
           alt="nologin"
-          width={36}
-          height={36}
-          className="h-6 w-6 md:h-9 md:w-9"
+          width={308}
+          height={402}
+          priority
+          className="h-[402px] w-full rounded-[12px] md:hidden"
         />
-        <div className="text-contents-primary-accent heading-md-semibold">
-          로그인 후 이용 가능
+
+        <div className="hidden w-full grid-cols-1 gap-6 sm:grid-cols-2 md:grid lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <Image
+              key={idx}
+              src="/images/nologin.png"
+              alt={`nologin-${idx}`}
+              width={592}
+              height={164}
+              priority
+              className="h-[164px] w-full max-w-[592px] rounded-[12px] object-cover"
+            />
+          ))}
         </div>
       </div>
     );
