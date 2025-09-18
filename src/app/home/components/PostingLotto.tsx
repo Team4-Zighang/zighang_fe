@@ -52,7 +52,7 @@ const PostingLotto = () => {
     formatHMS,
     openSync,
     syncBackState,
-  } = useCardTimer(3, 900, (idx) => {
+  } = useCardTimer(3, 21600, (idx) => {
     const position = positions[idx];
     cardReplaceMutation.mutate({ position });
   });
