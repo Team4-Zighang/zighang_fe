@@ -12,7 +12,7 @@ import LoginModal from '@/app/_components/common/LoginModal';
 
 const RecruitFooter = () => {
   const { id } = useParams();
-  const { data, isLoading, isFetching } = useRecruitmentDetail({
+  const { data } = useRecruitmentDetail({
     postingId: Number(id),
   });
 
