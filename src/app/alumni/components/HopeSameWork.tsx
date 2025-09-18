@@ -40,7 +40,10 @@ const HopeSameWork = () => {
           <span className="block md:inline"> 동문의 공고를 볼 수 있어요</span>
         </div>
 
-        <div className="mt-8 mb-4 flex w-full cursor-pointer justify-end md:hidden">
+        <div
+          className="mt-8 mb-4 flex w-full cursor-pointer justify-end lg:hidden"
+          onClick={() => router.push('/onboarding')}
+        >
           <button type="button" aria-label="희망 직무 도움말">
             <Image src="/icons/help.svg" alt="help" width={20} height={20} />
           </button>
@@ -90,13 +93,12 @@ const HopeSameWork = () => {
               </div>
             </div>
           </div>
-
           <div
-            className="bg-base-primary-alternative hidden cursor-pointer flex-row items-center gap-1 rounded-[6px] px-3 py-2 md:flex"
+            className="bg-base-primary-alternative hidden cursor-pointer flex-row items-center gap-1 rounded-[6px] px-3 py-2 lg:flex"
             onClick={() => router.push('/onboarding')}
           >
             <Image src="/icons/help.svg" alt="help" width={24} height={24} />
-            <div className="body-lg-medium text-purple-900">
+            <div className="body-lg-medium break-words whitespace-normal text-purple-900">
               희망 직무가 변경되셨나요?
             </div>
           </div>

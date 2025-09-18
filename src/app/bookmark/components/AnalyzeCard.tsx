@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -8,7 +10,17 @@ import { CHARACTER_MAP } from '@/utils/character';
 import { isLoggedIn } from '@/utils/getUser';
 import { getMember } from '@/store/member';
 
-const AnalyzeCard = () => {
+interface AnalyzeCardProps {
+  customTitle?: string;
+  customButtonText?: string;
+  customButtonHref?: string;
+}
+
+const AnalyzeCard = ({
+  customTitle,
+  customButtonText,
+  customButtonHref,
+}: AnalyzeCardProps) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState<string | undefined>();
 
@@ -30,22 +42,39 @@ const AnalyzeCard = () => {
       ? CHARACTER_MAP[personality.data.characterName]
       : CHARACTER_MAP['듬직행'];
 
-  if (isLoadingPersonality || isFetching)
+  if (isLoadingPersonality || isFetching) {
     return (
       <div className="flex h-[360px] w-full items-center justify-center">
         <Loader size={20} />
       </div>
     );
+  }
+
+  const titleText =
+    !loggedIn || isError
+      ? '관심있는 공고를 북마크하고 취업 유형을 분석받아보세요!'
+      : customTitle
+        ? `${name ?? '??'}${customTitle}`
+        : `${name ?? '??'}님이 북마크한 공고들을 분석했어요!`;
+
+  const buttonText =
+    !loggedIn || isError
+      ? '북마크하고 나의 직행이 확인하기'
+      : (customButtonText ?? '직행이들의 스토리가 궁금하다면? 👀');
+
+  const buttonHref =
+    !loggedIn || isError ? '/onboarding' : (customButtonHref ?? '/promotion');
 
   return (
     <div className="md:px-auto flex w-full flex-col gap-[16px] px-[20px] py-[48px] md:w-[1200px]">
       <span className="heading-sm-semibold md:heading-1xl-semibold">
-        {name
-          ? `${name}님이 북마크한 공고들을 분석했어요!`
-          : '로그인하고 취업 유형을 분석해보세요!'}
+        {titleText}
       </span>
+
       <div
-        className={`bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px] ${isError ? 'md:justify-between' : ''}`}
+        className={`bg-base-primary-alternative flex w-full flex-col gap-[24px] rounded-[16px] p-[12px] md:h-[360px] md:flex-row md:gap-[0px] md:p-[0px] ${
+          isError ? 'md:justify-between' : ''
+        }`}
       >
         {isError || !loggedIn ? (
           <>
@@ -127,11 +156,12 @@ const AnalyzeCard = () => {
           </>
         )}
       </div>
+
       <Link
-        href="/"
+        href={buttonHref}
         className="body-lg-medium md:heading-sm-medium text-contents-neutral-primary active:bg-base-primary-default active:text-contents-state-inverse border-base-neutral-border bg-base-neutral-alternative hover:bg-base-primary-alternative flex h-[52px] items-center justify-center rounded-[16px] border-[1px] md:h-[72px]"
       >
-        직행이들의 스토리가 궁금하다면? 👀
+        {buttonText}
       </Link>
     </div>
   );

@@ -55,7 +55,7 @@ const SearchAlumni = () => {
   if (isLoading) {
     return (
       <div className="mt-8 flex w-full items-center justify-center">
-        <Loader />
+        <Loader size={20} />
       </div>
     );
   }
