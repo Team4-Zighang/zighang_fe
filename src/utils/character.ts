@@ -17,7 +17,7 @@ export const CHARACTER_MAP: Record<string, { img: string; desc: string }> = {
   },
   모험행: {
     img: '/images/characters/zighang_character_5.webp',
-    desc: '대기업의 안정된 환경에서 원격으로 일하며, 연봉과 복지보다 다양한 경험을 우선시하시네요. 정규직보다는 새로운 도전을 즐기는 모험행이에요!',
+    desc: '대기업의 안정된 환경에서 원격으로 일하며, 연봉·복지보다 다양한 경험을 우선시하시네요. 정규직보단 새로운 도전을 즐기는 모험행이에요!',
   },
   찐동행: {
     img: '/images/characters/zighang_character_6.webp',
