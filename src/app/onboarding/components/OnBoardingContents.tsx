@@ -171,7 +171,7 @@ const OnBoardingContents = () => {
             </div>
             <div
               onClick={handleOpenModal}
-              className="text-contents-primary-default body-sm-medium cursor-pointer underline"
+              className="text-contents-primary-default body-sm-medium cursor-pointer"
             >
               아직 직무를 탐색중인가요?
             </div>

@@ -34,13 +34,13 @@ export default function JobRemoveModal({
           </div>
           <div
             onClick={onConfirm}
-            className="text-contents-primary-default body-sm-medium cursor-pointer underline"
+            className="text-contents-primary-default body-sm-medium cursor-pointer"
           >
-            원하지 않는 직무를 다 지웠어요
+            완료
           </div>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-[6px]">
+        <div className="mt-4 flex flex-wrap gap-[6px]">
           {jobs.map((job) => (
             <div
               key={job}
