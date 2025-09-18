@@ -18,45 +18,52 @@ type CareerJourneyItem = {
 const data: CareerJourneyItem[] = [
   {
     id: 1,
-    name: '박채수',
-    school: '한국대학교',
-    department: ['디자인학부'],
+    name: '윤창현',
+    school: '서울대학교',
+    department: ['컴퓨터공학부'],
     journey: [{ src: '/images/jobfootstep/jobfootstep1.png', alt: '첫번째' }],
-    badges: ['현) UX 디자이너', '전) 콘텐츠 디자이너'],
+    badges: ['현) 백엔드 엔지니어'],
     type: '학점 괴물 & 성실형',
-    description: `채수 선배님은 학사와 석사 재학기간 동안 학기 
+    description: `창현 선배님은 학사와 석사 재학기간 동안 학기 
     내내 학점을 4.3 이상으로 유지했어요.
     학점뿐만이 아니라 크고작은 대외활동, 공모전, 
     인턴 등 성실한 이력서를 보여주고 있답니다.`,
   },
   {
     id: 2,
-    name: '윤창현',
-    school: '한국대학교',
-    department: ['디자인학부'],
-    journey: [{ src: '/images/jobfootstep/jobfootstep2.png', alt: '첫번째' }],
-    badges: ['현) UIUX·프로덕트', '전) 콘텐츠 디자이너'],
+    name: '박예나',
+    school: '서울대학교',
+    department: ['광고학과'],
+    journey: [{ src: '/images/jobfootstep/jobfootstep2.png', alt: '두번째' }],
+    badges: ['현) 광고기획자', '전) 콘텐츠 마케터'],
     type: '대외활동형',
-    description:
-      '다양한 동아리/공모전/인턴 경험을 통해 실무 감각을 쌓았어요.\n협업 프로젝트 경험이 풍부해요.',
+    description: `예나 선배님은 교내·교외의 다양한 활동과 프로젝트에 적극 참여하며 진로를 탐색하고 경험을 확장하는 유형입니다. 
+      학업 경로에서도 전문학사, 편입 등 유연한 선택을 통해 여러 경험을 병행하고, 단기 체험형 인턴이나 외부 프로젝트 등을 통해 실무 감각을 쌓는 데 중점을 둡니다. 
+      다양한 환경에서 쌓은 경험을 자신의 성장 자산으로 활용하는 것이 특징입니다.`,
   },
   {
     id: 3,
-    name: '백즌',
-    school: '한국대학교',
-    department: ['디자인학부'],
-    journey: [{ src: '/images/jobfootstep/jobfootstep1.png', alt: '첫번째' }],
-    badges: ['현) UIUX·프로덕트', '전) 콘텐츠 디자이너'],
+    name: '김시원',
+    school: '서울대학교',
+    department: ['경영학과 · 경제학과'],
+    journey: [{ src: '/images/jobfootstep/jobfootstep3.png', alt: '세번째' }],
+    badges: ['현) Product Manager'],
     type: '인턴 다수형',
+    description: `시원 선배님은 학사·석사 등 학업 과정을 체계적으로 마친 뒤 다수의 인턴십과 기업 실무 경험을 통해 직무 전문성을 빠르게 쌓는 유형입니다. 
+    여러 회사에서 장·단기 인턴 경험을 반복하면서 현업의 흐름을 익히고 경력을 명확히 설계하며, 이를 기반으로 대기업이나 전문 직무로 자연스럽게 이어가는 경로가 특징입니다.`,
   },
   {
     id: 4,
-    name: '윤창현',
-    school: '한국대학교',
-    department: ['디자인학부'],
-    journey: [{ src: '/images/jobfootstep/jobfootstep1.png', alt: '첫번째' }],
-    badges: ['현) UIUX·프로덕트', '전) 콘텐츠 디자이너'],
+    name: '김영록',
+    school: '서울대학교',
+    department: ['컴퓨터공학부'],
+    journey: [{ src: '/images/jobfootstep/jobfootstep4.png', alt: '네번째' }],
+    badges: ['현) 프론트엔드 엔지니어', '전) 백엔드 엔지니어'],
     type: '대외활동형',
+    description: `영록 선배님은 교내·교외에서 진행되는 활동과 프로젝트에 적극 참여하며 진로를 탐색하고 경험의 폭을 넓혀가는 유형입니다. 
+    학업 과정에서도 전문학사 중퇴 후 학사 편입처럼 유연한 선택을 통해 다양한 경험을 병행하고, 
+    단기 인턴십이나 외부 프로젝트를 통해 실무 감각을 기르는 것이 특징입니다. 
+    이렇게 축적한 다양한 경험을 현 직무에서 성장 자산으로 활용하는 모습이 대표적입니다.`,
   },
 ];
 
