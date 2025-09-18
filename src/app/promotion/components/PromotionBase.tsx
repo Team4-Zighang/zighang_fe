@@ -1,3 +1,4 @@
+// eslint-disable-next-line @next/next/no-img-element
 'use client';
 
 import AnalyzeCard from '@/app/bookmark/components/AnalyzeCard';
