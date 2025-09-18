@@ -11,11 +11,13 @@ function getRandomPostingIds(count = 6, min = 30000, max = 35000) {
   return Array.from(ids);
 }
 
+function useMultipleRecruitmentDetails(ids: number[]) {
+  return ids.map((id) => useRecruitmentDetail({ postingId: id }));
+}
+
 const SimilarJob = () => {
   const randomIds = React.useMemo(() => getRandomPostingIds(), []);
-  const jobDetails = randomIds.map((id) =>
-    useRecruitmentDetail({ postingId: id })
-  );
+  const jobDetails = useMultipleRecruitmentDetails(randomIds);
 
   return (
     <div className="flex flex-col gap-[8px] py-[36px] md:gap-[20px]">
@@ -55,7 +57,11 @@ const SimilarJob = () => {
       <div className="flex flex-col gap-[8px]">
         {jobDetails.map(({ data }, idx) =>
           data?.data ? (
-            <SimilarJobItem key={randomIds[idx]} item={data.data} />
+            <SimilarJobItem
+              key={randomIds[idx]}
+              item={data.data}
+              isLoading={!data}
+            />
           ) : null
         )}
       </div>
