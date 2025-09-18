@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![표지](https://github.com/user-attachments/assets/404054db-035b-4b0e-bc19-2ea0441cfbb0)
 
-## Getting Started
+> 본 프로젝트는 직행과 큐시즘이 협력하여 진행한 기업 프로젝트입니다.
 
-First, run the development server:
+# 🧐 어떤 고민인가요?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+본 프로젝트는 직행 플랫폼 내 공고 탐색 과정의 불편함을 해결하기 위해 기획되었습니다.
+고객이 더욱 빠르고 정확하게 자신에게 맞는 공고를 발견할 수 있도록 개인화 로직 개발과 간결한 온보딩 프로세스 수립을 핵심 목표로 삼았습니다.
+특히, 로그인 유도를 통해 고객 데이터를 확보하고 이를 분석·활용함으로써, 고객 맞춤형 추천과 지속적인 개선이 가능한 기반을 마련하였습니다.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 🌟 솔루션
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> [1] 카드뽑기
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**"안누르면 손해"**
 
-## Learn More
+- 카드 뽑기를 통해 로그인을 유도합니다.
+- 다음 뽑기까지의 6시간 시간 제한 후, 카드가 자동으로 교체됩니다.
+- 새로뽑기 버튼을 통해 새로운 카드를 뽑을 수 있습니다.
 
-To learn more about Next.js, take a look at the following resources:
+> [2] 북마크(대시보드)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**"나만의 언어로 관리"**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 공고에서 작성한 메모가 자동으로 연동됩니다.
+- 기업마다 요구하는 채용절차를 한눈에 확인할 수 있어 불필요한 뎁스를 줄일 수 있습니다.
+- 북마크 된 공고를 AI로 분석하여 나만의 취업 유형 캐릭터를 생성합니다.
+- 스크롤에 따라 움직이는 영상을 감상할 수 있습니다.
 
-## Deploy on Vercel
+> [3] 동문관
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**"같이 힘내어 취준해요"**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 현재 동문들의 가장 뜨거운 공고 top3를 확인할 수 있습니다.
+- 같은 직무를 희망하는 동문의 관심 기업과 공고를 볼 수 있습니다.
+- 공고 상세페이지에서 우리 학교 동문들이 해당 공고에 작성한 리뷰를 볼 수 있습니다.
+
+> [4] 온보딩
+
+**"쉽고 빠른 정보 수집"**
+
+- 직무를 정하지 못한 유저를 위해 희망하지 않는 직무를 선택할 수 있습니다.
+- 학교와 전공 정보를 간편하게 받을 수 있습니다.
+
+## 🌃 FE Developer
+
+| 박채수                                                                                                                                                                                                  | 김선화                                                                                                                                                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <p align="center"><img src="https://avatars.githubusercontent.com/u/127167163?v=4" width="100" height="100" style="border-radius: 5%;"> <p align="center"><p>[@ChaeSu](https://github.com/Chasyuss)</p> | <p align="center"><img src="https://avatars.githubusercontent.com/u/105573067?v=4" width="100" height="100" style="border-radius: 5%;"></p> <p align="center"><p>[@SEONHWA KIM](https://github.com/sunhwaaRj)</p> |
+
+</br>
