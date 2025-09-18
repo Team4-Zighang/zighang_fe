@@ -58,7 +58,7 @@ const ManyBookmark = () => {
   if (isLoading)
     return (
       <div className="flex w-full items-center justify-center">
-        <Loader />
+        <Loader size={20} />
       </div>
     );
   if (isError) return <div className="text-center">에러가 발생했습니다.</div>;

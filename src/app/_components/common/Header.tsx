@@ -98,7 +98,7 @@ export default function Header() {
               <SearchBar mdWidth="md:w-[448px]" />
             </div>
             <Link href="/bookmark">
-              <span className="web-navi text-contents-neutral-primary hidden flex-shrink-0 cursor-pointer md:block">
+              <span className="web-navi text-contents-neutral-primary hidden flex-shrink-0 cursor-pointer truncate md:block">
                 북마크
               </span>
             </Link>
@@ -113,7 +113,7 @@ export default function Header() {
                   className="h-[40px] w-[40px] cursor-pointer rounded-full object-cover"
                 />
                 <div
-                  className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
+                  className="web-title4 border-base-neutral-border text-contents-primary-default hidden h-[44px] cursor-pointer items-center justify-center truncate rounded-[8px] border-[1px] px-[16px] py-[10px] md:block"
                   onClick={handleLogout}
                 >
                   로그아웃
