@@ -74,7 +74,6 @@ export function useSimilarJobs(count = 6, min = 30000, max = 35000) {
         refetchOnMount: 'always' as const,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
-        placeholderData: (prev: any) => prev,
         select: (res: RecruitmentCommonResponse<RecruitmentItem>) => res.data,
       })),
     [randomIds]
