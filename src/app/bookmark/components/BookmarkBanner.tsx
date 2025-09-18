@@ -1,6 +1,6 @@
 const BookmarkBanner = () => {
   return (
-    <div className="flex h-[320px] w-full bg-[url('/images/zighang_bookmark_mo.png')] bg-cover bg-center py-[32px] md:bg-[url('/images/zighang_bookmark.png')] md:pt-[80px]">
+    <div className="flex h-[320px] w-full bg-[url('/images/zighang_bookmark_mo.webp')] bg-cover bg-center py-[32px] md:bg-[url('/images/zighang_bookmark.webp')] md:pt-[80px]">
       <div className="mx-[20px] flex h-full flex-col justify-between md:mx-auto md:w-[1200px]">
         <div className="flex flex-col">
           <span className="text-contents-primary-accent body-xl-semibold">
