@@ -111,6 +111,7 @@ const AnalyzeCard = ({
               alt="zighang character"
               width={360}
               height={360}
+              quality={100}
             />
             <div className="flex flex-1 flex-col gap-[8px] p-[8px] md:gap-[80px] md:p-0 md:py-[52px]">
               <div className="flex flex-col">

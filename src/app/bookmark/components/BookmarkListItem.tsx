@@ -377,7 +377,7 @@ const BookmarkListItem = ({
                   <span className="text-contents-neutral-secondary body-sm-medium flex-1">
                     {item.fileResponse.originalFileName || '없음'}
                   </span>
-                  <div className="flex gap-[16px] py-[5px] md:gap-[24px] md:py-0">
+                  <div className="flex justify-end gap-[16px] py-[5px] md:gap-[24px] md:py-0">
                     <button
                       className={`flex gap-[4px] ${!item.fileResponse.fileUrl ? 'text-contents-state-disabled' : 'text-contents-primary-accent cursor-pointer'}`}
                       disabled={!item.fileResponse.fileUrl}
@@ -409,7 +409,9 @@ const BookmarkListItem = ({
                         height={20}
                         alt="Upload"
                       />
-                      <span>재업로드</span>
+                      <span>
+                        {item.fileResponse.fileUrl ? '재업로드' : '업로드'}
+                      </span>
                     </button>
                     <input
                       type="file"
@@ -426,7 +428,7 @@ const BookmarkListItem = ({
                   <span className="text-contents-neutral-secondary body-sm-medium flex-1">
                     {item.portfolioResponse.originalFileName || '없음'}
                   </span>
-                  <div className="flex gap-[16px] py-[5px] md:gap-[24px] md:py-0">
+                  <div className="flex justify-end gap-[16px] py-[5px] md:gap-[24px] md:py-0">
                     <button
                       className={`flex gap-[4px] ${!item.portfolioResponse.fileUrl ? 'text-contents-state-disabled' : 'text-contents-primary-accent cursor-pointer'}`}
                       disabled={!item.portfolioResponse.fileUrl}
@@ -458,7 +460,9 @@ const BookmarkListItem = ({
                         height={20}
                         alt="Upload"
                       />
-                      <span>재업로드</span>
+                      <span>
+                        {item.portfolioResponse.fileUrl ? '재업로드' : '업로드'}
+                      </span>
                     </button>
                     <input
                       type="file"

@@ -18,7 +18,7 @@ const JobInfoBanner = () => {
         </div>
         <div className="flex items-center gap-[4px]">
           <span className="mobile-badge-lg md:body-lg-semibold text-contents-primary-default">
-            00곳
+            22곳
           </span>
           <span className="mobile-badge-lg md:body-lg-medium text-contents-neutral-tertiary">
             에서 채용중

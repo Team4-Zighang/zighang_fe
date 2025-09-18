@@ -1,8 +1,11 @@
 import Image from 'next/image';
 import React from 'react';
 import SimilarJobItem from './SimilarJobItem';
+import { useSimilarJobs } from '@/hooks/queries/useRecruitment';
 
 const SimilarJob = () => {
+  const { randomIds, jobDetails } = useSimilarJobs();
+
   return (
     <div className="flex flex-col gap-[8px] py-[36px] md:gap-[20px]">
       <div className="flex flex-col gap-[8px]">
@@ -23,7 +26,7 @@ const SimilarJob = () => {
           </div>
           <div className="flex items-center gap-[4px]">
             <span className="mobile-badge-lg md:body-lg-semibold text-contents-primary-default">
-              00곳
+              22곳
             </span>
             <span className="mobile-badge-lg md:body-lg-medium text-contents-neutral-tertiary">
               에서 채용중
@@ -39,12 +42,16 @@ const SimilarJob = () => {
         </div>
       </div>
       <div className="flex flex-col gap-[8px]">
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
-        <SimilarJobItem />
+        {jobDetails.map(({ data, isLoading, isFetching }, idx) => {
+          const loading = isLoading || isFetching || !data;
+          return (
+            <SimilarJobItem
+              key={randomIds[idx]}
+              item={data ?? undefined}
+              isLoading={loading}
+            />
+          );
+        })}
       </div>
     </div>
   );

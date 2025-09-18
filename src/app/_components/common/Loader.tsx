@@ -50,16 +50,18 @@ export default function Loader({
           width: 80%;
           height: 80%;
           top: 5%;
-          background-color: var(--color);
+          // background-color: var(--color);
           border-radius: 50%;
         }
         .loader::before {
           left: -5%;
+          background-color: #7a52ff70;
           transform-origin: 10% 50%;
           animation: loader-2 var(--duration) infinite alternate ease-in-out;
         }
         .loader::after {
           right: -5%;
+          background-color: #7a52ff30;
           transform-origin: 90% 50%;
           transform: scale(0);
           animation: loader-2 var(--duration) var(--duration) infinite alternate
