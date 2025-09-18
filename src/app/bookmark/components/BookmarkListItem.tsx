@@ -409,7 +409,9 @@ const BookmarkListItem = ({
                         height={20}
                         alt="Upload"
                       />
-                      <span>재업로드</span>
+                      <span>
+                        {item.fileResponse.fileUrl ? '재업로드' : '업로드'}
+                      </span>
                     </button>
                     <input
                       type="file"
@@ -458,7 +460,9 @@ const BookmarkListItem = ({
                         height={20}
                         alt="Upload"
                       />
-                      <span>재업로드</span>
+                      <span>
+                        {item.portfolioResponse.fileUrl ? '재업로드' : '업로드'}
+                      </span>
                     </button>
                     <input
                       type="file"
