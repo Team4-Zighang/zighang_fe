@@ -1,23 +1,17 @@
 import Image from 'next/image';
 import React from 'react';
 import SimilarJobItem from './SimilarJobItem';
-import { useRecruitmentDetail } from '@/hooks/queries/useRecruitment';
-
-function getRandomPostingIds(count = 6, min = 30000, max = 35000) {
-  const ids = new Set<number>();
-  while (ids.size < count) {
-    ids.add(Math.floor(Math.random() * (max - min + 1)) + min);
-  }
-  return Array.from(ids);
-}
+import {
+  useRecruitmentDetail,
+  useSimilarJobs,
+} from '@/hooks/queries/useRecruitment';
 
 function useMultipleRecruitmentDetails(ids: number[]) {
   return ids.map((id) => useRecruitmentDetail({ postingId: id }));
 }
 
 const SimilarJob = () => {
-  const randomIds = React.useMemo(() => getRandomPostingIds(), []);
-  const jobDetails = useMultipleRecruitmentDetails(randomIds);
+  const { randomIds, jobDetails } = useSimilarJobs();
 
   return (
     <div className="flex flex-col gap-[8px] py-[36px] md:gap-[20px]">
@@ -55,15 +49,16 @@ const SimilarJob = () => {
         </div>
       </div>
       <div className="flex flex-col gap-[8px]">
-        {jobDetails.map(({ data }, idx) =>
-          data?.data ? (
+        {jobDetails.map(({ data, isLoading, isFetching }, idx) => {
+          const loading = isLoading || isFetching || !data;
+          return (
             <SimilarJobItem
               key={randomIds[idx]}
-              item={data.data}
-              isLoading={!data}
+              item={data ?? undefined}
+              isLoading={loading}
             />
-          ) : null
-        )}
+          );
+        })}
       </div>
     </div>
   );

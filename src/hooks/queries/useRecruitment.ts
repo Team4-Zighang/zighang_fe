@@ -3,7 +3,12 @@ import {
   GetRecruitmentDetail,
   GetRecruitmentEvalList,
 } from '@/app/_apis/recruitment';
-import { useQuery } from '@tanstack/react-query';
+import {
+  RecruitmentCommonResponse,
+  RecruitmentItem,
+} from '@/app/_apis/schemas/recruitmentResponse';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 /**
  * 공고 상세 불러오기
@@ -48,4 +53,36 @@ export function useGetMemo({ id }: { id: number }) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+}
+
+export function useSimilarJobs(count = 6, min = 30000, max = 35000) {
+  const randomIds = useMemo(() => {
+    const ids = new Set<number>();
+    while (ids.size < count) {
+      ids.add(Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+    return Array.from(ids);
+  }, [count, min, max]);
+
+  const queries = useMemo(
+    () =>
+      randomIds.map((id) => ({
+        queryKey: ['recruitmentDetail', id] as const,
+        queryFn: () => GetRecruitmentDetail(id),
+        gcTime: 30 * 60 * 1000,
+        staleTime: 0,
+        refetchOnMount: 'always' as const,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+        placeholderData: (prev: any) => prev,
+        select: (res: RecruitmentCommonResponse<RecruitmentItem>) => res.data,
+      })),
+    [randomIds]
+  );
+
+  const jobDetails = useQueries({
+    queries,
+  });
+
+  return { randomIds, jobDetails };
 }
