@@ -1,14 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import SimilarJobItem from './SimilarJobItem';
-import {
-  useRecruitmentDetail,
-  useSimilarJobs,
-} from '@/hooks/queries/useRecruitment';
-
-function useMultipleRecruitmentDetails(ids: number[]) {
-  return ids.map((id) => useRecruitmentDetail({ postingId: id }));
-}
+import { useSimilarJobs } from '@/hooks/queries/useRecruitment';
 
 const SimilarJob = () => {
   const { randomIds, jobDetails } = useSimilarJobs();
