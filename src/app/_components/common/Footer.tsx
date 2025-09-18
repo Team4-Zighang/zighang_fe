@@ -4,7 +4,13 @@ const Footer = () => {
   return (
     <div className="mt-20 h-[300px] w-full bg-gray-100 px-6 lg:px-[120px]">
       <div className="flex w-full flex-col py-12 sm:px-[60px]">
-        <Image src="/icons/logo.svg" alt="Logo" width={81.4} height={40} />
+        <Image
+          src="/icons/logo.svg"
+          alt="Logo"
+          width={81}
+          height={40}
+          className="h-10 w-[81px]"
+        />
         <div className="text-contents-neutral-tertiary mt-5 flex flex-wrap items-center">
           <span className="web-badge-sm">에이아이커리어</span>
           <div className="mx-2">|</div>
